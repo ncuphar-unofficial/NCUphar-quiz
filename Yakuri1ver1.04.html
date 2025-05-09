@@ -38,24 +38,39 @@
         }
         /* Question Text Styling */
         .question {
-            font-size: 1.05rem; /* Slightly adjusted font size */
+            font-size: 1.05rem; 
             margin-bottom: 1.5rem;
-            color: #1f2937; /* Tailwind gray-800 */
-            font-weight: 500; /* Adjusted font-weight for Noto Sans JP */
+            color: #1f2937; 
+            font-weight: 500; 
             text-align: left;
-            line-height: 1.7; /* Increased line height for better readability */
+            line-height: 1.7; 
         }
-        .question-item { /* Class for each item in the question (Mechanism, Characteristics, Applications) */
-            margin-bottom: 0.75rem; /* Space between items */
+        
+        /* Styles for question detail boxes */
+        .question-detail-box {
+            border: 1px solid #e5e7eb; /* Tailwind gray-200 - slightly lighter border */
+            border-radius: 0.5rem; /* Tailwind rounded-lg */
+            padding: 0.875rem 1.25rem; /* py-3.5 px-5 */
+            margin-bottom: 1rem; /* mb-4 */
+            text-align: left;
         }
-        .question-item strong {
-            color: #374151; /* Tailwind gray-700 for labels */
-            font-weight: 600; /* Bolder labels */
+        .question-detail-box strong { /* Label style (e.g., 作用機序:) */
+            color: #6b7280;   /* Tailwind gray-500 - more subtle label color */
+            font-weight: 400; /* Tailwind font-normal - more subtle weight */
+            display: block; 
+            margin-bottom: 0.25rem; /* mb-1 - slightly less space below label */
+            font-size: 0.875rem; /* Tailwind text-sm - slightly smaller label */
         }
+        .question-detail-box div { /* Content text (mechanism, characteristics, etc.) */
+            color: #1f2937; /* Tailwind gray-800 - main content text color */
+            font-size: 0.95rem; 
+            line-height: 1.65;
+        }
+
         .question-prompt { /* Style for the actual question "この説明に該当する薬物はどれですか？" */
-            margin-top: 1.25rem;
-            font-weight: 600;
-            color: #1f2937;
+            margin-top: 1.75rem; /* Increased margin-top for better separation */
+            font-weight: 600;   /* Tailwind font-semibold */
+            color: #111827;     /* Tailwind gray-900 - slightly darker for prompt */
         }
 
         .options {
@@ -66,50 +81,50 @@
         }
         .option {
             padding: 0.9rem 1.25rem;
-            border: 1px solid #d1d5db; /* Tailwind gray-300 */
-            border-radius: 0.5rem; /* Tailwind rounded-lg */
+            border: 1px solid #d1d5db; 
+            border-radius: 0.5rem; 
             margin-bottom: 0.75rem;
             cursor: pointer;
             transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease;
-            background-color: #f9fafb; /* Tailwind gray-50 */
-            color: #374151; /* Tailwind gray-700 */
+            background-color: #f9fafb; 
+            color: #374151; 
             text-align: left;
             font-size: 1rem;
             font-weight: 500;
-            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* Tailwind shadow-sm */
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); 
         }
         .option:hover:not(.disabled):not(.answered) {
-            background-color: #f3f4f6; /* Tailwind gray-100 */
+            background-color: #f3f4f6; 
             transform: translateY(-2px);
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); /* Tailwind shadow-md */
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); 
         }
         .option.correct {
-            background-color: #d1fae5; /* Tailwind green-100 */
-            border-color: #6ee7b7; /* Tailwind green-300 */
-            color: #065f46; /* Tailwind green-800 */
+            background-color: #d1fae5; 
+            border-color: #6ee7b7; 
+            color: #065f46; 
             font-weight: 600;
         }
         .option.incorrect {
-            background-color: #fee2e2; /* Tailwind red-100 */
-            border-color: #fca5a5; /* Tailwind red-300 */
-            color: #991b1b; /* Tailwind red-800 */
+            background-color: #fee2e2; 
+            border-color: #fca5a5; 
+            color: #991b1b; 
             font-weight: 600;
         }
         .explanation {
-            background-color: #e0f2fe; /* Tailwind sky-100 */
+            background-color: #e0f2fe; 
             border-radius: 0.5rem;
             padding: 1.25rem;
             margin-top: 1.5rem;
             margin-bottom: 1.5rem;
-            color: #0c4a6e; /* Tailwind sky-800 */
+            color: #0c4a6e; 
             text-align: left;
             font-size: 0.95rem;
-            border: 1px solid #bae6fd; /* Tailwind sky-200 */
+            border: 1px solid #bae6fd; 
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             line-height: 1.6;
         }
         .explanation strong {
-            color: #075985; /* Tailwind sky-700 */
+            color: #075985; 
         }
         .controls {
             display: flex;
@@ -119,72 +134,71 @@
             margin-top: 2rem;
         }
         .quiz-btn {
-            padding: 0.75rem 1.5rem; /* Tailwind py-3 px-6 */
-            border-radius: 0.375rem; /* Tailwind rounded-md */
+            padding: 0.75rem 1.5rem; 
+            border-radius: 0.375rem; 
             font-weight: 600;
             color: white;
             cursor: pointer;
             transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease;
             border: none;
             font-size: 1rem;
-            box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1), 0 1px 2px 0 rgba(0,0,0,0.06); /* Tailwind shadow */
+            box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1), 0 1px 2px 0 rgba(0,0,0,0.06); 
         }
         .quiz-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
         .quiz-btn:hover:not(:disabled) {
-            transform: translateY(-1px); /* Subtle lift */
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); /* Tailwind shadow-md */
+            transform: translateY(-1px); 
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); 
         }
 
         /* Specific Button Colors */
-        .start-quiz-btn { /* Start Quiz Button */
-            background-color: #2563eb; /* Tailwind blue-600 */
-            font-size: 1.1rem; /* Slightly larger */
+        .start-quiz-btn { 
+            background-color: #2563eb; 
+            font-size: 1.1rem; 
             padding: 0.8rem 2rem;
             margin-top: 2.5rem;
         }
         .start-quiz-btn:hover:not(:disabled) {
-            background-color: #1d4ed8; /* Tailwind blue-700 */
+            background-color: #1d4ed8; 
         }
 
-        .next-btn { /* Next Button */
-            background-color: #16a34a; /* Tailwind green-600 */
+        .next-btn { 
+            background-color: #16a34a; 
         }
         .next-btn:hover:not(:disabled) {
-            background-color: #15803d; /* Tailwind green-700 */
+            background-color: #15803d; 
         }
 
-        .prev-btn { /* Previous Button */
-            background-color: #0ea5e9; /* Tailwind sky-500 */
+        .prev-btn { 
+            background-color: #0ea5e9; 
         }
         .prev-btn:hover:not(:disabled) {
-            background-color: #0284c7; /* Tailwind sky-600 */
+            background-color: #0284c7; 
         }
 
-        .finish-btn { /* Finish Button */
-            background-color: #dc2626; /* Tailwind red-600 */
+        .finish-btn { 
+            background-color: #dc2626; 
         }
         .finish-btn:hover:not(:disabled) {
-            background-color: #b91c1c; /* Tailwind red-700 */
+            background-color: #b91c1c; 
         }
         
-        .restart-btn { /* Restart Button on Summary */
-            background-color: #4f46e5; /* Tailwind indigo-600 */
+        .restart-btn { 
+            background-color: #4f46e5; 
             font-size: 1.1rem;
             padding: 0.8rem 2rem;
         }
         .restart-btn:hover:not(:disabled) {
-            background-color: #4338ca; /* Tailwind indigo-700 */
+            background-color: #4338ca; 
         }
         
-        /* Review Incorrect Button Color */
-        .review-btn { /* Class for the new review button */
-            background-color: #7e22ce; /* Tailwind purple-700 */
+        .review-btn { 
+            background-color: #7e22ce; 
         }
         .review-btn:hover:not(:disabled) {
-            background-color: #6b21a8; /* Tailwind purple-800 */
+            background-color: #6b21a8; 
         }
 
 
@@ -219,14 +233,14 @@
             font-size: 1rem;
         }
         .feedback.correct {
-            background-color: #dcfce7; /* Tailwind green-100 */
-            border: 1px solid #86efac; /* Tailwind green-300 */
-            color: #166534; /* Tailwind green-700 */
+            background-color: #dcfce7; 
+            border: 1px solid #86efac; 
+            color: #166534; 
         }
         .feedback.incorrect {
-            background-color: #fee2e2; /* Tailwind red-100 */
-            border: 1px solid #fca5a5; /* Tailwind red-300 */
-            color: #991b1b; /* Tailwind red-700 */
+            background-color: #fee2e2; 
+            border: 1px solid #fca5a5; 
+            color: #991b1b; 
         }
         .option.disabled {
             opacity: 0.7;
@@ -265,12 +279,12 @@
         }
         #category-select:focus, #num-questions-select:focus {
             outline: none;
-            border-color: #2563eb; /* Tailwind blue-600 */
+            border-color: #2563eb; 
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
         }
         .progress-bar-container {
             width: 100%;
-            background-color: #e5e7eb; /* Tailwind gray-200 */
+            background-color: #e5e7eb; 
             border-radius: 0.375rem;
             margin-bottom: 1.5rem;
             overflow: hidden;
@@ -278,22 +292,22 @@
         .progress-bar {
             height: 12px;
             width: 0%;
-            background-color: #2563eb; /* Tailwind blue-600 */
+            background-color: #2563eb; 
             border-radius: 0.375rem;
             transition: width 0.3s ease-in-out;
         }
         .question-counter {
             font-size: 0.9rem;
-            color: #6b7280; /* Tailwind gray-500 */
+            color: #6b7280; 
         }
         .back-to-menu-link {
             text-decoration: none;
-            color: #2563eb; /* Tailwind blue-600 */
+            color: #2563eb; 
             font-weight: 500;
             font-size: 0.9rem;
         }
         .back-to-menu-link:hover {
-            color: #1d4ed8; /* Tailwind blue-700 */
+            color: #1d4ed8; 
             text-decoration: underline;
         }
 
@@ -364,7 +378,7 @@
     </div>
 
     <script>
-        // Drug data array - Updated categories based on PDF content
+        // Drug data array
         const drugData = [
             { name: "アセチルコリン", mechanism: "ムスカリン受容体刺激", characteristics: "神経伝達物質、コリンエステラーゼで分解", applications: "神経伝達、血管拡張", category: "神経系" },
             { name: "アトロピン", mechanism: "ムスカリン受容体遮断", characteristics: "抗コリン作用、散瞳、抗痙攣", applications: "散瞳、前投薬、鎮痙", category: "神経系" },
@@ -472,7 +486,7 @@
         const questionCounterElement = document.getElementById('question-counter');
         const reviewIncorrectContainer = document.getElementById('review-incorrect-container');
         const backToMenuButton = document.getElementById('back-to-menu-btn');
-        const reviewIncorrectBtn = document.getElementById('review-incorrect-btn'); // New button element
+        const reviewIncorrectBtn = document.getElementById('review-incorrect-btn'); 
 
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
@@ -482,7 +496,7 @@
         }
 
         function initializeQuizData(category, numQuestionsRequestedStr) {
-            isReviewMode = false; // Ensure review mode is off for normal quiz
+            isReviewMode = false; 
             selectedCategory = category;
             let filteredDrugs = drugData;
 
@@ -513,7 +527,7 @@
             }
 
             const selectedQuizDrugs = filteredDrugs.slice(0, numToDisplay);
-            generateQuestionsFromSource(selectedQuizDrugs); // Use helper to generate questions
+            generateQuestionsFromSource(selectedQuizDrugs); 
             
             if (quizQuestions.length === 0) {
                  alert("クイズの問題を生成できませんでした。出題数を調整するか、カテゴリーを変更してください。");
@@ -525,16 +539,26 @@
         // Helper function to generate quizQuestions from a source array of drug objects
         function generateQuestionsFromSource(sourceDrugArray) {
             quizQuestions = sourceDrugArray.map(correctDrug => {
+                // Updated questionText formatting with bordered boxes and different background colors
                 const questionText = `
-                    <div class="text-left space-y-2 mb-3">
-                        <p class="question-item"><strong>作用機序:</strong><br>${correctDrug.mechanism}</p>
-                        <p class="question-item"><strong>薬理学的特徴:</strong><br>${correctDrug.characteristics}</p>
-                        <p class="question-item"><strong>主な適応:</strong><br>${correctDrug.applications}</p>
+                    <div class="text-left space-y-3 mb-4"> 
+                        <div class="question-detail-box bg-sky-50"> 
+                            <strong>作用機序:</strong>
+                            <div>${correctDrug.mechanism}</div>
+                        </div>
+                        <div class="question-detail-box bg-emerald-50"> 
+                            <strong>薬理学的特徴:</strong>
+                            <div>${correctDrug.characteristics}</div>
+                        </div>
+                        <div class="question-detail-box bg-amber-50"> 
+                            <strong>主な適応:</strong>
+                            <div>${correctDrug.applications}</div>
+                        </div>
                     </div>
                     <p class="question-prompt"><strong>この説明に該当する薬物はどれですか？</strong></p>`;
                 
                 let distractors = drugData
-                    .filter(d => d.name !== correctDrug.name) // Distractors from all drugs
+                    .filter(d => d.name !== correctDrug.name) 
                     .map(d => d.name);
                 shuffleArray(distractors);
                 
@@ -568,7 +592,7 @@
                     options: options,
                     correctAnswer: correctDrug.name,
                     explanationText: `<strong>${correctDrug.name}</strong><br>作用機序: ${correctDrug.mechanism}<br>薬理学的特徴: ${correctDrug.characteristics}<br>主な適応: ${correctDrug.applications}`,
-                    drugDetails: correctDrug // Keep the original drug object for explanations and review
+                    drugDetails: correctDrug 
                 };
             });
         }
@@ -619,13 +643,11 @@
 
             const progressPercentage = quizQuestions.length > 0 ? ((index + 1) / quizQuestions.length) * 100 : 0;
             progressBar.style.width = `${progressPercentage}%`;
-            // Update question counter based on mode
             if (isReviewMode) {
                 questionCounterElement.textContent = quizQuestions.length > 0 ? `復習問題 ${index + 1} / ${quizQuestions.length}` : '復習問題 0 / 0';
             } else {
                 questionCounterElement.textContent = quizQuestions.length > 0 ? `問題 ${index + 1} / ${quizQuestions.length}` : '問題 0 / 0';
             }
-
 
             prevButton.disabled = index === 0;
             if (index === quizQuestions.length - 1) {
@@ -700,7 +722,6 @@
             accuracyElement.textContent = accuracy;
 
             reviewIncorrectContainer.innerHTML = '';
-            // Store incorrect answers for potential review
             reviewSourceQuestions = []; 
             const incorrectAnswersForDisplay = userAnswers.filter(ans => ans && !ans.isCorrect);
             
@@ -722,27 +743,26 @@
                                               <p><strong>主な適応:</strong> ${ans.drugDetails.applications}</p>
                                           </div>`;
                     reviewList.appendChild(listItem);
-                    // Add the original drug object to reviewSourceQuestions if not already there
                     if (!reviewSourceQuestions.some(rq => rq.name === ans.drugDetails.name)) {
                         reviewSourceQuestions.push(ans.drugDetails);
                     }
                 });
                 reviewIncorrectContainer.appendChild(reviewList);
-                reviewIncorrectBtn.style.display = 'inline-block'; // Show review button
+                reviewIncorrectBtn.style.display = 'inline-block'; 
                 reviewIncorrectBtn.disabled = false;
             } else if (quizQuestions.length > 0 && score === quizQuestions.length) {
                  const perfectMessage = document.createElement('p');
                  perfectMessage.textContent = '全問正解です！素晴らしい！';
                  perfectMessage.className = 'text-green-600 font-semibold mt-4 text-lg';
                  reviewIncorrectContainer.appendChild(perfectMessage);
-                 reviewIncorrectBtn.style.display = 'none'; // Hide review button if no incorrect answers
+                 reviewIncorrectBtn.style.display = 'none'; 
             } else if (quizQuestions.length === 0) {
                 const noQuizMessage = document.createElement('p');
                 noQuizMessage.textContent = 'クイズは実行されませんでした。';
                 noQuizMessage.className = 'text-gray-600 font-semibold mt-4';
                 reviewIncorrectContainer.appendChild(noQuizMessage);
                 reviewIncorrectBtn.style.display = 'none';
-            } else { // No incorrect answers but not all questions were correct (e.g. quiz not finished fully)
+            } else { 
                  reviewIncorrectBtn.style.display = 'none';
             }
         }
@@ -758,8 +778,7 @@
             finishButton.style.display = 'none';
             nextButton.disabled = true;
             prevButton.disabled = true;
-            isReviewMode = false; // Reset review mode flag
-            // reviewSourceQuestions = []; // Do not clear here, clear in showSummary or startQuizButton
+            isReviewMode = false; 
         }
 
         function startReviewQuiz() {
@@ -768,22 +787,26 @@
                 return;
             }
             isReviewMode = true;
-            resetQuizState(); // Reset score, current index, user answers for the review session
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers = []; 
+            quizQuestions = []; 
+            progressBar.style.width = '0%';
             
-            let reviewDrugsToQuiz = [...reviewSourceQuestions]; // Use a copy
+            let reviewDrugsToQuiz = [...reviewSourceQuestions]; 
             shuffleArray(reviewDrugsToQuiz); 
-            generateQuestionsFromSource(reviewDrugsToQuiz); // Generate questions from the review list
+            generateQuestionsFromSource(reviewDrugsToQuiz); 
 
             if (quizQuestions.length > 0) {
                 categorySelectContainer.style.display = 'none';
                 summaryContainer.style.display = 'none';
                 quizContainer.style.display = 'block';
-                document.querySelector('.container > header > h1').textContent = "薬理学クイズ (復習モード)"; // Change title for review
+                document.querySelector('.container > header > h1').textContent = "薬理学クイズ (復習モード)"; 
                 loadQuestion(0);
             } else {
                 alert("復習問題の生成に失敗しました。");
-                isReviewMode = false; // Reset if failed
-                document.querySelector('.container > header > h1').textContent = "薬理学クイズ"; // Reset title
+                isReviewMode = false; 
+                document.querySelector('.container > header > h1').textContent = "薬理学クイズ"; 
             }
         }
 
@@ -792,8 +815,8 @@
             const category = categorySelect.value;
             const numQuestions = numQuestionsSelect.value; 
             resetQuizState(); 
-            reviewSourceQuestions = []; // Clear previous review questions when starting a new main quiz
-            document.querySelector('.container > header > h1').textContent = "薬理学クイズ"; // Reset title
+            reviewSourceQuestions = []; 
+            document.querySelector('.container > header > h1').textContent = "薬理学クイズ"; 
             if (initializeQuizData(category, numQuestions)) { 
                 categorySelectContainer.style.display = 'none';
                 quizContainer.style.display = 'block';
@@ -816,15 +839,15 @@
 
         finishButton.addEventListener('click', () => {
             showSummary(); 
-            if (isReviewMode) { // If finishing a review quiz
-                 document.querySelector('.container > header > h1').textContent = "薬理学クイズ"; // Reset title
+            if (isReviewMode) { 
+                 document.querySelector('.container > header > h1').textContent = "薬理学クイズ"; 
             }
         });
 
         restartButton.addEventListener('click', () => {
             resetQuizState();
-            reviewSourceQuestions = []; // Clear review questions
-            document.querySelector('.container > header > h1').textContent = "薬理学クイズ"; // Reset title
+            reviewSourceQuestions = []; 
+            document.querySelector('.container > header > h1').textContent = "薬理学クイズ"; 
             summaryContainer.style.display = 'none';
             quizContainer.style.display = 'none';
             categorySelectContainer.style.display = 'block';
@@ -833,8 +856,8 @@
         backToMenuButton.addEventListener('click', (e) => {
             e.preventDefault(); 
             resetQuizState();
-            reviewSourceQuestions = []; // Clear review questions
-            document.querySelector('.container > header > h1').textContent = "薬理学クイズ"; // Reset title
+            reviewSourceQuestions = []; 
+            document.querySelector('.container > header > h1').textContent = "薬理学クイズ"; 
             quizContainer.style.display = 'none';
             summaryContainer.style.display = 'none';
             categorySelectContainer.style.display = 'block';
