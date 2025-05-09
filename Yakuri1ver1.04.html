@@ -314,7 +314,7 @@
 </head>
 <body class="bg-gray-100">
     <div class="container">
-        <header class="my-6 md:my-8">
+        <header id="main-header" class="my-6 md:my-8">
              <h1 class="text-3xl sm:text-4xl font-bold text-slate-800">薬理学クイズ</h1>
         </header>
 
@@ -488,12 +488,13 @@
         const reviewIncorrectContainer = document.getElementById('review-incorrect-container');
         const backToMenuButton = document.getElementById('back-to-menu-btn');
         const reviewIncorrectBtn = document.getElementById('review-incorrect-btn'); 
-        const quizCardElement = document.getElementById('quiz-card-element'); // For swipe
-        const quizCardContent = document.getElementById('quiz-card-content'); // For animation
+        const quizCardElement = document.getElementById('quiz-card-element'); 
+        const quizCardContent = document.getElementById('quiz-card-content'); 
+        const mainHeader = document.getElementById('main-header'); // Get the header element
 
         let touchstartX = 0;
         let touchendX = 0;
-        const swipeThreshold = 50; // Minimum distance for a swipe
+        const swipeThreshold = 50; 
 
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
@@ -516,6 +517,7 @@
                 quizContainer.style.display = 'none';
                 summaryContainer.style.display = 'none';
                 categorySelectContainer.style.display = 'block';
+                mainHeader.style.display = 'block'; // Show header on menu
                 return false;
             }
             
@@ -538,6 +540,7 @@
             
             if (quizQuestions.length === 0) {
                  alert("クイズの問題を生成できませんでした。出題数を調整するか、カテゴリーを変更してください。");
+                 mainHeader.style.display = 'block'; // Show header if quiz generation fails
                  return false;
             }
             return true;
@@ -603,34 +606,28 @@
         }
         
         function animateAndLoadQuestion(newIndex, direction) {
-            // 1. 現在のコンテンツをスライドアウト
             quizCardContent.style.opacity = '0';
             if (direction === 'next') {
-                quizCardContent.style.transform = 'translateX(-25%)'; // 少し左に動かして消える感じ
-            } else { // prev
-                quizCardContent.style.transform = 'translateX(25%)'; // 少し右に動かして消える感じ
+                quizCardContent.style.transform = 'translateX(-25%)'; 
+            } else { 
+                quizCardContent.style.transform = 'translateX(25%)'; 
             }
 
             setTimeout(() => {
-                // 2. 問題内容を更新 (DOM書き換え)
                 loadQuestion(newIndex);
-
-                // 3. 新しいコンテンツを画面外の反対側に配置 (トランジションを一時的に無効化)
                 quizCardContent.style.transition = 'none'; 
                 if (direction === 'next') {
                     quizCardContent.style.transform = 'translateX(25%)';
-                } else { // prev
+                } else { 
                     quizCardContent.style.transform = 'translateX(-25%)';
                 }
-
-                // 4. スライドインアニメーションを有効にして実行
-                setTimeout(() => { // DOMの更新とtransformの初期位置設定をブラウザに認識させるための遅延
+                setTimeout(() => { 
                     quizCardContent.style.transition = 'transform 0.35s ease-in-out, opacity 0.3s ease-in-out';
                     quizCardContent.style.opacity = '1';
                     quizCardContent.style.transform = 'translateX(0)';
                 }, 20);
 
-            }, 300); // スライドアウトの時間
+            }, 300); 
         }
 
 
@@ -752,6 +749,7 @@
             quizContainer.style.display = 'none';
             summaryContainer.style.display = 'block';
             categorySelectContainer.style.display = 'none';
+            mainHeader.style.display = 'none'; // Hide main header on summary
 
             correctCountElement.textContent = score;
             totalQuestionsElement.textContent = quizQuestions.length;
@@ -838,27 +836,26 @@
                 categorySelectContainer.style.display = 'none';
                 summaryContainer.style.display = 'none';
                 quizContainer.style.display = 'block';
-                document.querySelector('.container > header > h1').textContent = "薬理学クイズ (復習モード)"; 
-                // Ensure the first question slides in correctly for review mode
+                mainHeader.style.display = 'none'; // Hide main header during review quiz
+                
                 quizCardContent.style.transition = 'none';
-                quizCardContent.style.transform = 'translateX(0)'; // Reset position before loading
-                quizCardContent.style.opacity = '0'; // Start transparent
+                quizCardContent.style.transform = 'translateX(0)'; 
+                quizCardContent.style.opacity = '0'; 
                 loadQuestion(0);
-                setTimeout(() => { // Allow DOM to update
+                setTimeout(() => { 
                     quizCardContent.style.transition = 'transform 0.35s ease-in-out, opacity 0.3s ease-in-out';
                     quizCardContent.style.opacity = '1';
                 }, 20);
             } else {
                 alert("復習問題の生成に失敗しました。");
                 isReviewMode = false; 
-                document.querySelector('.container > header > h1').textContent = "薬理学クイズ"; 
+                mainHeader.style.display = 'block'; 
             }
         }
 
-        // Swipe functionality
         quizCardElement.addEventListener('touchstart', function(event) {
             touchstartX = event.changedTouches[0].screenX;
-        }, {passive: true}); // Use passive for better scroll performance if swipe doesn't prevent scroll
+        }, {passive: true}); 
 
         quizCardElement.addEventListener('touchend', function(event) {
             touchendX = event.changedTouches[0].screenX;
@@ -866,17 +863,15 @@
         }, {passive: true});
 
         function handleSwipe() {
-            // Left swipe (Next question)
             if (touchendX < touchstartX - swipeThreshold) {
                 if (currentQuestionIndex < quizQuestions.length - 1) {
-                    if (!nextButton.disabled) { // Check if next button is enabled (i.e., current question answered or review mode)
+                    if (!nextButton.disabled) { 
                         animateAndLoadQuestion(currentQuestionIndex + 1, 'next');
                     }
-                } else if (!nextButton.disabled) { // Last question and answered
-                    finishButton.click(); // Or animate to summary
+                } else if (!nextButton.disabled) { 
+                    finishButton.click(); 
                 }
             }
-            // Right swipe (Previous question)
             if (touchendX > touchstartX + swipeThreshold) {
                 if (currentQuestionIndex > 0) {
                     animateAndLoadQuestion(currentQuestionIndex - 1, 'prev');
@@ -890,12 +885,11 @@
             const numQuestions = numQuestionsSelect.value; 
             resetQuizState(); 
             reviewSourceQuestions = []; 
-            document.querySelector('.container > header > h1').textContent = "薬理学クイズ"; 
+            mainHeader.style.display = 'none'; // Hide main header when quiz starts
             if (initializeQuizData(category, numQuestions)) { 
                 categorySelectContainer.style.display = 'none';
                 quizContainer.style.display = 'block';
                 summaryContainer.style.display = 'none';
-                 // Initial load without animation, or with a specific "entry" animation
                 quizCardContent.style.transition = 'none';
                 quizCardContent.style.transform = 'translateX(0)';
                 quizCardContent.style.opacity = '0';
@@ -904,6 +898,8 @@
                     quizCardContent.style.transition = 'opacity 0.35s ease-in-out';
                     quizCardContent.style.opacity = '1';
                 }, 20);
+            } else {
+                mainHeader.style.display = 'block'; // Show header if initialization fails
             }
         });
 
@@ -922,14 +918,14 @@
         finishButton.addEventListener('click', () => {
             showSummary(); 
             if (isReviewMode) { 
-                 document.querySelector('.container > header > h1').textContent = "薬理学クイズ"; 
+                 mainHeader.style.display = 'block'; // Show header when returning to menu after review
             }
         });
 
         restartButton.addEventListener('click', () => {
             resetQuizState();
             reviewSourceQuestions = []; 
-            document.querySelector('.container > header > h1').textContent = "薬理学クイズ"; 
+            mainHeader.style.display = 'block'; // Show header on menu
             summaryContainer.style.display = 'none';
             quizContainer.style.display = 'none';
             categorySelectContainer.style.display = 'block';
@@ -939,7 +935,7 @@
             e.preventDefault(); 
             resetQuizState();
             reviewSourceQuestions = []; 
-            document.querySelector('.container > header > h1').textContent = "薬理学クイズ"; 
+            mainHeader.style.display = 'block'; // Show header on menu
             quizContainer.style.display = 'none';
             summaryContainer.style.display = 'none';
             categorySelectContainer.style.display = 'block';
@@ -949,9 +945,11 @@
             startReviewQuiz();
         });
 
+        // Initial setup
         categorySelectContainer.style.display = 'block'; 
         quizContainer.style.display = 'none'; 
         summaryContainer.style.display = 'none'; 
+        mainHeader.style.display = 'block'; // Ensure header is visible on initial load
 
     </script>
 </body>
