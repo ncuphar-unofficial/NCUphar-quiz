@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>薬理学クイズ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans JP', 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            background-color: #f3f4f6; /* Tailwind gray-100 */
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 1rem;
+            text-align: center;
+        }
+        @media (min-width: 640px) {
+            .container {
+                padding: 2rem;
+            }
+        }
+        .quiz-card {
+            background-color: white;
+            border-radius: 0.75rem; /* Tailwind rounded-xl */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Tailwind shadow-lg */
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+         @media (min-width: 640px) {
+            .quiz-card {
+                padding: 2rem;
+            }
+        }
+        /* Question Text Styling */
+        .question {
+            font-size: 1.05rem; /* Slightly adjusted font size */
+            margin-bottom: 1.5rem;
+            color: #1f2937; /* Tailwind gray-800 */
+            font-weight: 500; /* Adjusted font-weight for Noto Sans JP */
+            text-align: left;
+            line-height: 1.7; /* Increased line height for better readability */
+        }
+        .question-item { /* Class for each item in the question (Mechanism, Characteristics, Applications) */
+            margin-bottom: 0.75rem; /* Space between items */
+        }
+        .question-item strong {
+            color: #374151; /* Tailwind gray-700 for labels */
+            font-weight: 600; /* Bolder labels */
+        }
+        .question-prompt { /* Style for the actual question "この説明に該当する薬物はどれですか？" */
+            margin-top: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            margin-bottom: 1.5rem;
+        }
+        .option {
+            padding: 0.9rem 1.25rem;
+            border: 1px solid #d1d5db; /* Tailwind gray-300 */
+            border-radius: 0.5rem; /* Tailwind rounded-lg */
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease;
+            background-color: #f9fafb; /* Tailwind gray-50 */
+            color: #374151; /* Tailwind gray-700 */
+            text-align: left;
+            font-size: 1rem;
+            font-weight: 500;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* Tailwind shadow-sm */
+        }
+        .option:hover:not(.disabled):not(.answered) {
+            background-color: #f3f4f6; /* Tailwind gray-100 */
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); /* Tailwind shadow-md */
+        }
+        .option.correct {
+            background-color: #d1fae5; /* Tailwind green-100 */
+            border-color: #6ee7b7; /* Tailwind green-300 */
+            color: #065f46; /* Tailwind green-800 */
+            font-weight: 600;
+        }
+        .option.incorrect {
+            background-color: #fee2e2; /* Tailwind red-100 */
+            border-color: #fca5a5; /* Tailwind red-300 */
+            color: #991b1b; /* Tailwind red-800 */
+            font-weight: 600;
+        }
+        .explanation {
+            background-color: #e0f2fe; /* Tailwind sky-100 */
+            border-radius: 0.5rem;
+            padding: 1.25rem;
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: #0c4a6e; /* Tailwind sky-800 */
+            text-align: left;
+            font-size: 0.95rem;
+            border: 1px solid #bae6fd; /* Tailwind sky-200 */
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            line-height: 1.6;
+        }
+        .explanation strong {
+            color: #075985; /* Tailwind sky-700 */
+        }
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        .quiz-btn {
+            padding: 0.75rem 1.5rem; /* Tailwind py-3 px-6 */
+            border-radius: 0.375rem; /* Tailwind rounded-md */
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease;
+            border: none;
+            font-size: 1rem;
+            box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1), 0 1px 2px 0 rgba(0,0,0,0.06); /* Tailwind shadow */
+        }
+        .quiz-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .quiz-btn:hover:not(:disabled) {
+            transform: translateY(-1px); /* Subtle lift */
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); /* Tailwind shadow-md */
+        }
+
+        /* Specific Button Colors */
+        .start-quiz-btn { /* Start Quiz Button */
+            background-color: #2563eb; /* Tailwind blue-600 */
+            font-size: 1.1rem; /* Slightly larger */
+            padding: 0.8rem 2rem;
+        }
+        .start-quiz-btn:hover:not(:disabled) {
+            background-color: #1d4ed8; /* Tailwind blue-700 */
+        }
+
+        .next-btn { /* Next Button */
+            background-color: #16a34a; /* Tailwind green-600 */
+        }
+        .next-btn:hover:not(:disabled) {
+            background-color: #15803d; /* Tailwind green-700 */
+        }
+
+        .prev-btn { /* Previous Button */
+            background-color: #0ea5e9; /* Tailwind sky-500 */
+        }
+        .prev-btn:hover:not(:disabled) {
+            background-color: #0284c7; /* Tailwind sky-600 */
+        }
+
+        .finish-btn { /* Finish Button */
+            background-color: #dc2626; /* Tailwind red-600 */
+        }
+        .finish-btn:hover:not(:disabled) {
+            background-color: #b91c1c; /* Tailwind red-700 */
+        }
+        
+        .restart-btn { /* Restart Button on Summary */
+            background-color: #4f46e5; /* Tailwind indigo-600 */
+            font-size: 1.1rem;
+            padding: 0.8rem 2rem;
+        }
+        .restart-btn:hover:not(:disabled) {
+            background-color: #4338ca; /* Tailwind indigo-700 */
+        }
+
+
+        .summary {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .summary h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: #1f2937;
+            font-weight: 700;
+        }
+        .summary p {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: #374151;
+        }
+        #quiz-container, #summary-container {
+            display: none;
+        }
+        .feedback {
+            margin-top: 1.5rem;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        .feedback.correct {
+            background-color: #dcfce7; /* Tailwind green-100 */
+            border: 1px solid #86efac; /* Tailwind green-300 */
+            color: #166534; /* Tailwind green-700 */
+        }
+        .feedback.incorrect {
+            background-color: #fee2e2; /* Tailwind red-100 */
+            border: 1px solid #fca5a5; /* Tailwind red-300 */
+            color: #991b1b; /* Tailwind red-700 */
+        }
+        .option.disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        .option.answered:not(.correct):not(.incorrect) {
+            opacity: 0.6;
+        }
+        #category-select-container {
+            display: block;
+            margin-bottom: 2rem;
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+         @media (min-width: 640px) {
+            #category-select-container {
+                padding: 2rem;
+            }
+        }
+        #category-select, #num-questions-select {
+            padding: 0.75rem 1rem;
+            border-radius: 0.375rem;
+            border: 1px solid #d1d5db;
+            font-size: 1rem;
+            color: #374151;
+            background-color: #f9fafb;
+            transition: border-color 0.2s ease;
+            margin-top: 0.5rem;
+            width: 100%;
+            max-width: 400px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        #category-select:focus, #num-questions-select:focus {
+            outline: none;
+            border-color: #2563eb; /* Tailwind blue-600 */
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        .progress-bar-container {
+            width: 100%;
+            background-color: #e5e7eb; /* Tailwind gray-200 */
+            border-radius: 0.375rem;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 12px;
+            width: 0%;
+            background-color: #2563eb; /* Tailwind blue-600 */
+            border-radius: 0.375rem;
+            transition: width 0.3s ease-in-out;
+        }
+        .question-counter {
+            font-size: 0.9rem;
+            color: #6b7280; /* Tailwind gray-500 */
+        }
+        .back-to-menu-link {
+            text-decoration: none;
+            color: #2563eb; /* Tailwind blue-600 */
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        .back-to-menu-link:hover {
+            color: #1d4ed8; /* Tailwind blue-700 */
+            text-decoration: underline;
+        }
+
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container">
+        <header class="my-6 md:my-8">
+             <h1 class="text-3xl sm:text-4xl font-bold text-slate-800">薬理学クイズ</h1>
+        </header>
+
+        <div id="category-select-container">
+           <label for="category-select" class="block text-slate-700 text-lg font-semibold mb-2">出題カテゴリーを選択してください:</label>
+           <select id="category-select" class="shadow-sm appearance-none border rounded w-full py-3 px-4 text-slate-700 leading-tight focus:outline-none focus:shadow-outline">
+               <option value="all">全ての薬物</option>
+               <option value="神経系">神経系に作用する薬物</option>
+               <option value="循環器系">循環器系に作用する薬物</option>
+               <option value="局所麻酔薬">局所麻酔薬</option>
+               <option value="末梢性筋弛緩薬">末梢性筋弛緩薬</option>
+               <option value="交感神経刺激薬">交感神経刺激薬</option>
+               <option value="交感神経遮断薬">交感神経遮断薬</option>
+               <option value="その他">その他の薬物</option>
+           </select>
+
+           <label for="num-questions-select" class="block text-slate-700 text-lg font-semibold mb-2 mt-6">出題数を選択してください:</label>
+           <select id="num-questions-select" class="shadow-sm appearance-none border rounded w-full py-3 px-4 text-slate-700 leading-tight focus:outline-none focus:shadow-outline">
+               <option value="5">5問</option>
+               <option value="10" selected>10問</option>
+               <option value="15">15問</option>
+               <option value="20">20問</option>
+               <option value="all">全ての問題</option>
+           </select>
+
+           <button id="start-quiz-btn" class="quiz-btn start-quiz-btn">クイズを開始する</button>
+        </div>
+
+        <div id="quiz-container" style="display: none;">
+            <div class="quiz-card">
+                <div class="flex justify-between items-center mb-4">
+                    <a href="#" id="back-to-menu-btn" class="back-to-menu-link">&larr; メニューに戻る</a>
+                    <div class="question-counter" id="question-counter"></div>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+                <div id="question" class="question"></div>
+                <div id="options" class="options">
+                    </div>
+                <div id="feedback" class="feedback" style="display: none;"></div>
+                <div id="explanation" class="explanation" style="display: none;"></div>
+                <div class="controls">
+                    <button id="prev-btn" class="quiz-btn prev-btn">前へ</button>
+                    <button id="next-btn" class="quiz-btn next-btn">次へ</button>
+                    <button id="finish-btn" class="quiz-btn finish-btn" style="display: none;">終了</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="summary-container" class="summary" style="display: none;">
+            <h2>あなたの成績</h2>
+            <p>正解数: <span id="correct-count">0</span> / <span id="total-questions">0</span></p>
+            <p>正答率: <span id="accuracy">0</span>%</p>
+            <div id="review-incorrect-container" class="mt-4">
+                </div>
+            <button id="restart-btn" class="quiz-btn restart-btn">もう一度挑戦する</button>
+        </div>
+    </div>
+
+    <script>
+        // Drug data array - Updated categories based on PDF content
+        const drugData = [
+            { name: "アセチルコリン", mechanism: "ムスカリン受容体刺激", characteristics: "神経伝達物質、コリンエステラーゼで分解", applications: "神経伝達、血管拡張", category: "神経系" },
+            { name: "アトロピン", mechanism: "ムスカリン受容体遮断", characteristics: "抗コリン作用、散瞳、抗痙攣", applications: "散瞳、前投薬、鎮痙", category: "神経系" },
+            { name: "パパベリン", mechanism: "ホスホジエステラーゼ阻害", characteristics: "平滑筋弛緩作用、血管拡張作用", applications: "血管拡張、鎮痙", category: "循環器系" },
+            { name: "アドレナリン", mechanism: "アドレナリン受容体(α,β)刺激", characteristics: "心機能亢進、血管収縮(α)/拡張(β2)、気管支拡張(β2)", applications: "アナフィラキシー、心停止、気管支喘息", category: "交感神経刺激薬" },
+            { name: "ノルアドレナリン", mechanism: "アドレナリン受容体(主にα,一部β1)刺激", characteristics: "血管収縮(α1)、血圧上昇、心機能亢進(β1)", applications: "ショック時の昇圧", category: "交感神経刺激薬" },
+            { name: "プロプラノロール", mechanism: "非選択的β受容体遮断", characteristics: "心拍数減少、血圧低下、気管支収縮、うっ血性心不全患者には禁忌", applications: "高血圧、狭心症、不整脈、片頭痛予防", category: "交感神経遮断薬" },
+            { name: "フェントラミン", mechanism: "非選択的α受容体遮断", characteristics: "血管拡張、血圧低下、イミダゾリン誘導体", applications: "褐色細胞腫、末梢血管障害", category: "交感神経遮断薬" },
+            { name: "イソプレナリン", mechanism: "非選択的β受容体刺激", characteristics: "心機能亢進(β1)、気管支拡張(β2)、血管拡張(β2)", applications: "気管支喘息、徐脈、房室ブロック", category: "交感神経刺激薬" },
+            { name: "スキサメトニウム", mechanism: "ニコチン性アセチルコリン(NM)受容体刺激(持続的脱分極)", characteristics: "脱分極性筋弛緩、アセチルコリン2分子結合構造、血漿ChEで分解、作用時間短い(約5分)、悪性高熱症・緑内障に禁忌", applications: "麻酔時の筋弛緩、気管内挿管時の筋弛緩", category: "末梢性筋弛緩薬" },
+            { name: "ベクロニウム", mechanism: "ニコチン性アセチルコリン(NM)受容体競合的遮断", characteristics: "非脱分極性筋弛緩、ステロイド骨格、ヒスタミン遊離作用弱い、作用時間約1時間", applications: "全身麻酔時の筋弛緩", category: "末梢性筋弛緩薬" },
+            { name: "エドロホニウム", mechanism: "可逆的コリンエステラーゼ阻害", characteristics: "抗コリンエステラーゼ作用、骨格筋直接刺激作用、作用持続時間非常に短い", applications: "重症筋無力症の診断", category: "その他" },
+            { name: "ジアゼパム", mechanism: "GABA_A受容体アロステリック修飾 (ベンゾジアゼピン結合部位)", characteristics: "抗不安、筋弛緩、抗痙攣", applications: "不安障害、てんかん、筋痙攣", category: "神経系" },
+            { name: "タムスロシン", mechanism: "選択的α1A受容体遮断", characteristics: "前立腺・尿道平滑筋弛緩、前立腺α1A受容体への選択性が高い", applications: "前立腺肥大症に伴う排尿障害", category: "交感神経遮断薬" },
+            { name: "ニフェジピン", mechanism: "Caチャネル遮断 (L型)", characteristics: "血管拡張、血圧低下", applications: "高血圧、狭心症", category: "循環器系" },
+            { name: "エフェドリン", mechanism: "混合型アドレナリン作動薬 (直接αβ刺激＋NA遊離促進)", characteristics: "MAOやCOMTで分解されない、中枢興奮作用", applications: "気管支喘息、低血圧、鼻閉", category: "交感神経刺激薬" },
+            { name: "ピロカルピン", mechanism: "ムスカリン受容体刺激", characteristics: "縮瞳、発汗・唾液分泌促進", applications: "緑内障、口腔乾燥症(シェーグレン症候群)", category: "神経系" },
+            { name: "ブチルスコポラミン", mechanism: "ムスカリン受容体遮断", characteristics: "抗コリン作用、鎮痙、4級アンモニウム化合物で中枢作用弱い", applications: "消化管痙攣、胆道・尿路痙攣", category: "神経系" },
+            { name: "ロピバカイン", mechanism: "電位依存性Naチャネル遮断", characteristics: "アミド型、長時間作用型(3-5時間)、ブピバカインのS体で心毒性低い", applications: "硬膜外麻酔、伝達麻酔、浸潤麻酔", category: "局所麻酔薬" },
+            { name: "リドカイン", mechanism: "電位依存性Naチャネル遮断", characteristics: "アミド型、中時間作用型(1.5-2時間)、抗不整脈作用(Ib群)、安全性高い", applications: "硬膜外麻酔、伝達麻酔、浸潤麻酔、表面麻酔、心室性不整脈", category: "局所麻酔薬" },
+            { name: "プロカイン", mechanism: "電位依存性Naチャネル遮断", characteristics: "エステル型、短時間作用型(約1時間)、血中ChEで分解、アレルギー反応注意、組織浸透性低い", applications: "浸潤麻酔、伝達麻酔、硬膜外麻酔、脊椎麻酔", category: "局所麻酔薬" },
+            { name: "テトラカイン", mechanism: "電位依存性Naチャネル遮断", characteristics: "エステル型、プロカインより作用時間長い(1.5-2時間)、効力・毒性強い", applications: "脊椎麻酔、硬膜外麻酔、伝達麻酔、浸潤麻酔、表面麻酔", category: "局所麻酔薬" },
+            { name: "コカイン", mechanism: "電位依存性Naチャネル遮断、NA再取込阻害", characteristics: "エステル型、局所麻酔作用、血管収縮作用、中枢興奮作用、精神依存性(麻薬指定)", applications: "表面麻酔(眼科・耳鼻科)", category: "局所麻酔薬" },
+            { name: "カプサイシン", mechanism: "TRPV1受容体作動", characteristics: "知覚神経刺激(灼熱感)、鎮痛作用 (バニロイド受容体作動薬)", applications: "疼痛緩和 (外用剤・軟膏、神経障害性疼痛)", category: "その他" },
+            { name: "ジブカイン", mechanism: "電位依存性Naチャネル遮断", characteristics: "アミド型、効力最強、毒性も強い、作用時間長い", applications: "脊椎麻酔、伝達・浸潤麻酔(歯科領域)、表面麻酔", category: "局所麻酔薬" },
+            { name: "レボブピバカイン", mechanism: "電位依存性Naチャネル遮断", characteristics: "アミド型、長時間作用型、ブピバカインのS体、心毒性低い", applications: "硬膜外麻酔、神経ブロック", category: "局所麻酔薬" },
+            { name: "メピバカイン", mechanism: "電位依存性Naチャネル遮断", characteristics: "アミド型、中時間作用型(1.5-2時間)、血管収縮作用あり(アドレナリン添加不要な場合も)、アナフィラキシー注意", applications: "硬膜外麻酔、伝達麻酔、浸潤麻酔", category: "局所麻酔薬" },
+            { name: "プリロカイン", mechanism: "電位依存性Naチャネル遮断", characteristics: "アミド型、中時間作用型、メトヘモグロビン血症に注意", applications: "浸潤麻酔、伝達麻酔、歯科領域の浸潤麻酔", category: "局所麻酔薬" },
+            { name: "アルチカイン", mechanism: "電位依存性Naチャネル遮断", characteristics: "アミド型（チオフェン環を持つ）、強酸性条件下でも効果発揮、組織浸透性高い", applications: "歯科麻酔、口腔粘膜局所麻酔", category: "局所麻酔薬" },
+            { name: "ボツリヌス毒素A型", mechanism: "アセチルコリン遊離抑制 (神経終末)", characteristics: "ボツリヌス菌産生毒素、効果3-4ヶ月持続", applications: "眼瞼痙攣、片側顔面痙攣、痙性斜頸、表情皺(眉間・目尻)", category: "末梢性筋弛緩薬" }, // カテゴリ変更
+            { name: "ロクロニウム", mechanism: "ニコチン性アセチルコリン(NM)受容体競合的遮断", characteristics: "非脱分極性筋弛緩、ステロイド骨格、作用発現速い、スガマデクスで拮抗", applications: "全身麻酔時の筋弛緩", category: "末梢性筋弛緩薬" },
+            { name: "ベシル酸シスアトラクリウム", mechanism: "ニコチン性アセチルコリン(NM)受容体競合的遮断", characteristics: "非脱分極性筋弛緩、アトラクリウムの異性体、ホフマン分解、副作用少ない", applications: "全身麻酔時の筋弛緩", category: "末梢性筋弛緩薬" },
+            { name: "ダントロレンナトリウム", mechanism: "筋小胞体リアノジン受容体(Ca2+遊離チャネル)抑制", characteristics: "骨格筋の興奮収縮連関を抑制、骨格筋直接電気刺激による収縮も抑制", applications: "悪性高熱症、悪性症候群、痙性麻痺", category: "末梢性筋弛緩薬" }, // カテゴリ変更
+            { name: "スガマデクス", mechanism: "ロクロニウム・ベクロニウムを包接化し不活性化", characteristics: "修飾γシクロデキストリン、筋弛緩回復薬", applications: "ロクロニウム・ベクロニウムによる筋弛緩からの回復", category: "その他" },
+            { name: "テトロドトキシン", mechanism: "電位依存性Naチャネル遮断 (細胞外から蓋をする)", characteristics: "フグ毒、Naチャネル選択性高い、強力な局所麻酔作用だが臨床応用なし", applications: "薬理学的試薬", category: "その他" },
+            { name: "ヘミコリニウム", mechanism: "コリン作動性神経終末へのコリン取り込み阻害 (ACh合成阻害)", characteristics: "現在使用されていない", applications: "薬理学的試薬", category: "神経系" },
+            { name: "ツボクラリン", mechanism: "ニコチン性アセチルコリン(NM)受容体競合的遮断", characteristics: "d-ツボクラリン、矢毒クラーレ主成分、ヒスタミン遊離作用、自律神経節遮断作用、現在使用されていない", applications: "（歴史的）筋弛緩薬", category: "末梢性筋弛緩薬" },
+            { name: "ガラミン", mechanism: "ニコチン性アセチルコリン(NM)受容体競合的遮断", characteristics: "Daniel Bovet開発、ツボクラリンより弱い、ヒスタミン遊離作用なし、心臓副交感神経遮断で血圧・心拍数上昇、現在使用されていない", applications: "（歴史的）筋弛緩薬", category: "末梢性筋弛緩薬" },
+            { name: "パンクロニウム", mechanism: "ニコチン性アセチルコリン(NM)受容体競合的遮断", characteristics: "非脱分極性筋弛緩、ステロイド骨格、ツボクラリンより強力、作用時間長い、ヒスタミン遊離・自律神経節遮断作用弱い、現在使用されていない", applications: "（歴史的）筋弛緩薬", category: "末梢性筋弛緩薬" },
+            { name: "ジピベフリン", mechanism: "α/β受容体刺激薬", characteristics: "アドレナリンのプロドラッグ、MAO・COMTによる代謝を受けにくい", applications: "低血圧、緑内障", category: "交感神経刺激薬" },
+            { name: "ナファゾリン", mechanism: "α1受容体刺激薬", characteristics: "細動脈血管の収縮", applications: "表在性充血(眼)、鼻粘膜充血", category: "交感神経刺激薬" },
+            { name: "フェニレフリン", mechanism: "α1受容体刺激薬", characteristics: "血管収縮、瞳孔散大筋の収縮", applications: "低血圧、散瞳薬、局所麻酔薬の配合剤", category: "交感神経刺激薬" },
+            { name: "メトキサミン", mechanism: "α1受容体刺激薬", characteristics: "末梢血管の収縮", applications: "低血圧", category: "交感神経刺激薬" },
+            { name: "クロニジン", mechanism: "中枢性α2受容体刺激薬 (一部末梢性)", characteristics: "眼房水の産生抑制・排出促進、鎮静、鎮痛", applications: "高血圧、緑内障、片頭痛予防、薬物離脱症状緩和", category: "交感神経遮断薬" }, // カテゴリ変更
+            { name: "メチルドパ", mechanism: "中枢性α2受容体刺激薬 (αメチルNAに変換)", characteristics: "ドパ脱炭酸酵素により代謝され作用", applications: "妊娠高血圧", category: "交感神経遮断薬" }, // カテゴリ変更
+            { name: "ドブタミン", mechanism: "β1受容体刺激薬", characteristics: "合成カテコールアミン、心筋収縮力を増強する", applications: "急性循環不全、うっ血性心不全、心原性ショック", category: "交感神経刺激薬" },
+            { name: "デノパミン", mechanism: "β1受容体刺激薬", characteristics: "非カテコールアミン、経口投与可能、心筋収縮力を増強する", applications: "慢性心不全", category: "交感神経刺激薬" },
+            { name: "サルブタモール", mechanism: "選択的β2受容体刺激薬", characteristics: "第二世代のβ2作用薬、中時間作用型、気管支拡張", applications: "気管支喘息、気管支炎、COPD", category: "交感神経刺激薬" },
+            { name: "ホルモテロール", mechanism: "選択的β2受容体刺激薬", characteristics: "第三世代のβ2作用薬、長時間作用型、気管支拡張", applications: "気管支喘息(発作治療・管理)、COPD", category: "交感神経刺激薬" },
+            { name: "クレンブテロール", mechanism: "選択的β2受容体刺激薬", characteristics: "気管支平滑筋の弛緩、排尿筋弛緩", applications: "気管支喘息、気管支炎、腹圧性尿失禁", category: "交感神経刺激薬" },
+            { name: "リトドリン", mechanism: "選択的β2受容体刺激薬", characteristics: "子宮平滑筋β2受容体に選択性が高い、子宮弛緩", applications: "切迫流産・早産", category: "交感神経刺激薬" },
+            { name: "ミラベグロン", mechanism: "選択的β3受容体刺激薬", characteristics: "膀胱平滑筋弛緩、畜尿機能の亢進", applications: "過活動膀胱の諸症状(尿意切迫感、頻尿、切迫性尿失禁)", category: "交感神経刺激薬" },
+            { name: "チラミン", mechanism: "間接型アドレナリン作動薬", characteristics: "ノルアドレナリン遊離促進、MAOにより作用消失", applications: "医薬品ではない (チーズ、赤ワイン等に含有)", category: "その他" },
+            { name: "メタンフェタミン", mechanism: "間接型アドレナリン作動薬", characteristics: "ノルアドレナリン・ドパミン遊離促進、覚せい剤、精神依存・耐性強い", applications: "ナルコレプシー、(注意欠陥・多動性障害)", category: "神経系" },
+            { name: "ドパミン", mechanism: "ドパミン受容体作動薬、αβ受容体作動(高用量)", characteristics: "内因性カテコールアミン、腎血管拡張(低用量)", applications: "急性循環不全、心原性ショック、出血性ショック", category: "交感神経刺激薬" },
+            { name: "エルゴタミン", mechanism: "α受容体遮断薬、5-HT1B/1D受容体作動薬", characteristics: "麦角アルカロイド、脳血管収縮作用", applications: "片頭痛(発作治療)", category: "神経系" },
+            { name: "エルゴメトリン", mechanism: "α受容体遮断薬、子宮平滑筋収縮", characteristics: "麦角アルカロイド、子宮選択性が高い", applications: "分娩後の弛緩性子宮出血、子宮収縮促進", category: "その他" },
+            { name: "プラゾシン", mechanism: "選択的α1受容体遮断薬", characteristics: "血管拡張、血圧低下、初回投与時の起立性低血圧に注意", applications: "高血圧、(前立腺肥大症に伴う排尿障害)", category: "交感神経遮断薬" },
+            { name: "ウラピジル", mechanism: "選択的α1受容体遮断薬、5-HT1A受容体作動", characteristics: "血管拡張作用", applications: "高血圧、(前立腺肥大症に伴う排尿障害)", category: "交感神経遮断薬" },
+            { name: "ピンドロール", mechanism: "非選択的β受容体遮断薬 (ISA+)", characteristics: "内因性交感神経刺激作用(ISA)有り(約0.6)", applications: "高血圧、狭心症、頻脈性不整脈", category: "交感神経遮断薬" },
+            { name: "チモロール", mechanism: "非選択的β受容体遮断薬 (ISA-)", characteristics: "内因性交感神経刺激作用(ISA)無し、効力が強い、眼房水産生抑制", applications: "緑内障、高眼圧症、(高血圧、狭心症)", category: "交感神経遮断薬" },
+            { name: "ニプラジロール", mechanism: "非選択的β受容体遮断薬 (α1遮断作用も, ISA-)", characteristics: "NO遊離作用、ニトロ基を持つ", applications: "高血圧、狭心症、緑内障", category: "交感神経遮断薬" },
+            { name: "ベタキソロール", mechanism: "選択的β1受容体遮断薬 (ISA-)", characteristics: "眼房水の産生抑制", applications: "高血圧、狭心症、緑内障", category: "交感神経遮断薬" },
+            { name: "エスモロール", mechanism: "選択的β1受容体遮断薬 (ISA-)", characteristics: "超短時間作用型、エステラーゼで分解", applications: "手術時の頻脈性不整脈・高血圧の救急処置", category: "交感神経遮断薬" },
+            { name: "カルベジロール", mechanism: "非選択的β受容体遮断薬 (α1遮断作用も)", characteristics: "抗酸化作用、血管拡張作用、喘息患者には禁忌", applications: "高血圧、狭心症、慢性心不全", category: "交感神経遮断薬" },
+            { name: "ラベタロール", mechanism: "非選択的β受容体遮断薬 (α1遮断作用も)", characteristics: "ISAをわずかに有する、血圧降下、心拍出量減少", applications: "高血圧（高血圧救急症も）、狭心症", category: "交感神経遮断薬" },
+            { name: "アミノ安息香酸エチル", mechanism: "電位依存性Naチャネル遮断", characteristics: "エステル型、水に難溶、外用剤(軟膏)・内服(鎮痛)", applications: "表面麻酔(鎮痒、胃炎鎮痛)", category: "局所麻酔薬" },
+            { name: "オキシブプロカイン", mechanism: "電位依存性Naチャネル遮断", characteristics: "エステル型、プロカインより速やかに分解", applications: "表面麻酔(眼科領域)", category: "局所麻酔薬" },
+            { name: "オキセサゼイン", mechanism: "電位依存性Naチャネル遮断", characteristics: "アミド型、強酸性下でも作用、胃粘膜局所麻酔薬、ガストリン遊離抑制", applications: "食道炎・胃炎・胃潰瘍等の疼痛・嘔吐・げっぷ等", category: "局所麻酔薬" },
+            { name: "ブピバカイン", mechanism: "電位依存性Naチャネル遮断", characteristics: "アミド型、長時間作用型(3-5時間)、血管収縮薬なしでも作用時間長い、心毒性に注意", applications: "脊椎麻酔、伝達麻酔、硬膜外麻酔", category: "局所麻酔薬" },
+            { name: "フィゾスチグミン", mechanism: "可逆的コリンエステラーゼ阻害", characteristics: "カラバル豆アルカロイド、3級アミンで血液脳関門通過、現在使用されていない", applications: "（歴史的）抗コリン薬中毒の解毒", category: "神経系" }, // カテゴリ変更
+            { name: "ネオスチグミン", mechanism: "可逆的コリンエステラーゼ阻害", characteristics: "合成4級アンモニウム、骨格筋直接刺激作用(NM, NN受容体)", applications: "重症筋無力症、クラーレ剤による呼吸抑制、麻痺性イレウス", category: "神経系" }, // カテゴリ変更
+            { name: "ジスチグミン", mechanism: "可逆的コリンエステラーゼ阻害", characteristics: "合成4級アンモニウム、骨格筋直接刺激作用、作用時間長い", applications: "重症筋無力症、排尿困難(術後・神経因性膀胱)", category: "神経系" }, // カテゴリ変更
+            { name: "ピリドスチグミン", mechanism: "可逆的コリンエステラーゼ阻害", characteristics: "合成4級アンモニウム、骨格筋直接刺激作用", applications: "重症筋無力症", category: "神経系" }, // カテゴリ変更
+            { name: "アンベノニウム", mechanism: "可逆的コリンエステラーゼ阻害", characteristics: "合成4級アンモニウム、骨格筋直接刺激作用", applications: "重症筋無力症", category: "神経系" }, // カテゴリ変更
+            { name: "α-ブンガロトキシン", mechanism: "ニコチン性アセチルコリン(NM)受容体非競合的・不可逆的遮断", characteristics: "ヘビ毒の一種", applications: "研究用試薬", category: "その他" }
+        ];
+
+        let quizQuestions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let userAnswers = [];
+        let selectedCategory = 'all';
+
+        const questionElement = document.getElementById('question');
+        const optionsElement = document.getElementById('options');
+        const explanationElement = document.getElementById('explanation');
+        const feedbackElement = document.getElementById('feedback');
+        const nextButton = document.getElementById('next-btn');
+        const prevButton = document.getElementById('prev-btn');
+        const finishButton = document.getElementById('finish-btn');
+        const quizContainer = document.getElementById('quiz-container');
+        const summaryContainer = document.getElementById('summary-container');
+        const correctCountElement = document.getElementById('correct-count');
+        const totalQuestionsElement = document.getElementById('total-questions');
+        const accuracyElement = document.getElementById('accuracy');
+        const restartButton = document.getElementById('restart-btn');
+        const categorySelectContainer = document.getElementById('category-select-container');
+        const categorySelect = document.getElementById('category-select');
+        const numQuestionsSelect = document.getElementById('num-questions-select');
+        const startQuizButton = document.getElementById('start-quiz-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const questionCounterElement = document.getElementById('question-counter');
+        const reviewIncorrectContainer = document.getElementById('review-incorrect-container');
+        const backToMenuButton = document.getElementById('back-to-menu-btn');
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function initializeQuizData(category, numQuestionsRequestedStr) {
+            selectedCategory = category;
+            let filteredDrugs = drugData;
+
+            if (category !== 'all') {
+                filteredDrugs = drugData.filter(drug => drug.category === category);
+            }
+
+            if (filteredDrugs.length === 0) {
+                alert("選択されたカテゴリーに該当する薬物がありません。");
+                quizContainer.style.display = 'none';
+                summaryContainer.style.display = 'none';
+                categorySelectContainer.style.display = 'block';
+                return false;
+            }
+            
+            shuffleArray(filteredDrugs);
+            
+            let numToDisplay;
+            if (numQuestionsRequestedStr === 'all') {
+                numToDisplay = filteredDrugs.length;
+            } else {
+                const requestedNum = parseInt(numQuestionsRequestedStr);
+                numToDisplay = Math.min(requestedNum, filteredDrugs.length);
+            }
+            
+            if (numToDisplay === 0 && filteredDrugs.length > 0) {
+                numToDisplay = filteredDrugs.length; 
+            }
+
+            const selectedQuizDrugs = filteredDrugs.slice(0, numToDisplay);
+
+            quizQuestions = selectedQuizDrugs.map(correctDrug => {
+                const questionText = `
+                    <div class="text-left space-y-2 mb-3">
+                        <p class="question-item"><strong>作用機序:</strong><br>${correctDrug.mechanism}</p>
+                        <p class="question-item"><strong>薬理学的特徴:</strong><br>${correctDrug.characteristics}</p>
+                        <p class="question-item"><strong>主な適応:</strong><br>${correctDrug.applications}</p>
+                    </div>
+                    <p class="question-prompt"><strong>この説明に該当する薬物はどれですか？</strong></p>`;
+                
+                let distractors = drugData
+                    .filter(d => d.name !== correctDrug.name && (category === 'all' || d.category === category || drugData.length < 10)) 
+                    .map(d => d.name);
+                shuffleArray(distractors);
+                
+                let finalDistractors = [];
+                let usedNames = new Set([correctDrug.name]); 
+
+                for (const distractorName of distractors) {
+                    if (finalDistractors.length < 3 && !usedNames.has(distractorName)) {
+                        finalDistractors.push(distractorName);
+                        usedNames.add(distractorName);
+                    }
+                }
+                
+                if (finalDistractors.length < 3) {
+                    let allOtherDrugs = drugData.filter(d => !usedNames.has(d.name)).map(d => d.name);
+                    shuffleArray(allOtherDrugs);
+                    for (const otherDrugName of allOtherDrugs) {
+                        if (finalDistractors.length < 3) {
+                            finalDistractors.push(otherDrugName);
+                            usedNames.add(otherDrugName);
+                        } else {
+                            break;
+                        }
+                    }
+                }
+                 while(finalDistractors.length < 3 && drugData.length > finalDistractors.length + 1) { 
+                    const randomDrugIndex = Math.floor(Math.random() * drugData.length);
+                    const randomDrugName = drugData[randomDrugIndex].name;
+                     if (randomDrugName !== correctDrug.name) { 
+                         finalDistractors.push(randomDrugName);
+                     }
+                     if (finalDistractors.length >=3) break;
+                 }
+                 finalDistractors = finalDistractors.slice(0,3);
+
+
+                const options = [correctDrug.name, ...finalDistractors];
+                shuffleArray(options);
+
+                return {
+                    questionText: questionText,
+                    options: options,
+                    correctAnswer: correctDrug.name,
+                    explanationText: `<strong>${correctDrug.name}</strong><br>作用機序: ${correctDrug.mechanism}<br>薬理学的特徴: ${correctDrug.characteristics}<br>主な適応: ${correctDrug.applications}`,
+                    drugDetails: correctDrug
+                };
+            });
+            
+            if (quizQuestions.length === 0) {
+                 alert("クイズの問題を生成できませんでした。出題数を調整するか、カテゴリーを変更してください。");
+                 return false;
+            }
+            return true;
+        }
+        
+        function loadQuestion(index) {
+            if (index < 0 || index >= quizQuestions.length) return;
+
+            currentQuestionIndex = index;
+            const questionData = quizQuestions[index];
+
+            questionElement.innerHTML = questionData.questionText;
+            optionsElement.innerHTML = ''; 
+
+            questionData.options.forEach((optionName) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.classList.add('option');
+                optionDiv.textContent = optionName;
+                optionDiv.dataset.optionName = optionName;
+                optionDiv.addEventListener('click', () => selectOption(optionDiv, questionData));
+                optionsElement.appendChild(optionDiv);
+            });
+
+            explanationElement.style.display = 'none';
+            feedbackElement.style.display = 'none';
+            feedbackElement.textContent = '';
+            feedbackElement.className = 'feedback';
+
+            const answered = userAnswers[index];
+            if (answered) {
+                optionsElement.childNodes.forEach(optDiv => {
+                    optDiv.classList.add('answered');
+                    optDiv.classList.add('disabled');
+                    if (optDiv.dataset.optionName === questionData.correctAnswer) {
+                        optDiv.classList.add('correct');
+                    } else if (optDiv.dataset.optionName === answered.selectedDrugName) {
+                        optDiv.classList.add('incorrect');
+                    }
+                });
+                feedbackElement.textContent = answered.isCorrect ? '正解です！' : '不正解です。';
+                feedbackElement.classList.add(answered.isCorrect ? 'correct' : 'incorrect');
+                feedbackElement.style.display = 'block';
+                explanationElement.innerHTML = questionData.explanationText;
+                explanationElement.style.display = 'block';
+                nextButton.disabled = false;
+            } else {
+                nextButton.disabled = true;
+            }
+
+            const progressPercentage = quizQuestions.length > 0 ? ((index + 1) / quizQuestions.length) * 100 : 0;
+            progressBar.style.width = `${progressPercentage}%`;
+            questionCounterElement.textContent = quizQuestions.length > 0 ? `問題 ${index + 1} / ${quizQuestions.length}` : '問題 0 / 0';
+
+            prevButton.disabled = index === 0;
+            if (index === quizQuestions.length - 1) {
+                nextButton.style.display = 'none';
+                finishButton.style.display = 'inline-block';
+                finishButton.disabled = !answered; 
+            } else {
+                nextButton.style.display = 'inline-block';
+                finishButton.style.display = 'none';
+            }
+            if (quizQuestions.length === 0) {
+                nextButton.style.display = 'none';
+                finishButton.style.display = 'none';
+                prevButton.disabled = true;
+            }
+        }
+
+        function selectOption(selectedOptionDiv, questionData) {
+            if (userAnswers[currentQuestionIndex]) return; 
+
+            const selectedDrugName = selectedOptionDiv.dataset.optionName;
+            const isCorrect = selectedDrugName === questionData.correctAnswer;
+
+            userAnswers[currentQuestionIndex] = {
+                questionIndex: currentQuestionIndex,
+                selectedDrugName: selectedDrugName,
+                correctAnswerName: questionData.correctAnswer,
+                isCorrect: isCorrect,
+                questionText: questionData.questionText,
+                drugDetails: questionData.drugDetails
+            };
+
+            if (isCorrect) {
+                score++;
+                selectedOptionDiv.classList.add('correct');
+                feedbackElement.textContent = '正解です！';
+                feedbackElement.classList.add('correct');
+            } else {
+                selectedOptionDiv.classList.add('incorrect');
+                feedbackElement.textContent = '不正解です。';
+                feedbackElement.classList.add('incorrect');
+                optionsElement.childNodes.forEach(optDiv => {
+                    if (optDiv.dataset.optionName === questionData.correctAnswer) {
+                        optDiv.classList.add('correct');
+                    }
+                });
+            }
+
+            feedbackElement.style.display = 'block';
+            explanationElement.innerHTML = questionData.explanationText;
+            explanationElement.style.display = 'block';
+
+            optionsElement.childNodes.forEach(optDiv => {
+                optDiv.classList.add('disabled');
+                optDiv.classList.add('answered');
+            });
+
+            nextButton.disabled = false;
+            if (currentQuestionIndex === quizQuestions.length - 1) {
+                finishButton.disabled = false;
+            }
+        }
+
+        function showSummary() {
+            quizContainer.style.display = 'none';
+            summaryContainer.style.display = 'block';
+            categorySelectContainer.style.display = 'none';
+
+            correctCountElement.textContent = score;
+            totalQuestionsElement.textContent = quizQuestions.length;
+            const accuracy = quizQuestions.length > 0 ? Math.round((score / quizQuestions.length) * 100) : 0;
+            accuracyElement.textContent = accuracy;
+
+            reviewIncorrectContainer.innerHTML = '';
+            const incorrectAnswers = userAnswers.filter(ans => ans && !ans.isCorrect);
+            if (incorrectAnswers.length > 0) {
+                const reviewTitle = document.createElement('h3');
+                reviewTitle.textContent = '間違えた問題の復習:';
+                reviewTitle.className = 'text-lg font-semibold mt-6 mb-3 text-left text-gray-700';
+                reviewIncorrectContainer.appendChild(reviewTitle);
+
+                const reviewList = document.createElement('ul');
+                reviewList.className = 'list-disc pl-5 text-left space-y-3';
+                incorrectAnswers.forEach(ans => {
+                    const listItem = document.createElement('li');
+                    listItem.className = 'text-sm text-gray-700 leading-relaxed';
+                    listItem.innerHTML = `<strong class="text-base text-slate-800">問題 ${ans.questionIndex + 1}: ${ans.drugDetails.name}</strong> (あなたの回答: ${ans.selectedDrugName})<br>
+                                          <div class="pl-2 mt-1 text-xs space-y-0.5">
+                                              <p><strong>作用機序:</strong> ${ans.drugDetails.mechanism}</p>
+                                              <p><strong>薬理学的特徴:</strong> ${ans.drugDetails.characteristics}</p>
+                                              <p><strong>主な適応:</strong> ${ans.drugDetails.applications}</p>
+                                          </div>`;
+                    reviewList.appendChild(listItem);
+                });
+                reviewIncorrectContainer.appendChild(reviewList);
+            } else if (quizQuestions.length > 0 && score === quizQuestions.length) {
+                 const perfectMessage = document.createElement('p');
+                 perfectMessage.textContent = '全問正解です！素晴らしい！';
+                 perfectMessage.className = 'text-green-600 font-semibold mt-4 text-lg';
+                 reviewIncorrectContainer.appendChild(perfectMessage);
+            } else if (quizQuestions.length === 0) {
+                const noQuizMessage = document.createElement('p');
+                noQuizMessage.textContent = 'クイズは実行されませんでした。';
+                noQuizMessage.className = 'text-gray-600 font-semibold mt-4';
+                reviewIncorrectContainer.appendChild(noQuizMessage);
+            }
+        }
+        
+        function resetQuizState() {
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers = [];
+            quizQuestions = []; 
+            progressBar.style.width = '0%';
+            questionCounterElement.textContent = '';
+            nextButton.style.display = 'inline-block';
+            finishButton.style.display = 'none';
+            nextButton.disabled = true;
+            prevButton.disabled = true;
+        }
+
+        startQuizButton.addEventListener('click', () => {
+            const category = categorySelect.value;
+            const numQuestions = numQuestionsSelect.value; 
+            resetQuizState(); 
+            if (initializeQuizData(category, numQuestions)) { 
+                categorySelectContainer.style.display = 'none';
+                quizContainer.style.display = 'block';
+                summaryContainer.style.display = 'none';
+                loadQuestion(0); 
+            }
+        });
+
+        nextButton.addEventListener('click', () => {
+            if (currentQuestionIndex < quizQuestions.length - 1) {
+                loadQuestion(currentQuestionIndex + 1); 
+            }
+        });
+
+        prevButton.addEventListener('click', () => {
+            if (currentQuestionIndex > 0) {
+                loadQuestion(currentQuestionIndex - 1); 
+            }
+        });
+
+        finishButton.addEventListener('click', () => {
+            showSummary(); 
+        });
+
+        restartButton.addEventListener('click', () => {
+            resetQuizState();
+            summaryContainer.style.display = 'none';
+            quizContainer.style.display = 'none';
+            categorySelectContainer.style.display = 'block';
+        });
+
+        backToMenuButton.addEventListener('click', (e) => {
+            e.preventDefault(); 
+            resetQuizState();
+            quizContainer.style.display = 'none';
+            summaryContainer.style.display = 'none';
+            categorySelectContainer.style.display = 'block';
+        });
+
+        categorySelectContainer.style.display = 'block'; 
+        quizContainer.style.display = 'none'; 
+        summaryContainer.style.display = 'none'; 
+
+    </script>
+</body>
+</html>
