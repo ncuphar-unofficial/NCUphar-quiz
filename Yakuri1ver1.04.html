@@ -24,19 +24,27 @@
                 padding: 2rem;
             }
         }
-        .quiz-card {
+        /* Updated quiz-card-element for swipe and animation */
+        #quiz-card-element {
             background-color: white;
-            border-radius: 0.75rem; /* Tailwind rounded-xl */
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Tailwind shadow-lg */
+            border-radius: 0.75rem; 
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); 
             padding: 1.5rem;
             margin-bottom: 2rem;
+            overflow: hidden; /* Important for slide animation */
+            position: relative; /* For potential absolute positioning of children if needed */
         }
          @media (min-width: 640px) {
-            .quiz-card {
+            #quiz-card-element {
                 padding: 2rem;
             }
         }
-        /* Question Text Styling */
+        /* Content inside the card that will animate */
+        #quiz-card-content {
+            width: 100%;
+            transition: transform 0.35s ease-in-out, opacity 0.3s ease-in-out;
+        }
+
         .question {
             font-size: 1.05rem; 
             margin-bottom: 1.5rem;
@@ -46,31 +54,30 @@
             line-height: 1.7; 
         }
         
-        /* Styles for question detail boxes */
         .question-detail-box {
-            border: 1px solid #e5e7eb; /* Tailwind gray-200 - slightly lighter border */
-            border-radius: 0.5rem; /* Tailwind rounded-lg */
-            padding: 0.875rem 1.25rem; /* py-3.5 px-5 */
-            margin-bottom: 1rem; /* mb-4 */
+            border: 1px solid #e5e7eb; 
+            border-radius: 0.5rem; 
+            padding: 0.875rem 1.25rem; 
+            margin-bottom: 1rem; 
             text-align: left;
         }
-        .question-detail-box strong { /* Label style (e.g., 作用機序:) */
-            color: #6b7280;   /* Tailwind gray-500 - more subtle label color */
-            font-weight: 400; /* Tailwind font-normal - more subtle weight */
+        .question-detail-box strong { 
+            color: #6b7280;   
+            font-weight: 400; 
             display: block; 
-            margin-bottom: 0.25rem; /* mb-1 - slightly less space below label */
-            font-size: 0.875rem; /* Tailwind text-sm - slightly smaller label */
+            margin-bottom: 0.25rem; 
+            font-size: 0.875rem; 
         }
-        .question-detail-box div { /* Content text (mechanism, characteristics, etc.) */
-            color: #1f2937; /* Tailwind gray-800 - main content text color */
+        .question-detail-box div { 
+            color: #1f2937; 
             font-size: 0.95rem; 
             line-height: 1.65;
         }
 
-        .question-prompt { /* Style for the actual question "この説明に該当する薬物はどれですか？" */
-            margin-top: 1.75rem; /* Increased margin-top for better separation */
-            font-weight: 600;   /* Tailwind font-semibold */
-            color: #111827;     /* Tailwind gray-900 - slightly darker for prompt */
+        .question-prompt { 
+            margin-top: 1.75rem; 
+            font-weight: 600;   
+            color: #111827;     
         }
 
         .options {
@@ -153,7 +160,6 @@
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); 
         }
 
-        /* Specific Button Colors */
         .start-quiz-btn { 
             background-color: #2563eb; 
             font-size: 1.1rem; 
@@ -163,28 +169,24 @@
         .start-quiz-btn:hover:not(:disabled) {
             background-color: #1d4ed8; 
         }
-
         .next-btn { 
             background-color: #16a34a; 
         }
         .next-btn:hover:not(:disabled) {
             background-color: #15803d; 
         }
-
         .prev-btn { 
             background-color: #0ea5e9; 
         }
         .prev-btn:hover:not(:disabled) {
             background-color: #0284c7; 
         }
-
         .finish-btn { 
             background-color: #dc2626; 
         }
         .finish-btn:hover:not(:disabled) {
             background-color: #b91c1c; 
         }
-        
         .restart-btn { 
             background-color: #4f46e5; 
             font-size: 1.1rem;
@@ -193,15 +195,12 @@
         .restart-btn:hover:not(:disabled) {
             background-color: #4338ca; 
         }
-        
         .review-btn { 
             background-color: #7e22ce; 
         }
         .review-btn:hover:not(:disabled) {
             background-color: #6b21a8; 
         }
-
-
         .summary {
             background-color: white;
             border-radius: 0.75rem;
@@ -345,23 +344,25 @@
         </div>
 
         <div id="quiz-container" style="display: none;">
-            <div class="quiz-card">
-                <div class="flex justify-between items-center mb-4">
-                    <a href="#" id="back-to-menu-btn" class="back-to-menu-link">&larr; メニューに戻る</a>
-                    <div class="question-counter" id="question-counter"></div>
-                </div>
-                <div class="progress-bar-container">
-                    <div class="progress-bar" id="progress-bar"></div>
-                </div>
-                <div id="question" class="question"></div>
-                <div id="options" class="options">
+            <div id="quiz-card-element"> 
+                <div id="quiz-card-content">
+                    <div class="flex justify-between items-center mb-4">
+                        <a href="#" id="back-to-menu-btn" class="back-to-menu-link">&larr; メニューに戻る</a>
+                        <div class="question-counter" id="question-counter"></div>
                     </div>
-                <div id="feedback" class="feedback" style="display: none;"></div>
-                <div id="explanation" class="explanation" style="display: none;"></div>
-                <div class="controls">
-                    <button id="prev-btn" class="quiz-btn prev-btn">前へ</button>
-                    <button id="next-btn" class="quiz-btn next-btn">次へ</button>
-                    <button id="finish-btn" class="quiz-btn finish-btn" style="display: none;">終了</button>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="progress-bar"></div>
+                    </div>
+                    <div id="question" class="question"></div>
+                    <div id="options" class="options">
+                        </div>
+                    <div id="feedback" class="feedback" style="display: none;"></div>
+                    <div id="explanation" class="explanation" style="display: none;"></div>
+                    <div class="controls">
+                        <button id="prev-btn" class="quiz-btn prev-btn">前へ</button>
+                        <button id="next-btn" class="quiz-btn next-btn">次へ</button>
+                        <button id="finish-btn" class="quiz-btn finish-btn" style="display: none;">終了</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -462,8 +463,8 @@
         let score = 0;
         let userAnswers = [];
         let selectedCategory = 'all';
-        let isReviewMode = false; // Flag to indicate if currently in review mode
-        let reviewSourceQuestions = []; // Array to store drug objects for review
+        let isReviewMode = false; 
+        let reviewSourceQuestions = []; 
 
         const questionElement = document.getElementById('question');
         const optionsElement = document.getElementById('options');
@@ -487,6 +488,12 @@
         const reviewIncorrectContainer = document.getElementById('review-incorrect-container');
         const backToMenuButton = document.getElementById('back-to-menu-btn');
         const reviewIncorrectBtn = document.getElementById('review-incorrect-btn'); 
+        const quizCardElement = document.getElementById('quiz-card-element'); // For swipe
+        const quizCardContent = document.getElementById('quiz-card-content'); // For animation
+
+        let touchstartX = 0;
+        let touchendX = 0;
+        const swipeThreshold = 50; // Minimum distance for a swipe
 
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
@@ -536,10 +543,8 @@
             return true;
         }
 
-        // Helper function to generate quizQuestions from a source array of drug objects
         function generateQuestionsFromSource(sourceDrugArray) {
             quizQuestions = sourceDrugArray.map(correctDrug => {
-                // Updated questionText formatting with bordered boxes and different background colors
                 const questionText = `
                     <div class="text-left space-y-3 mb-4"> 
                         <div class="question-detail-box bg-sky-50"> 
@@ -597,6 +602,38 @@
             });
         }
         
+        function animateAndLoadQuestion(newIndex, direction) {
+            // 1. 現在のコンテンツをスライドアウト
+            quizCardContent.style.opacity = '0';
+            if (direction === 'next') {
+                quizCardContent.style.transform = 'translateX(-25%)'; // 少し左に動かして消える感じ
+            } else { // prev
+                quizCardContent.style.transform = 'translateX(25%)'; // 少し右に動かして消える感じ
+            }
+
+            setTimeout(() => {
+                // 2. 問題内容を更新 (DOM書き換え)
+                loadQuestion(newIndex);
+
+                // 3. 新しいコンテンツを画面外の反対側に配置 (トランジションを一時的に無効化)
+                quizCardContent.style.transition = 'none'; 
+                if (direction === 'next') {
+                    quizCardContent.style.transform = 'translateX(25%)';
+                } else { // prev
+                    quizCardContent.style.transform = 'translateX(-25%)';
+                }
+
+                // 4. スライドインアニメーションを有効にして実行
+                setTimeout(() => { // DOMの更新とtransformの初期位置設定をブラウザに認識させるための遅延
+                    quizCardContent.style.transition = 'transform 0.35s ease-in-out, opacity 0.3s ease-in-out';
+                    quizCardContent.style.opacity = '1';
+                    quizCardContent.style.transform = 'translateX(0)';
+                }, 20);
+
+            }, 300); // スライドアウトの時間
+        }
+
+
         function loadQuestion(index) {
             if (index < 0 || index >= quizQuestions.length) return;
 
@@ -802,11 +839,48 @@
                 summaryContainer.style.display = 'none';
                 quizContainer.style.display = 'block';
                 document.querySelector('.container > header > h1').textContent = "薬理学クイズ (復習モード)"; 
+                // Ensure the first question slides in correctly for review mode
+                quizCardContent.style.transition = 'none';
+                quizCardContent.style.transform = 'translateX(0)'; // Reset position before loading
+                quizCardContent.style.opacity = '0'; // Start transparent
                 loadQuestion(0);
+                setTimeout(() => { // Allow DOM to update
+                    quizCardContent.style.transition = 'transform 0.35s ease-in-out, opacity 0.3s ease-in-out';
+                    quizCardContent.style.opacity = '1';
+                }, 20);
             } else {
                 alert("復習問題の生成に失敗しました。");
                 isReviewMode = false; 
                 document.querySelector('.container > header > h1').textContent = "薬理学クイズ"; 
+            }
+        }
+
+        // Swipe functionality
+        quizCardElement.addEventListener('touchstart', function(event) {
+            touchstartX = event.changedTouches[0].screenX;
+        }, {passive: true}); // Use passive for better scroll performance if swipe doesn't prevent scroll
+
+        quizCardElement.addEventListener('touchend', function(event) {
+            touchendX = event.changedTouches[0].screenX;
+            handleSwipe();
+        }, {passive: true});
+
+        function handleSwipe() {
+            // Left swipe (Next question)
+            if (touchendX < touchstartX - swipeThreshold) {
+                if (currentQuestionIndex < quizQuestions.length - 1) {
+                    if (!nextButton.disabled) { // Check if next button is enabled (i.e., current question answered or review mode)
+                        animateAndLoadQuestion(currentQuestionIndex + 1, 'next');
+                    }
+                } else if (!nextButton.disabled) { // Last question and answered
+                    finishButton.click(); // Or animate to summary
+                }
+            }
+            // Right swipe (Previous question)
+            if (touchendX > touchstartX + swipeThreshold) {
+                if (currentQuestionIndex > 0) {
+                    animateAndLoadQuestion(currentQuestionIndex - 1, 'prev');
+                }
             }
         }
 
@@ -821,19 +895,27 @@
                 categorySelectContainer.style.display = 'none';
                 quizContainer.style.display = 'block';
                 summaryContainer.style.display = 'none';
-                loadQuestion(0); 
+                 // Initial load without animation, or with a specific "entry" animation
+                quizCardContent.style.transition = 'none';
+                quizCardContent.style.transform = 'translateX(0)';
+                quizCardContent.style.opacity = '0';
+                loadQuestion(0);
+                setTimeout(() => {
+                    quizCardContent.style.transition = 'opacity 0.35s ease-in-out';
+                    quizCardContent.style.opacity = '1';
+                }, 20);
             }
         });
 
         nextButton.addEventListener('click', () => {
-            if (currentQuestionIndex < quizQuestions.length - 1) {
-                loadQuestion(currentQuestionIndex + 1); 
+            if (currentQuestionIndex < quizQuestions.length - 1 && !nextButton.disabled) {
+                animateAndLoadQuestion(currentQuestionIndex + 1, 'next');
             }
         });
 
         prevButton.addEventListener('click', () => {
-            if (currentQuestionIndex > 0) {
-                loadQuestion(currentQuestionIndex - 1); 
+            if (currentQuestionIndex > 0 && !prevButton.disabled) {
+                animateAndLoadQuestion(currentQuestionIndex - 1, 'prev');
             }
         });
 
