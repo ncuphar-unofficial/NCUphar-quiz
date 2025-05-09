@@ -24,27 +24,38 @@
                 padding: 2rem;
             }
         }
-        /* Updated quiz-card-element for swipe and animation */
         #quiz-card-element {
             background-color: white;
             border-radius: 0.75rem; 
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); 
             padding: 1.5rem;
             margin-bottom: 2rem;
-            overflow: hidden; /* Important for slide animation */
-            position: relative; /* For potential absolute positioning of children if needed */
+            overflow: hidden; 
+            position: relative; 
         }
          @media (min-width: 640px) {
             #quiz-card-element {
                 padding: 2rem;
             }
         }
-        /* Content inside the card that will animate */
         #quiz-card-content {
             width: 100%;
-            /* Adjusted transition for smoother effect */
             transition: transform 0.35s ease-in-out, opacity 0.35s ease-in-out;
+            will-change: transform, opacity; /* Hint for browser optimization */
         }
+
+        /* Styling for fade-in of the quiz container */
+        #quiz-container {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease-in-out, visibility 0s linear 0.5s; /* Delay visibility change */
+        }
+        #quiz-container.visible {
+            opacity: 1;
+            visibility: visible;
+            transition-delay: 0s; /* Apply opacity transition immediately when visible */
+        }
+
 
         .question {
             font-size: 1.05rem; 
@@ -221,7 +232,7 @@
             margin-bottom: 1rem;
             color: #374151;
         }
-        #quiz-container, #summary-container {
+        #summary-container { 
             display: none;
         }
         .feedback {
@@ -344,7 +355,7 @@
            <button id="start-quiz-btn" class="quiz-btn start-quiz-btn">クイズを開始する</button>
         </div>
 
-        <div id="quiz-container" style="display: none;">
+        <div id="quiz-container"> 
             <div id="quiz-card-element"> 
                 <div id="quiz-card-content">
                     <div class="flex justify-between items-center mb-4">
@@ -368,7 +379,7 @@
             </div>
         </div>
 
-        <div id="summary-container" class="summary" style="display: none;">
+        <div id="summary-container" class="summary"> 
             <h2>あなたの成績</h2>
             <p>正解数: <span id="correct-count">0</span> / <span id="total-questions">0</span></p>
             <p>正答率: <span id="accuracy">0</span>%</p>
@@ -491,11 +502,12 @@
         const reviewIncorrectBtn = document.getElementById('review-incorrect-btn'); 
         const quizCardElement = document.getElementById('quiz-card-element'); 
         const quizCardContent = document.getElementById('quiz-card-content'); 
-        const mainHeader = document.getElementById('main-header'); // Get the header element
+        const mainHeader = document.getElementById('main-header'); 
 
         let touchstartX = 0;
         let touchendX = 0;
         const swipeThreshold = 50; 
+        let isAnimating = false; 
 
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
@@ -515,10 +527,10 @@
 
             if (filteredDrugs.length === 0) {
                 alert("選択されたカテゴリーに該当する薬物がありません。");
-                quizContainer.style.display = 'none';
+                quizContainer.classList.remove('visible');
                 summaryContainer.style.display = 'none';
                 categorySelectContainer.style.display = 'block';
-                mainHeader.style.display = 'block'; // Show header on menu
+                mainHeader.style.display = 'block'; 
                 return false;
             }
             
@@ -541,7 +553,7 @@
             
             if (quizQuestions.length === 0) {
                  alert("クイズの問題を生成できませんでした。出題数を調整するか、カテゴリーを変更してください。");
-                 mainHeader.style.display = 'block'; // Show header if quiz generation fails
+                 mainHeader.style.display = 'block'; 
                  return false;
             }
             return true;
@@ -607,28 +619,37 @@
         }
         
         function animateAndLoadQuestion(newIndex, direction) {
+            if (isAnimating) return; 
+            isAnimating = true;
+
             quizCardContent.style.opacity = '0';
             if (direction === 'next') {
-                quizCardContent.style.transform = 'translateX(-100%)'; // Full slide
+                quizCardContent.style.transform = 'translateX(-100%)'; 
             } else { 
-                quizCardContent.style.transform = 'translateX(100%)'; // Full slide
+                quizCardContent.style.transform = 'translateX(100%)'; 
             }
 
             setTimeout(() => {
-                loadQuestion(newIndex);
+                loadQuestion(newIndex); 
+                
                 quizCardContent.style.transition = 'none'; 
                 if (direction === 'next') {
                     quizCardContent.style.transform = 'translateX(100%)';
                 } else { 
                     quizCardContent.style.transform = 'translateX(-100%)';
                 }
-                setTimeout(() => { 
-                    quizCardContent.style.transition = 'transform 0.35s ease-in-out, opacity 0.35s ease-in-out';
-                    quizCardContent.style.opacity = '1';
-                    quizCardContent.style.transform = 'translateX(0)';
-                }, 20); // Small delay for the browser to catch up
+                
+                quizCardContent.offsetHeight; 
 
-            }, 350); // Match CSS transition duration
+                quizCardContent.style.transition = 'transform 0.35s ease-in-out, opacity 0.35s ease-in-out';
+                quizCardContent.style.opacity = '1';
+                quizCardContent.style.transform = 'translateX(0)';
+
+                setTimeout(() => {
+                    isAnimating = false;
+                }, 350); 
+
+            }, 350); 
         }
 
 
@@ -747,8 +768,12 @@
         }
 
         function showSummary() {
-            quizContainer.style.display = 'none';
-            summaryContainer.style.display = 'block';
+            quizContainer.classList.remove('visible');
+            setTimeout(() => {
+                 quizContainer.style.display = 'none';
+            }, 500); 
+
+            summaryContainer.style.display = 'block'; 
             categorySelectContainer.style.display = 'none';
             mainHeader.style.display = 'none'; 
 
@@ -836,7 +861,12 @@
             if (quizQuestions.length > 0) {
                 categorySelectContainer.style.display = 'none';
                 summaryContainer.style.display = 'none';
-                quizContainer.style.display = 'block';
+                
+                quizContainer.style.display = 'block'; 
+                setTimeout(() => { 
+                    quizContainer.classList.add('visible');
+                }, 10);
+
                 mainHeader.style.display = 'none'; 
                 
                 quizCardContent.style.transition = 'none';
@@ -855,10 +885,12 @@
         }
 
         quizCardElement.addEventListener('touchstart', function(event) {
+            if (isAnimating) return;
             touchstartX = event.changedTouches[0].screenX;
         }, {passive: true}); 
 
         quizCardElement.addEventListener('touchend', function(event) {
+            if (isAnimating) return;
             touchendX = event.changedTouches[0].screenX;
             handleSwipe();
         }, {passive: true});
@@ -889,16 +921,21 @@
             mainHeader.style.display = 'none'; 
             if (initializeQuizData(category, numQuestions)) { 
                 categorySelectContainer.style.display = 'none';
-                quizContainer.style.display = 'block';
+                
+                quizContainer.style.display = 'block'; 
+                setTimeout(() => { 
+                    quizContainer.classList.add('visible');
+                }, 10); 
+
                 summaryContainer.style.display = 'none';
                 quizCardContent.style.transition = 'none';
                 quizCardContent.style.transform = 'translateX(0)';
                 quizCardContent.style.opacity = '0';
                 loadQuestion(0);
                 setTimeout(() => {
-                    quizCardContent.style.transition = 'opacity 0.35s ease-in-out';
+                    quizCardContent.style.transition = 'opacity 0.35s ease-in-out'; 
                     quizCardContent.style.opacity = '1';
-                }, 20);
+                }, 50); 
             } else {
                 mainHeader.style.display = 'block'; 
             }
@@ -928,7 +965,10 @@
             reviewSourceQuestions = []; 
             mainHeader.style.display = 'block'; 
             summaryContainer.style.display = 'none';
-            quizContainer.style.display = 'none';
+            quizContainer.classList.remove('visible');
+            setTimeout(() => {
+                quizContainer.style.display = 'none';
+            }, 500);
             categorySelectContainer.style.display = 'block';
         });
 
@@ -937,7 +977,10 @@
             resetQuizState();
             reviewSourceQuestions = []; 
             mainHeader.style.display = 'block'; 
-            quizContainer.style.display = 'none';
+            quizContainer.classList.remove('visible');
+            setTimeout(() => {
+                quizContainer.style.display = 'none';
+            }, 500);
             summaryContainer.style.display = 'none';
             categorySelectContainer.style.display = 'block';
         });
@@ -946,8 +989,10 @@
             startReviewQuiz();
         });
 
+        // Initial setup
         categorySelectContainer.style.display = 'block'; 
         quizContainer.style.display = 'none'; 
+        quizContainer.classList.remove('visible');
         summaryContainer.style.display = 'none'; 
         mainHeader.style.display = 'block'; 
 
