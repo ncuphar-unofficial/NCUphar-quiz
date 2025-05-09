@@ -24,60 +24,38 @@
                 padding: 2rem;
             }
         }
-        /* Updated quiz-card-element for swipe and animation */
-        #quiz-card-element {
+        .quiz-card {
             background-color: white;
-            border-radius: 0.75rem; 
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); 
+            border-radius: 0.75rem; /* Tailwind rounded-xl */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Tailwind shadow-lg */
             padding: 1.5rem;
             margin-bottom: 2rem;
-            overflow: hidden; /* Important for slide animation */
-            position: relative; /* For potential absolute positioning of children if needed */
         }
          @media (min-width: 640px) {
-            #quiz-card-element {
+            .quiz-card {
                 padding: 2rem;
             }
         }
-        /* Content inside the card that will animate */
-        #quiz-card-content {
-            width: 100%;
-            transition: transform 0.35s ease-in-out, opacity 0.3s ease-in-out;
-        }
-
+        /* Question Text Styling */
         .question {
-            font-size: 1.05rem; 
+            font-size: 1.05rem; /* Slightly adjusted font size */
             margin-bottom: 1.5rem;
-            color: #1f2937; 
-            font-weight: 500; 
+            color: #1f2937; /* Tailwind gray-800 */
+            font-weight: 500; /* Adjusted font-weight for Noto Sans JP */
             text-align: left;
-            line-height: 1.7; 
+            line-height: 1.7; /* Increased line height for better readability */
         }
-        
-        .question-detail-box {
-            border: 1px solid #e5e7eb; 
-            border-radius: 0.5rem; 
-            padding: 0.875rem 1.25rem; 
-            margin-bottom: 1rem; 
-            text-align: left;
+        .question-item { /* Class for each item in the question (Mechanism, Characteristics, Applications) */
+            margin-bottom: 0.75rem; /* Space between items */
         }
-        .question-detail-box strong { 
-            color: #6b7280;   
-            font-weight: 400; 
-            display: block; 
-            margin-bottom: 0.25rem; 
-            font-size: 0.875rem; 
+        .question-item strong {
+            color: #374151; /* Tailwind gray-700 for labels */
+            font-weight: 600; /* Bolder labels */
         }
-        .question-detail-box div { 
-            color: #1f2937; 
-            font-size: 0.95rem; 
-            line-height: 1.65;
-        }
-
-        .question-prompt { 
-            margin-top: 1.75rem; 
-            font-weight: 600;   
-            color: #111827;     
+        .question-prompt { /* Style for the actual question "この説明に該当する薬物はどれですか？" */
+            margin-top: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
         }
 
         .options {
@@ -88,50 +66,50 @@
         }
         .option {
             padding: 0.9rem 1.25rem;
-            border: 1px solid #d1d5db; 
-            border-radius: 0.5rem; 
+            border: 1px solid #d1d5db; /* Tailwind gray-300 */
+            border-radius: 0.5rem; /* Tailwind rounded-lg */
             margin-bottom: 0.75rem;
             cursor: pointer;
             transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease;
-            background-color: #f9fafb; 
-            color: #374151; 
+            background-color: #f9fafb; /* Tailwind gray-50 */
+            color: #374151; /* Tailwind gray-700 */
             text-align: left;
             font-size: 1rem;
             font-weight: 500;
-            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); 
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* Tailwind shadow-sm */
         }
         .option:hover:not(.disabled):not(.answered) {
-            background-color: #f3f4f6; 
+            background-color: #f3f4f6; /* Tailwind gray-100 */
             transform: translateY(-2px);
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); 
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); /* Tailwind shadow-md */
         }
         .option.correct {
-            background-color: #d1fae5; 
-            border-color: #6ee7b7; 
-            color: #065f46; 
+            background-color: #d1fae5; /* Tailwind green-100 */
+            border-color: #6ee7b7; /* Tailwind green-300 */
+            color: #065f46; /* Tailwind green-800 */
             font-weight: 600;
         }
         .option.incorrect {
-            background-color: #fee2e2; 
-            border-color: #fca5a5; 
-            color: #991b1b; 
+            background-color: #fee2e2; /* Tailwind red-100 */
+            border-color: #fca5a5; /* Tailwind red-300 */
+            color: #991b1b; /* Tailwind red-800 */
             font-weight: 600;
         }
         .explanation {
-            background-color: #e0f2fe; 
+            background-color: #e0f2fe; /* Tailwind sky-100 */
             border-radius: 0.5rem;
             padding: 1.25rem;
             margin-top: 1.5rem;
             margin-bottom: 1.5rem;
-            color: #0c4a6e; 
+            color: #0c4a6e; /* Tailwind sky-800 */
             text-align: left;
             font-size: 0.95rem;
-            border: 1px solid #bae6fd; 
+            border: 1px solid #bae6fd; /* Tailwind sky-200 */
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             line-height: 1.6;
         }
         .explanation strong {
-            color: #075985; 
+            color: #075985; /* Tailwind sky-700 */
         }
         .controls {
             display: flex;
@@ -141,66 +119,74 @@
             margin-top: 2rem;
         }
         .quiz-btn {
-            padding: 0.75rem 1.5rem; 
-            border-radius: 0.375rem; 
+            padding: 0.75rem 1.5rem; /* Tailwind py-3 px-6 */
+            border-radius: 0.375rem; /* Tailwind rounded-md */
             font-weight: 600;
             color: white;
             cursor: pointer;
             transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease;
             border: none;
             font-size: 1rem;
-            box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1), 0 1px 2px 0 rgba(0,0,0,0.06); 
+            box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1), 0 1px 2px 0 rgba(0,0,0,0.06); /* Tailwind shadow */
         }
         .quiz-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
         .quiz-btn:hover:not(:disabled) {
-            transform: translateY(-1px); 
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); 
+            transform: translateY(-1px); /* Subtle lift */
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); /* Tailwind shadow-md */
         }
 
-        .start-quiz-btn { 
-            background-color: #2563eb; 
-            font-size: 1.1rem; 
+        /* Specific Button Colors */
+        .start-quiz-btn { /* Start Quiz Button */
+            background-color: #2563eb; /* Tailwind blue-600 */
+            font-size: 1.1rem; /* Slightly larger */
             padding: 0.8rem 2rem;
-            margin-top: 2.5rem;
         }
         .start-quiz-btn:hover:not(:disabled) {
-            background-color: #1d4ed8; 
+            background-color: #1d4ed8; /* Tailwind blue-700 */
         }
-        .next-btn { 
-            background-color: #16a34a; 
+
+        .next-btn { /* Next Button */
+            background-color: #16a34a; /* Tailwind green-600 */
         }
         .next-btn:hover:not(:disabled) {
-            background-color: #15803d; 
+            background-color: #15803d; /* Tailwind green-700 */
         }
-        .prev-btn { 
-            background-color: #0ea5e9; 
+
+        .prev-btn { /* Previous Button */
+            background-color: #0ea5e9; /* Tailwind sky-500 */
         }
         .prev-btn:hover:not(:disabled) {
-            background-color: #0284c7; 
+            background-color: #0284c7; /* Tailwind sky-600 */
         }
-        .finish-btn { 
-            background-color: #dc2626; 
+
+        .finish-btn { /* Finish Button */
+            background-color: #dc2626; /* Tailwind red-600 */
         }
         .finish-btn:hover:not(:disabled) {
-            background-color: #b91c1c; 
+            background-color: #b91c1c; /* Tailwind red-700 */
         }
-        .restart-btn { 
-            background-color: #4f46e5; 
+        
+        .restart-btn { /* Restart Button on Summary */
+            background-color: #4f46e5; /* Tailwind indigo-600 */
             font-size: 1.1rem;
             padding: 0.8rem 2rem;
         }
         .restart-btn:hover:not(:disabled) {
-            background-color: #4338ca; 
+            background-color: #4338ca; /* Tailwind indigo-700 */
         }
-        .review-btn { 
-            background-color: #7e22ce; 
+        
+        /* Review Incorrect Button Color */
+        .review-btn { /* Class for the new review button */
+            background-color: #7e22ce; /* Tailwind purple-700 */
         }
         .review-btn:hover:not(:disabled) {
-            background-color: #6b21a8; 
+            background-color: #6b21a8; /* Tailwind purple-800 */
         }
+
+
         .summary {
             background-color: white;
             border-radius: 0.75rem;
@@ -232,14 +218,14 @@
             font-size: 1rem;
         }
         .feedback.correct {
-            background-color: #dcfce7; 
-            border: 1px solid #86efac; 
-            color: #166534; 
+            background-color: #dcfce7; /* Tailwind green-100 */
+            border: 1px solid #86efac; /* Tailwind green-300 */
+            color: #166534; /* Tailwind green-700 */
         }
         .feedback.incorrect {
-            background-color: #fee2e2; 
-            border: 1px solid #fca5a5; 
-            color: #991b1b; 
+            background-color: #fee2e2; /* Tailwind red-100 */
+            border: 1px solid #fca5a5; /* Tailwind red-300 */
+            color: #991b1b; /* Tailwind red-700 */
         }
         .option.disabled {
             opacity: 0.7;
@@ -278,12 +264,12 @@
         }
         #category-select:focus, #num-questions-select:focus {
             outline: none;
-            border-color: #2563eb; 
+            border-color: #2563eb; /* Tailwind blue-600 */
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
         }
         .progress-bar-container {
             width: 100%;
-            background-color: #e5e7eb; 
+            background-color: #e5e7eb; /* Tailwind gray-200 */
             border-radius: 0.375rem;
             margin-bottom: 1.5rem;
             overflow: hidden;
@@ -291,22 +277,22 @@
         .progress-bar {
             height: 12px;
             width: 0%;
-            background-color: #2563eb; 
+            background-color: #2563eb; /* Tailwind blue-600 */
             border-radius: 0.375rem;
             transition: width 0.3s ease-in-out;
         }
         .question-counter {
             font-size: 0.9rem;
-            color: #6b7280; 
+            color: #6b7280; /* Tailwind gray-500 */
         }
         .back-to-menu-link {
             text-decoration: none;
-            color: #2563eb; 
+            color: #2563eb; /* Tailwind blue-600 */
             font-weight: 500;
             font-size: 0.9rem;
         }
         .back-to-menu-link:hover {
-            color: #1d4ed8; 
+            color: #1d4ed8; /* Tailwind blue-700 */
             text-decoration: underline;
         }
 
@@ -314,7 +300,7 @@
 </head>
 <body class="bg-gray-100">
     <div class="container">
-        <header id="main-header" class="my-6 md:my-8">
+        <header class="my-6 md:my-8">
              <h1 class="text-3xl sm:text-4xl font-bold text-slate-800">薬理学クイズ</h1>
         </header>
 
@@ -344,25 +330,23 @@
         </div>
 
         <div id="quiz-container" style="display: none;">
-            <div id="quiz-card-element"> 
-                <div id="quiz-card-content">
-                    <div class="flex justify-between items-center mb-4">
-                        <a href="#" id="back-to-menu-btn" class="back-to-menu-link">&larr; メニューに戻る</a>
-                        <div class="question-counter" id="question-counter"></div>
+            <div class="quiz-card">
+                <div class="flex justify-between items-center mb-4">
+                    <a href="#" id="back-to-menu-btn" class="back-to-menu-link">&larr; メニューに戻る</a>
+                    <div class="question-counter" id="question-counter"></div>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+                <div id="question" class="question"></div>
+                <div id="options" class="options">
                     </div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar" id="progress-bar"></div>
-                    </div>
-                    <div id="question" class="question"></div>
-                    <div id="options" class="options">
-                        </div>
-                    <div id="feedback" class="feedback" style="display: none;"></div>
-                    <div id="explanation" class="explanation" style="display: none;"></div>
-                    <div class="controls">
-                        <button id="prev-btn" class="quiz-btn prev-btn">前へ</button>
-                        <button id="next-btn" class="quiz-btn next-btn">次へ</button>
-                        <button id="finish-btn" class="quiz-btn finish-btn" style="display: none;">終了</button>
-                    </div>
+                <div id="feedback" class="feedback" style="display: none;"></div>
+                <div id="explanation" class="explanation" style="display: none;"></div>
+                <div class="controls">
+                    <button id="prev-btn" class="quiz-btn prev-btn">前へ</button>
+                    <button id="next-btn" class="quiz-btn next-btn">次へ</button>
+                    <button id="finish-btn" class="quiz-btn finish-btn" style="display: none;">終了</button>
                 </div>
             </div>
         </div>
@@ -379,7 +363,7 @@
     </div>
 
     <script>
-        // Drug data array
+        // Drug data array - Updated categories based on PDF content
         const drugData = [
             { name: "アセチルコリン", mechanism: "ムスカリン受容体刺激", characteristics: "神経伝達物質、コリンエステラーゼで分解", applications: "神経伝達、血管拡張", category: "神経系" },
             { name: "アトロピン", mechanism: "ムスカリン受容体遮断", characteristics: "抗コリン作用、散瞳、抗痙攣", applications: "散瞳、前投薬、鎮痙", category: "神経系" },
@@ -463,8 +447,8 @@
         let score = 0;
         let userAnswers = [];
         let selectedCategory = 'all';
-        let isReviewMode = false; 
-        let reviewSourceQuestions = []; 
+        let isReviewMode = false; // Flag to indicate if currently in review mode
+        let reviewSourceQuestions = []; // Array to store drug objects for review
 
         const questionElement = document.getElementById('question');
         const optionsElement = document.getElementById('options');
@@ -487,14 +471,7 @@
         const questionCounterElement = document.getElementById('question-counter');
         const reviewIncorrectContainer = document.getElementById('review-incorrect-container');
         const backToMenuButton = document.getElementById('back-to-menu-btn');
-        const reviewIncorrectBtn = document.getElementById('review-incorrect-btn'); 
-        const quizCardElement = document.getElementById('quiz-card-element'); 
-        const quizCardContent = document.getElementById('quiz-card-content'); 
-        const mainHeader = document.getElementById('main-header'); // Get the header element
-
-        let touchstartX = 0;
-        let touchendX = 0;
-        const swipeThreshold = 50; 
+        const reviewIncorrectBtn = document.getElementById('review-incorrect-btn'); // New button element
 
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
@@ -504,7 +481,7 @@
         }
 
         function initializeQuizData(category, numQuestionsRequestedStr) {
-            isReviewMode = false; 
+            isReviewMode = false; // Ensure review mode is off for normal quiz
             selectedCategory = category;
             let filteredDrugs = drugData;
 
@@ -517,7 +494,6 @@
                 quizContainer.style.display = 'none';
                 summaryContainer.style.display = 'none';
                 categorySelectContainer.style.display = 'block';
-                mainHeader.style.display = 'block'; // Show header on menu
                 return false;
             }
             
@@ -536,37 +512,28 @@
             }
 
             const selectedQuizDrugs = filteredDrugs.slice(0, numToDisplay);
-            generateQuestionsFromSource(selectedQuizDrugs); 
+            generateQuestionsFromSource(selectedQuizDrugs); // Use helper to generate questions
             
             if (quizQuestions.length === 0) {
                  alert("クイズの問題を生成できませんでした。出題数を調整するか、カテゴリーを変更してください。");
-                 mainHeader.style.display = 'block'; // Show header if quiz generation fails
                  return false;
             }
             return true;
         }
 
+        // Helper function to generate quizQuestions from a source array of drug objects
         function generateQuestionsFromSource(sourceDrugArray) {
             quizQuestions = sourceDrugArray.map(correctDrug => {
                 const questionText = `
-                    <div class="text-left space-y-3 mb-4"> 
-                        <div class="question-detail-box bg-sky-50"> 
-                            <strong>作用機序:</strong>
-                            <div>${correctDrug.mechanism}</div>
-                        </div>
-                        <div class="question-detail-box bg-emerald-50"> 
-                            <strong>薬理学的特徴:</strong>
-                            <div>${correctDrug.characteristics}</div>
-                        </div>
-                        <div class="question-detail-box bg-amber-50"> 
-                            <strong>主な適応:</strong>
-                            <div>${correctDrug.applications}</div>
-                        </div>
+                    <div class="text-left space-y-2 mb-3">
+                        <p class="question-item"><strong>作用機序:</strong><br>${correctDrug.mechanism}</p>
+                        <p class="question-item"><strong>薬理学的特徴:</strong><br>${correctDrug.characteristics}</p>
+                        <p class="question-item"><strong>主な適応:</strong><br>${correctDrug.applications}</p>
                     </div>
                     <p class="question-prompt"><strong>この説明に該当する薬物はどれですか？</strong></p>`;
                 
                 let distractors = drugData
-                    .filter(d => d.name !== correctDrug.name) 
+                    .filter(d => d.name !== correctDrug.name) // Distractors from all drugs
                     .map(d => d.name);
                 shuffleArray(distractors);
                 
@@ -600,37 +567,11 @@
                     options: options,
                     correctAnswer: correctDrug.name,
                     explanationText: `<strong>${correctDrug.name}</strong><br>作用機序: ${correctDrug.mechanism}<br>薬理学的特徴: ${correctDrug.characteristics}<br>主な適応: ${correctDrug.applications}`,
-                    drugDetails: correctDrug 
+                    drugDetails: correctDrug // Keep the original drug object for explanations and review
                 };
             });
         }
         
-        function animateAndLoadQuestion(newIndex, direction) {
-            quizCardContent.style.opacity = '0';
-            if (direction === 'next') {
-                quizCardContent.style.transform = 'translateX(-25%)'; 
-            } else { 
-                quizCardContent.style.transform = 'translateX(25%)'; 
-            }
-
-            setTimeout(() => {
-                loadQuestion(newIndex);
-                quizCardContent.style.transition = 'none'; 
-                if (direction === 'next') {
-                    quizCardContent.style.transform = 'translateX(25%)';
-                } else { 
-                    quizCardContent.style.transform = 'translateX(-25%)';
-                }
-                setTimeout(() => { 
-                    quizCardContent.style.transition = 'transform 0.35s ease-in-out, opacity 0.3s ease-in-out';
-                    quizCardContent.style.opacity = '1';
-                    quizCardContent.style.transform = 'translateX(0)';
-                }, 20);
-
-            }, 300); 
-        }
-
-
         function loadQuestion(index) {
             if (index < 0 || index >= quizQuestions.length) return;
 
@@ -677,11 +618,13 @@
 
             const progressPercentage = quizQuestions.length > 0 ? ((index + 1) / quizQuestions.length) * 100 : 0;
             progressBar.style.width = `${progressPercentage}%`;
+            // Update question counter based on mode
             if (isReviewMode) {
                 questionCounterElement.textContent = quizQuestions.length > 0 ? `復習問題 ${index + 1} / ${quizQuestions.length}` : '復習問題 0 / 0';
             } else {
                 questionCounterElement.textContent = quizQuestions.length > 0 ? `問題 ${index + 1} / ${quizQuestions.length}` : '問題 0 / 0';
             }
+
 
             prevButton.disabled = index === 0;
             if (index === quizQuestions.length - 1) {
@@ -749,7 +692,6 @@
             quizContainer.style.display = 'none';
             summaryContainer.style.display = 'block';
             categorySelectContainer.style.display = 'none';
-            mainHeader.style.display = 'none'; // Hide main header on summary
 
             correctCountElement.textContent = score;
             totalQuestionsElement.textContent = quizQuestions.length;
@@ -757,6 +699,7 @@
             accuracyElement.textContent = accuracy;
 
             reviewIncorrectContainer.innerHTML = '';
+            // Store incorrect answers for potential review
             reviewSourceQuestions = []; 
             const incorrectAnswersForDisplay = userAnswers.filter(ans => ans && !ans.isCorrect);
             
@@ -778,26 +721,27 @@
                                               <p><strong>主な適応:</strong> ${ans.drugDetails.applications}</p>
                                           </div>`;
                     reviewList.appendChild(listItem);
+                    // Add the original drug object to reviewSourceQuestions if not already there
                     if (!reviewSourceQuestions.some(rq => rq.name === ans.drugDetails.name)) {
                         reviewSourceQuestions.push(ans.drugDetails);
                     }
                 });
                 reviewIncorrectContainer.appendChild(reviewList);
-                reviewIncorrectBtn.style.display = 'inline-block'; 
+                reviewIncorrectBtn.style.display = 'inline-block'; // Show review button
                 reviewIncorrectBtn.disabled = false;
             } else if (quizQuestions.length > 0 && score === quizQuestions.length) {
                  const perfectMessage = document.createElement('p');
                  perfectMessage.textContent = '全問正解です！素晴らしい！';
                  perfectMessage.className = 'text-green-600 font-semibold mt-4 text-lg';
                  reviewIncorrectContainer.appendChild(perfectMessage);
-                 reviewIncorrectBtn.style.display = 'none'; 
+                 reviewIncorrectBtn.style.display = 'none'; // Hide review button if no incorrect answers
             } else if (quizQuestions.length === 0) {
                 const noQuizMessage = document.createElement('p');
                 noQuizMessage.textContent = 'クイズは実行されませんでした。';
                 noQuizMessage.className = 'text-gray-600 font-semibold mt-4';
                 reviewIncorrectContainer.appendChild(noQuizMessage);
                 reviewIncorrectBtn.style.display = 'none';
-            } else { 
+            } else { // No incorrect answers but not all questions were correct (e.g. quiz not finished fully)
                  reviewIncorrectBtn.style.display = 'none';
             }
         }
@@ -813,7 +757,8 @@
             finishButton.style.display = 'none';
             nextButton.disabled = true;
             prevButton.disabled = true;
-            isReviewMode = false; 
+            isReviewMode = false; // Reset review mode flag
+            // reviewSourceQuestions = []; // Do not clear here, clear in showSummary or startQuizButton
         }
 
         function startReviewQuiz() {
@@ -822,60 +767,22 @@
                 return;
             }
             isReviewMode = true;
-            currentQuestionIndex = 0;
-            score = 0;
-            userAnswers = []; 
-            quizQuestions = []; 
-            progressBar.style.width = '0%';
+            resetQuizState(); // Reset score, current index, user answers for the review session
             
-            let reviewDrugsToQuiz = [...reviewSourceQuestions]; 
+            let reviewDrugsToQuiz = [...reviewSourceQuestions]; // Use a copy
             shuffleArray(reviewDrugsToQuiz); 
-            generateQuestionsFromSource(reviewDrugsToQuiz); 
+            generateQuestionsFromSource(reviewDrugsToQuiz); // Generate questions from the review list
 
             if (quizQuestions.length > 0) {
                 categorySelectContainer.style.display = 'none';
                 summaryContainer.style.display = 'none';
                 quizContainer.style.display = 'block';
-                mainHeader.style.display = 'none'; // Hide main header during review quiz
-                
-                quizCardContent.style.transition = 'none';
-                quizCardContent.style.transform = 'translateX(0)'; 
-                quizCardContent.style.opacity = '0'; 
+                document.querySelector('.container > header > h1').textContent = "薬理学クイズ (復習モード)"; // Change title for review
                 loadQuestion(0);
-                setTimeout(() => { 
-                    quizCardContent.style.transition = 'transform 0.35s ease-in-out, opacity 0.3s ease-in-out';
-                    quizCardContent.style.opacity = '1';
-                }, 20);
             } else {
                 alert("復習問題の生成に失敗しました。");
-                isReviewMode = false; 
-                mainHeader.style.display = 'block'; 
-            }
-        }
-
-        quizCardElement.addEventListener('touchstart', function(event) {
-            touchstartX = event.changedTouches[0].screenX;
-        }, {passive: true}); 
-
-        quizCardElement.addEventListener('touchend', function(event) {
-            touchendX = event.changedTouches[0].screenX;
-            handleSwipe();
-        }, {passive: true});
-
-        function handleSwipe() {
-            if (touchendX < touchstartX - swipeThreshold) {
-                if (currentQuestionIndex < quizQuestions.length - 1) {
-                    if (!nextButton.disabled) { 
-                        animateAndLoadQuestion(currentQuestionIndex + 1, 'next');
-                    }
-                } else if (!nextButton.disabled) { 
-                    finishButton.click(); 
-                }
-            }
-            if (touchendX > touchstartX + swipeThreshold) {
-                if (currentQuestionIndex > 0) {
-                    animateAndLoadQuestion(currentQuestionIndex - 1, 'prev');
-                }
+                isReviewMode = false; // Reset if failed
+                document.querySelector('.container > header > h1').textContent = "薬理学クイズ"; // Reset title
             }
         }
 
@@ -884,48 +791,39 @@
             const category = categorySelect.value;
             const numQuestions = numQuestionsSelect.value; 
             resetQuizState(); 
-            reviewSourceQuestions = []; 
-            mainHeader.style.display = 'none'; // Hide main header when quiz starts
+            reviewSourceQuestions = []; // Clear previous review questions when starting a new main quiz
+            document.querySelector('.container > header > h1').textContent = "薬理学クイズ"; // Reset title
             if (initializeQuizData(category, numQuestions)) { 
                 categorySelectContainer.style.display = 'none';
                 quizContainer.style.display = 'block';
                 summaryContainer.style.display = 'none';
-                quizCardContent.style.transition = 'none';
-                quizCardContent.style.transform = 'translateX(0)';
-                quizCardContent.style.opacity = '0';
-                loadQuestion(0);
-                setTimeout(() => {
-                    quizCardContent.style.transition = 'opacity 0.35s ease-in-out';
-                    quizCardContent.style.opacity = '1';
-                }, 20);
-            } else {
-                mainHeader.style.display = 'block'; // Show header if initialization fails
+                loadQuestion(0); 
             }
         });
 
         nextButton.addEventListener('click', () => {
-            if (currentQuestionIndex < quizQuestions.length - 1 && !nextButton.disabled) {
-                animateAndLoadQuestion(currentQuestionIndex + 1, 'next');
+            if (currentQuestionIndex < quizQuestions.length - 1) {
+                loadQuestion(currentQuestionIndex + 1); 
             }
         });
 
         prevButton.addEventListener('click', () => {
-            if (currentQuestionIndex > 0 && !prevButton.disabled) {
-                animateAndLoadQuestion(currentQuestionIndex - 1, 'prev');
+            if (currentQuestionIndex > 0) {
+                loadQuestion(currentQuestionIndex - 1); 
             }
         });
 
         finishButton.addEventListener('click', () => {
             showSummary(); 
-            if (isReviewMode) { 
-                 mainHeader.style.display = 'block'; // Show header when returning to menu after review
+            if (isReviewMode) { // If finishing a review quiz
+                 document.querySelector('.container > header > h1').textContent = "薬理学クイズ"; // Reset title
             }
         });
 
         restartButton.addEventListener('click', () => {
             resetQuizState();
-            reviewSourceQuestions = []; 
-            mainHeader.style.display = 'block'; // Show header on menu
+            reviewSourceQuestions = []; // Clear review questions
+            document.querySelector('.container > header > h1').textContent = "薬理学クイズ"; // Reset title
             summaryContainer.style.display = 'none';
             quizContainer.style.display = 'none';
             categorySelectContainer.style.display = 'block';
@@ -934,8 +832,8 @@
         backToMenuButton.addEventListener('click', (e) => {
             e.preventDefault(); 
             resetQuizState();
-            reviewSourceQuestions = []; 
-            mainHeader.style.display = 'block'; // Show header on menu
+            reviewSourceQuestions = []; // Clear review questions
+            document.querySelector('.container > header > h1').textContent = "薬理学クイズ"; // Reset title
             quizContainer.style.display = 'none';
             summaryContainer.style.display = 'none';
             categorySelectContainer.style.display = 'block';
@@ -945,11 +843,9 @@
             startReviewQuiz();
         });
 
-        // Initial setup
         categorySelectContainer.style.display = 'block'; 
         quizContainer.style.display = 'none'; 
         summaryContainer.style.display = 'none'; 
-        mainHeader.style.display = 'block'; // Ensure header is visible on initial load
 
     </script>
 </body>
