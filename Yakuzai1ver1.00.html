@@ -480,7 +480,6 @@
                 explanation: "平均滞留時間 (MRT) は、1次モーメント曲線下面積 (AUMC) を濃度曲線下面積 (AUC) で割ることで求められます。<div class='formula-block'>$$MRT_{iv} = \\frac{AUMC}{AUC}$$</div><strong>計算:</strong> $$MRT = \\frac{1500 \\text{ } \\mu g \\cdot h^2/mL}{200 \\text{ } \\mu g \\cdot h/mL} = 7.5 \\text{ h}$$",
                 references: "演習1: 5-1, 公式まとめ: 9.1"
             },
-            // Added Questions Start Here
             {
                 id: "pk011",
                 category: "基本パラメータ（静注）",
@@ -488,7 +487,7 @@
                 questionText: "消失半減期が6hで、分布容積が70Lである。全身クリアランス (L/h) を求めなさい。($\\ln(2) \\approx 0.693$)",
                 correctAnswerNumeric: 8.1,
                 answerUnit: "L/h",
-                tolerance: 0.05, // 8.085 -> 8.1
+                tolerance: 0.05, 
                 hint: "まず消失速度定数 ($k_{el}$) を求め、次に全身クリアランス (CL) を計算します。<div class='formula-block'>$$k_{el} = \\frac{\\ln(2)}{t_{1/2}}$$/div><div class='formula-block'>$$CL = k_{el} \\cdot V$$</div>",
                 explanation: "消失速度定数 ($k_{el}$) は $k_{el} = \\frac{\\ln(2)}{t_{1/2}} = \\frac{0.693}{6 \\text{ h}} \\approx 0.1155 \\text{ h}^{-1}$ です。全身クリアランス (CL) は $CL = k_{el} \\cdot V = 0.1155 \\text{ h}^{-1} \\cdot 70 \\text{ L} \\approx 8.085 \\text{ L/h}$ となります。有効数字2桁で答えると $8.1 \\text{ L/h}$ です。",
                 references: "演習1: 1-6"
@@ -564,6 +563,115 @@
                 hint: "変化前のパラメータから $CL_{total}$ と $CL_R$ を求めます。分布容積Vも計算できます。変化後の尿中排泄率 $f_e'$ から変化後の $CL_{total}'$ を求め、$t_{1/2}' = (\\ln(2) \\cdot V) / CL_{total}'$ で計算します。",
                 explanation: "変化前: $CL_{total} = D/AUC = 50 \\text{ mg} / (4 \\text{ } \\mu g \\cdot h/mL) = 12.5 \\text{ L/h}$。$CL_R = X_{e,\\infty}/AUC = 12 \\text{ mg} / (4 \\text{ } \\mu g \\cdot h/mL) = 3 \\text{ L/h}$。$V = CL_{total} \\cdot t_{1/2} / \\ln(2) = 12.5 \\text{ L/h} \\cdot 4.8 \\text{ h} / 0.693 \\approx 86.58 \\text{ L}$。変化後: 尿中総排泄量 $X_{e,\\infty}' = 30 \\text{ mg}$。$CL_R$ は変化しない ($3 \\text{ L/h}$)。新しい尿中排泄率 $f_e' = X_{e,\\infty}' / D = 30 \\text{ mg} / 50 \\text{ mg} = 0.6$。$CL_R = f_e' \\cdot CL_{total}'$ なので、$CL_{total}' = CL_R / f_e' = 3 \\text{ L/h} / 0.6 = 5 \\text{ L/h}$。新しい消失半減期 $t_{1/2}' = (\\ln(2) \\cdot V) / CL_{total}' = (0.693 \\cdot 86.58 \\text{ L}) / 5 \\text{ L/h} \\approx 11.999 \\text{ h} \\approx 12 \\text{ h}$。",
                 references: "演習2: 1-10"
+            },
+            // Newly Added Questions from 演習1
+            {
+                id: "pk018",
+                category: "基本パラメータ（静注）",
+                type: "calculation",
+                questionText: "分布容積が200Lである。80mgの投与量を静注後の初濃度 (μg/mL) を求めなさい。",
+                correctAnswerNumeric: 0.40,
+                answerUnit: "μg/mL",
+                tolerance: 0.005,
+                hint: "初期血中濃度 ($C_0$) は、投与量 (D) を分布容積 (V) で割ることで求められます。<div class='formula-block'>$$C_0 = \\frac{D}{V}$$</div>単位換算に注意しましょう (mg と μg、L と mL)。",
+                explanation: "初期血中濃度 ($C_0$) は $C_0 = \\frac{D}{V}$ で計算できます。$$C_0 = \\frac{80 \\text{ mg}}{200 \\text{ L}} = \\frac{80000 \\text{ } \\mu g}{200000 \\text{ mL}} = 0.4 \\text{ } \\mu g/mL$$",
+                references: "演習1: 1-2"
+            },
+            {
+                id: "pk019",
+                category: "基本パラメータ（静注）",
+                type: "calculation",
+                questionText: "消失速度定数が $0.231~h^{-1}$ である。消失半減期 (h) を求めなさい。($\\ln(2) \\approx 0.693$)",
+                correctAnswerNumeric: 3.0,
+                answerUnit: "h",
+                tolerance: 0.05,
+                hint: "消失半減期 ($t_{1/2}$) は、$\\ln(2)$ を消失速度定数 ($k_{el}$) で割ることで求められます。<div class='formula-block'>$$t_{1/2} = \\frac{\\ln(2)}{k_{el}}$$/div>",
+                explanation: "消失半減期 ($t_{1/2}$) は $t_{1/2} = \\frac{\\ln(2)}{k_{el}}$ で計算できます。$$t_{1/2} = \\frac{0.693}{0.231 \\text{ h}^{-1}} = 3.0 \\text{ h}$$",
+                references: "演習1: 1-4"
+            },
+            {
+                id: "pk020",
+                category: "基本パラメータ（静注）",
+                type: "calculation",
+                questionText: "全身クリアランスが18L/hで、消失速度定数が $0.25~h^{-1}$ である。分布容積 (L) を求めなさい。",
+                correctAnswerNumeric: 72,
+                answerUnit: "L",
+                tolerance: 0.5,
+                hint: "分布容積 (V) は、全身クリアランス (CL) を消失速度定数 ($k_{el}$) で割ることで求められます。<div class='formula-block'>$$V = \\frac{CL}{k_{el}}$$/div>",
+                explanation: "分布容積 (V) は $V = \\frac{CL}{k_{el}}$ で計算できます。$$V = \\frac{18 \\text{ L/h}}{0.25 \\text{ h}^{-1}} = 72 \\text{ L}$$",
+                references: "演習1: 1-7"
+            },
+            {
+                id: "pk021",
+                category: "基本パラメータ（静注）",
+                type: "calculation",
+                questionText: "投与量が300mgで、全身クリアランスが40L/hである。濃度曲線下面積 (AUC, $\\mu g \\cdot h/mL$) を求めなさい。",
+                correctAnswerNumeric: 7.5,
+                answerUnit: "μg・h/mL",
+                tolerance: 0.05,
+                hint: "濃度曲線下面積 (AUC) は、投与量 (D) を全身クリアランス (CL) で割ることで求められます。<div class='formula-block'>$$AUC = \\frac{D}{CL}$$</div>単位換算に注意しましょう (mg と μg、L と mL)。",
+                explanation: "濃度曲線下面積 (AUC) は $AUC = \\frac{D}{CL}$ で計算できます。$$AUC = \\frac{300 \\text{ mg}}{40 \\text{ L/h}} = \\frac{300000 \\text{ } \\mu g}{40000 \\text{ mL/h}} = 7.5 \\text{ } \\mu g \\cdot h/mL$$",
+                references: "演習1: 1-9"
+            },
+            {
+                id: "pk022",
+                category: "基本パラメータ（静注）",
+                type: "calculation",
+                questionText: "20 mgの投与量を静注後の初濃度が $0.5~\\mu g/mL$ で、消失半減期が10hであった。(1) 分布容積 (L) を求めなさい。(2) 全身クリアランス (L/h) を求めなさい。解答は (1) の値を入力してください。",
+                correctAnswerNumeric: 40, // For V
+                answerUnit: "L (分布容積)",
+                tolerance: 0.1,
+                hint: "(1) $V = D/C_0$ (2) $k_{el} = \\ln(2)/t_{1/2}$、$CL = k_{el} \\cdot V$",
+                explanation: "(1) 分布容積 $V = \\frac{D}{C_0} = \\frac{20 \\text{ mg}}{0.5 \\text{ } \\mu g/mL} = \\frac{20000 \\text{ } \\mu g}{0.5 \\text{ } \\mu g/mL} = 40000 \\text{ mL} = 40 \\text{ L}$。(2) 消失速度定数 $k_{el} = \\frac{\\ln(2)}{t_{1/2}} = \\frac{0.693}{10 \\text{ h}} = 0.0693 \\text{ h}^{-1}$。全身クリアランス $CL = k_{el} \\cdot V = 0.0693 \\text{ h}^{-1} \\cdot 40 \\text{ L} \\approx 2.772 \\text{ L/h}$。問題は(1)の分布容積を問うているため、正解は40L。",
+                references: "演習1: 1-10"
+            },
+            {
+                id: "pk023",
+                category: "基本パラメータ（静注）",
+                type: "calculation",
+                questionText: "500 mgの投与量を静注後の濃度が、3h後に $10~\\mu g/mL$ で、9h後に $2.5~\\mu g/mL$ であった。(1) 消失速度定数 ($h^{-1}$) を求めなさい。(2) 分布容積 (L) を求めなさい。解答は (1) の値を入力してください。(有効数字2桁)",
+                correctAnswerNumeric: 0.23, 
+                answerUnit: "h<sup>-1</sup> (消失速度定数)",
+                tolerance: 0.005, // 0.231 -> 0.23
+                hint: "(1) $k_{el} = \\frac{\\ln(C_1/C_2)}{t_2 - t_1}$ (2) $C_0 = C_t \\cdot e^{k_{el}t}$、$V = D/C_0$",
+                explanation: "(1) 消失速度定数 $k_{el} = \\frac{\\ln(C_{3h}/C_{9h})}{9 \\text{ h} - 3 \\text{ h}} = \\frac{\\ln(10/2.5)}{6 \\text{ h}} = \\frac{\\ln(4)}{6 \\text{ h}} = \\frac{2 \\ln(2)}{6 \\text{ h}} = \\frac{2 \\times 0.693}{6 \\text{ h}} \\approx 0.231 \\text{ h}^{-1}$。有効数字2桁で0.23 $h^{-1}$。(2) $C_0 = C_{3h} \\cdot e^{k_{el} \\cdot 3h} = 10 \\text{ } \\mu g/mL \\cdot e^{0.231 \\times 3} = 10 \\text{ } \\mu g/mL \\cdot e^{0.693} = 10 \\text{ } \\mu g/mL \\cdot 2 = 20 \\text{ } \\mu g/mL$。分布容積 $V = \\frac{D}{C_0} = \\frac{500 \\text{ mg}}{20 \\text{ } \\mu g/mL} = \\frac{500000 \\text{ } \\mu g}{20 \\text{ } \\mu g/mL} = 25000 \\text{ mL} = 25 \\text{ L}$。問題は(1)の消失速度定数を問うているため、正解は0.23 $h^{-1}$。",
+                references: "演習1: 1-11"
+            },
+            {
+                id: "pk024",
+                category: "基本パラメータ（静注）",
+                type: "calculation",
+                questionText: "初濃度が $6~\\mu g/mL$ で、消失半減期が8hであった。24h後の濃度 (μg/mL) を求めなさい。",
+                correctAnswerNumeric: 0.75,
+                answerUnit: "μg/mL",
+                tolerance: 0.005,
+                hint: "24時間は半減期の何倍かを確認し、$C_t = C_0 \\cdot (1/2)^n$ ($n = t/t_{1/2}$) を用いて計算します。",
+                explanation: "$t = 24 \\text{ h}$、$t_{1/2} = 8 \\text{ h}$ なので、$n = t/t_{1/2} = 24/8 = 3$。24時間後の濃度 $C_{24h} = C_0 \\cdot (1/2)^3 = 6 \\text{ } \\mu g/mL \\cdot (1/8) = 0.75 \\text{ } \\mu g/mL$。",
+                references: "演習1: 1-12"
+            },
+            {
+                id: "pk025",
+                category: "体内薬物量",
+                type: "calculation",
+                questionText: "消失半減期が6hである。100mgの投与量を静注後, 12hでの体内薬物量 (mg) を求めなさい。",
+                correctAnswerNumeric: 25,
+                answerUnit: "mg",
+                tolerance: 0.1,
+                hint: "12時間は半減期の何倍かを確認し、$X_t = D \\cdot (1/2)^n$ ($n = t/t_{1/2}$) を用いて計算します。",
+                explanation: "$t = 12 \\text{ h}$、$t_{1/2} = 6 \\text{ h}$ なので、$n = t/t_{1/2} = 12/6 = 2$。12時間後の体内薬物量 $X_{12h} = D \\cdot (1/2)^2 = 100 \\text{ mg} \\cdot (1/4) = 25 \\text{ mg}$。",
+                references: "演習1: 1-14"
+            },
+            {
+                id: "pk026",
+                category: "体内薬物量",
+                type: "calculation",
+                questionText: "消失半減期が4hである。80mgの投与量を静注後, 12hまでの体内からの消失量 (mg) を求めなさい。",
+                correctAnswerNumeric: 70,
+                answerUnit: "mg",
+                tolerance: 0.1,
+                hint: "まず12時間後の体内残存量を計算し、初期投与量から引くことで消失量を求めます。$X_{el} = D - X_t$。",
+                explanation: "$t = 12 \\text{ h}$、$t_{1/2} = 4 \\text{ h}$ なので、$n = t/t_{1/2} = 12/4 = 3$。12時間後の体内残存量 $X_{12h} = D \\cdot (1/2)^3 = 80 \\text{ mg} \\cdot (1/8) = 10 \\text{ mg}$。したがって、12時間までの消失量 $X_{el} = D - X_{12h} = 80 \\text{ mg} - 10 \\text{ mg} = 70 \\text{ mg}$。",
+                references: "演習1: 1-15"
             }
             // Added Questions End Here
         ];
