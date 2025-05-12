@@ -424,7 +424,93 @@
                 hint: "平均滞留時間 (MRT) は、AUMC を AUC で割ることで求められます。<div class='formula-block'>$$MRT_{iv} = \\frac{AUMC}{AUC}$$</div>",
                 explanation: "平均滞留時間 (MRT) は、1次モーメント曲線下面積 (AUMC) を濃度曲線下面積 (AUC) で割ることで求められます。<div class='formula-block'>$$MRT_{iv} = \\frac{AUMC}{AUC}$$</div><strong>計算:</strong> $$MRT = \\frac{1500 \\text{ } \\mu g \\cdot h^2/mL}{200 \\text{ } \\mu g \\cdot h/mL} = 7.5 \\text{ h}$$",
                 references: "演習1: 5-1, 公式まとめ: 9.1"
+            },
+            // Added Questions Start Here
+            {
+                id: "pk011",
+                category: "基本パラメータ（静注）",
+                type: "calculation",
+                questionText: "消失半減期が6hで、分布容積が70Lである。全身クリアランス (L/h) を求めなさい。($\\ln(2) \\approx 0.693$)",
+                correctAnswerNumeric: 8.1,
+                answerUnit: "L/h",
+                tolerance: 0.05, // 8.085 -> 8.1
+                hint: "まず消失速度定数 ($k_{el}$) を求め、次に全身クリアランス (CL) を計算します。<div class='formula-block'>$$k_{el} = \\frac{\\ln(2)}{t_{1/2}}$$/div><div class='formula-block'>$$CL = k_{el} \\cdot V$$</div>",
+                explanation: "消失速度定数 ($k_{el}$) は $k_{el} = \\frac{\\ln(2)}{t_{1/2}} = \\frac{0.693}{6 \\text{ h}} \\approx 0.1155 \\text{ h}^{-1}$ です。全身クリアランス (CL) は $CL = k_{el} \\cdot V = 0.1155 \\text{ h}^{-1} \\cdot 70 \\text{ L} \\approx 8.085 \\text{ L/h}$ となります。有効数字2桁で答えると $8.1 \\text{ L/h}$ です。",
+                references: "演習1: 1-6"
+            },
+            {
+                id: "pk012",
+                category: "基本パラメータ（静注）",
+                type: "calculation",
+                questionText: "投与量が200 mgで、濃度曲線下面積 (AUC) が $8~\\mu g \\cdot h/mL$ であった。全身クリアランス (L/h) を求めなさい。",
+                correctAnswerNumeric: 25,
+                answerUnit: "L/h",
+                tolerance: 0.1,
+                hint: "全身クリアランス (CL) は、投与量 (D) を濃度曲線下面積 (AUC) で割ることで求められます。<div class='formula-block'>$$CL = \\frac{D}{AUC}$$</div>単位換算に注意しましょう (mg と μg)。",
+                explanation: "全身クリアランス (CL) は $CL = \\frac{D}{AUC}$ で計算できます。$$CL = \\frac{200 \\text{ mg}}{8 \\text{ } \\mu g \\cdot h/mL} = \\frac{200000 \\text{ } \\mu g}{8 \\text{ } \\mu g \\cdot h/mL} = 25000 \\text{ mL/h} = 25 \\text{ L/h}$$",
+                references: "演習1: 1-8"
+            },
+            {
+                id: "pk013",
+                category: "基本パラメータ（静注）",
+                type: "calculation",
+                questionText: "初濃度が $40~\\mu g/mL$ で、36h後の濃度が $5~\\mu g/mL$ であった。24h後の濃度 (μg/mL) を求めなさい。",
+                correctAnswerNumeric: 10,
+                answerUnit: "μg/mL",
+                tolerance: 0.1,
+                hint: "36時間で濃度が $40 \\rightarrow 5 \\text{ } \\mu g/mL$ と1/8になったことから半減期を求め、それを用いて24時間後の濃度を計算します。$1/8 = (1/2)^3$ です。",
+                explanation: "36時間で濃度が $1/8$ になったので、$3 \\times t_{1/2} = 36 \\text{ h}$。よって、$t_{1/2} = 12 \\text{ h}$。24時間は半減期の2倍 ($24 \\text{ h} / 12 \\text{ h} = 2$) なので、濃度は初回濃度の $(1/2)^2 = 1/4$ になります。したがって、$C_{24h} = 40 \\text{ } \\mu g/mL \\times \\frac{1}{4} = 10 \\text{ } \\mu g/mL$。",
+                references: "演習1: 1-13"
+            },
+            {
+                id: "pk014",
+                category: "1-コンパートメントモデル（定速静脈内投与）",
+                type: "calculation",
+                questionText: "$5~mg/h$ の注入速度で定速静注時の定常状態濃度が $2~\\mu g/mL$ であった。全身クリアランス (L/h) を求めなさい。",
+                correctAnswerNumeric: 2.5,
+                answerUnit: "L/h",
+                tolerance: 0.05,
+                hint: "全身クリアランス (CL) は、注入速度 ($k_0$) を定常状態血中濃度 ($C_{ss}$) で割ることで求められます。<div class='formula-block'>$$CL = \\frac{k_0}{C_{ss}}$$/div>単位換算に注意しましょう (mg と μg、h と mL)。",
+                explanation: "全身クリアランス (CL) は $CL = \\frac{k_0}{C_{ss}}$ で計算できます。$$CL = \\frac{5 \\text{ mg/h}}{2 \\text{ } \\mu g/mL} = \\frac{5000 \\text{ } \\mu g/h}{2 \\text{ } \\mu g/mL} = 2500 \\text{ mL/h} = 2.5 \\text{ L/h}$$",
+                references: "演習1: 2-2"
+            },
+            {
+                id: "pk015",
+                category: "生物学的利用率（バイオアベイラビリティ, F）",
+                type: "calculation",
+                questionText: "全身クリアランスが $30~L/h$ で、$50~mg$ の投与量を経口投与したときの濃度曲線下面積 (AUC) が $1.2~\\mu g \\cdot h/mL$ であった。バイオアベイラビリティ F (%) を求めなさい。",
+                correctAnswerNumeric: 72,
+                answerUnit: "%",
+                tolerance: 0.5,
+                hint: "バイオアベイラビリティ (F) は、$F = \\frac{AUC_{po} \\cdot CL}{D_{po}}$ で計算できます。単位に注意してください。",
+                explanation: "バイオアベイラビリティ (F) は $F = \\frac{AUC_{po} \\cdot CL}{D_{po}}$ で計算できます。$$F = \\frac{1.2 \\text{ } \\mu g \\cdot h/mL \\cdot 30 \\text{ L/h}}{50 \\text{ mg}} = \\frac{1.2 \\text{ } \\mu g \\cdot h/mL \\cdot 30000 \\text{ mL/h}}{50000 \\text{ } \\mu g} = \\frac{36000}{50000} = 0.72$$したがって、$F = 72\\%$。",
+                references: "演習1: 3-2"
+            },
+            {
+                id: "pk016",
+                category: "1-コンパートメントモデル（反復投与）",
+                type: "calculation",
+                questionText: "ある薬物を、投与量(D)を300 mg, 投与間隔($\\tau$)を8hとして反復静注し、定常状態にした。この薬物の分布容積(V)は25Lで、消失半減期 ($t_{1/2}$) は4hである。定常状態でのピーク濃度 (μg/mL) を求めなさい。($\\ln(2) \\approx 0.693$)",
+                correctAnswerNumeric: 16,
+                answerUnit: "μg/mL",
+                tolerance: 0.5,
+                hint: "定常状態でのピーク濃度 ($C_{ss,max}$) は、$C_{ss,max} = \\frac{D/V}{1 - e^{-k_{el}\\tau}}$ で計算できます。まず $k_{el}$ を求め、次に $e^{-k_{el}\\tau}$ の値を計算します。$e^{-k_{el}\\tau} = (1/2)^{(\\tau/t_{1/2})}$ も利用できます。",
+                explanation: "$t_{1/2} = 4 \\text{ h}$ なので、$k_{el} = \\frac{\\ln(2)}{t_{1/2}} = \\frac{0.693}{4 \\text{ h}} \\approx 0.17325 \\text{ h}^{-1}$。$\\tau = 8 \\text{ h}$。$e^{-k_{el}\\tau} = e^{-0.17325 \\times 8} = e^{-1.386} \\approx 0.25$。または、$\\tau/t_{1/2} = 8/4 = 2$ なので、$e^{-k_{el}\\tau} = (1/2)^2 = 0.25$。初回投与直後の濃度 $C_1 = D/V = 300 \\text{ mg} / 25 \\text{ L} = 300000 \\text{ } \\mu g / 25000 \\text{ mL} = 12 \\text{ } \\mu g/mL$。$C_{ss,max} = \\frac{C_1}{1 - e^{-k_{el}\\tau}} = \\frac{12 \\text{ } \\mu g/mL}{1 - 0.25} = \\frac{12}{0.75} = 16 \\text{ } \\mu g/mL$。",
+                references: "演習2: 1-7 (1)"
+            },
+            {
+                id: "pk017",
+                category: "クリアランスと半減期",
+                type: "calculation",
+                questionText: "ある薬物を、投与量を50 mgとして静注したとき、血漿中濃度曲線下面積は $4~\\mu g \\cdot h/mL$, 尿中総排泄量は12mg, 消失半減期は4.8hであった。同じ投与量で、尿中総排泄量が30mgに増大した。この時の消失半減期 (h) を求めなさい。ただし、腎クリアランスと分布容積に変化はなかったとする。",
+                correctAnswerNumeric: 12,
+                answerUnit: "h",
+                tolerance: 0.5,
+                hint: "変化前のパラメータから $CL_{total}$ と $CL_R$ を求めます。分布容積Vも計算できます。変化後の尿中排泄率 $f_e'$ から変化後の $CL_{total}'$ を求め、$t_{1/2}' = (\\ln(2) \\cdot V) / CL_{total}'$ で計算します。",
+                explanation: "変化前: $CL_{total} = D/AUC = 50 \\text{ mg} / (4 \\text{ } \\mu g \\cdot h/mL) = 12.5 \\text{ L/h}$。$CL_R = X_{e,\\infty}/AUC = 12 \\text{ mg} / (4 \\text{ } \\mu g \\cdot h/mL) = 3 \\text{ L/h}$。$V = CL_{total} \\cdot t_{1/2} / \\ln(2) = 12.5 \\text{ L/h} \\cdot 4.8 \\text{ h} / 0.693 \\approx 86.58 \\text{ L}$。変化後: 尿中総排泄量 $X_{e,\\infty}' = 30 \\text{ mg}$。$CL_R$ は変化しない ($3 \\text{ L/h}$)。新しい尿中排泄率 $f_e' = X_{e,\\infty}' / D = 30 \\text{ mg} / 50 \\text{ mg} = 0.6$。$CL_R = f_e' \\cdot CL_{total}'$ なので、$CL_{total}' = CL_R / f_e' = 3 \\text{ L/h} / 0.6 = 5 \\text{ L/h}$。新しい消失半減期 $t_{1/2}' = (\\ln(2) \\cdot V) / CL_{total}' = (0.693 \\cdot 86.58 \\text{ L}) / 5 \\text{ L/h} \\approx 11.999 \\text{ h} \\approx 12 \\text{ h}$。",
+                references: "演習2: 1-10"
             }
+            // Added Questions End Here
         ];
 
         // Global variables for quiz state
@@ -458,7 +544,7 @@
         const progressBar = document.getElementById('progress-bar');
         const questionCounterElement = document.getElementById('question-counter');
         const mainHeader = document.getElementById('main-header');
-        const quizCardElement = document.getElementById('quiz-card-element'); // Added for content pushing
+        const quizCardElement = document.getElementById('quiz-card-element'); 
         const quizCardContent = document.getElementById('quiz-card-content');
 
 
