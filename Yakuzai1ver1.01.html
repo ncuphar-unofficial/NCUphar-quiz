@@ -101,6 +101,22 @@
         .explanation .formula-block { background-color: #f0f8ff; padding: 8px; border-radius: 4px; margin: 8px 0; text-align: center; overflow-x: auto;}
         .explanation .formula-block .katex { font-size: 1.1em !important; }
         .explanation .references { font-size: 0.8rem; color: #4b5563; margin-top: 0.75rem; }
+        .explanation { 
+            background-color: #e0f2fe; 
+            border-radius: 0.5rem; 
+            padding: 1.25rem; 
+            margin-top: 1.5rem; 
+            margin-bottom: 1.5rem; 
+            color: #0c4a6e; 
+            text-align: left; 
+            font-size: 0.9rem; 
+            border: 1px solid #bae6fd; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05); 
+            line-height: 1.6;
+            max-height: 300px; /* スマートフォンなどでの表示時の最大高さを設定 */
+            overflow-y: auto;   /* 内容が最大高さを超えた場合に縦スクロールバーを表示 */
+            overflow-x: auto;   /* 内容が幅を超えた場合に横スクロールバーを表示 */
+        }
 
         .controls { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-top: 2rem; }
         .quiz-btn { padding: 0.75rem 1.5rem; border-radius: 0.375rem; font-weight: 600; color: white; cursor: pointer; transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease; border: none; font-size: 1rem; box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1), 0 1px 2px 0 rgba(0,0,0,0.06); }
