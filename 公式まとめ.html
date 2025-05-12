@@ -15,14 +15,14 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start; /* 上から配置 */
+            justify-content: flex-start;
             min-height: 100vh;
             background-color: #f0f4f8;
             color: #1a202c;
-            padding-top: 20px; /* 上部に余白 */
-            padding-bottom: 20px; /* 下部に余白 */
+            padding-top: 20px;
+            padding-bottom: 20px;
         }
-        .slide-container-wrapper { /* 画面表示時の中央寄せ用ラッパー */
+        .slide-container-wrapper {
             width: 90%;
             max-width: 900px;
             margin-bottom: 20px;
@@ -34,13 +34,13 @@
             overflow: hidden;
         }
         .slide {
-            display: none; /* 初期状態では非表示 */
+            display: none; 
             padding: 20px 30px; 
             min-height: 450px; 
             border-bottom: 1px solid #e2e8f0;
         }
         .slide.active {
-            display: block; /* アクティブなスライドのみ表示 */
+            display: block; 
         }
         .slide h2 {
             font-size: 1.6rem; 
@@ -63,7 +63,7 @@
             border-radius: 8px;
             margin-top: 5px;
             margin-bottom: 10px; 
-            font-size: 1rem;  /* formula-block自体のフォントサイズは基準に */
+            font-size: 1rem;  
             overflow-x: auto;
             text-align: center; 
         }
@@ -113,17 +113,31 @@
             display: flex;
             align-items: center;
         }
-        .katex-display > .katex { /* KaTeXがdisplayモードで生成するラッパー */
+        .katex-display > .katex {
             display: inline-block; 
             text-align: center;
         }
-        /* .formula-block 内のKaTeX数式のフォントサイズを大きくする */
         .formula-block .katex { 
-            font-size: 1.4em !important; /* 例: 1.4em に変更 */
+            font-size: 1.4em !important;
         }
-        /* .explanation 内のKaTeX数式は親要素のフォントサイズに準じるか、必要であればここで指定 */
-        /* .explanation .katex { font-size: 1.0em !important; } */
-
+        /* 目次用スタイル */
+        .toc-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .toc-list li {
+            margin-bottom: 10px;
+        }
+        .toc-list li a {
+            text-decoration: none;
+            color: #3182ce;
+            font-size: 1.1rem;
+            transition: color 0.3s ease;
+        }
+        .toc-list li a:hover {
+            color: #2c5282;
+            text-decoration: underline;
+        }
 
         /* 印刷用スタイル */
         @media print {
@@ -169,7 +183,7 @@
                 margin-bottom: 5px;
             }
             .formula-block {
-                font-size: 10pt; /* ブロック自体のフォントサイズ */
+                font-size: 10pt; 
                 padding: 8px;
                 background-color: #f0f0f0; 
                 border: 1px solid #ccc; 
@@ -192,12 +206,13 @@
                 margin-left: auto;
                 margin-right: auto;
             }
-            /* 印刷時も .formula-block 内のKaTeX数式のフォントサイズを大きくする */
             .formula-block .katex { 
-                font-size: 1.3em !important; /* 印刷時のサイズ調整 (例: 1.3em) */
+                font-size: 1.3em !important; 
             }
-            /* 印刷時の .explanation 内のKaTeX数式は親要素に準じる */
-            /* .explanation .katex { font-size: 1.0em !important; } */
+             .toc-list li a {
+                color: black !important; /* 印刷時はリンク色を黒に */
+                text-decoration: none !important;
+            }
         }
         @page {
             size: A4; 
@@ -209,17 +224,35 @@
 
     <div class="slide-container-wrapper">
         <div class="slide-container">
-            <div class="slide active">
+            <div class="slide active" id="slide-0">
                 <h2>薬剤学I 頻出公式とその意味</h2>
                 <p class="explanation">このスライドは、「薬剤学I_資料.pdf」から、薬物動態学で特に使用頻度が高いと考えられる公式をリストアップし、それぞれの数式とそれが意味する内容を解説するものです。</p>
                 <p class="explanation"><strong>注記:</strong> 各式の詳細な導出や、より複雑なモデルについては、配布資料の該当ページや補足資料をご参照ください。</p>
                 
+                <p class="explanation text-center mt-4">（目次へは「次へ」ボタンを押してください）</p>
             </div>
 
-            <div class="slide">
+            <div class="slide" id="slide-1">
+                <h2>目次</h2>
+                <ul class="toc-list">
+                    <li><a href="#" onclick="jumpToSlide(0); return false;">タイトルページ</a></li>
+                    <li><a href="#" onclick="jumpToSlide(2); return false;">1. 基本パラメータと1-コンパートメントモデル（静注）</a></li>
+                    <li><a href="#" onclick="jumpToSlide(3); return false;">2. 1-コンパートメントモデル（経口投与・1次吸収）</a></li>
+                    <li><a href="#" onclick="jumpToSlide(4); return false;">3. 1-コンパートメントモデル（定速静脈内投与）</a></li>
+                    <li><a href="#" onclick="jumpToSlide(5); return false;">4. 1-コンパートメントモデル（反復投与）</a></li>
+                    <li><a href="#" onclick="jumpToSlide(6); return false;">5. 生物学的利用率（バイオアベイラビリティ, F）</a></li>
+                    <li><a href="#" onclick="jumpToSlide(7); return false;">6. 臓器クリアランスと抽出率</a></li>
+                    <li><a href="#" onclick="jumpToSlide(8); return false;">7. 2-コンパートメントモデル（静注）</a></li>
+                    <li><a href="#" onclick="jumpToSlide(9); return false;">8. 非線形薬物動態（ミカエリス・メンテン式）</a></li>
+                    <li><a href="#" onclick="jumpToSlide(10); return false;">9. モーメント解析</a></li>
+                    <li><a href="#" onclick="jumpToSlide(11); return false;">10. PK/PDモデル</a></li>
+                    <li><a href="#" onclick="jumpToSlide(12); return false;">まとめ / ご利用にあたって</a></li>
+                </ul>
+            </div>
+
+            <div class="slide" id="content-slide-1">
                 <h2>1. 基本パラメータと1-コンパートメントモデル（静注）</h2>
                 <p class="explanation">生体内の薬物の動きを最も単純化したモデルです。薬物は体内に投与されると、瞬時に均一に分布し、一定の速度で消失すると仮定します。</p>
-
                 <h3>1.1. 血中薬物濃度 (C)</h3>
                 <div class="formula-block">$$C(t) = C_0 \cdot e^{-k_{el}t}$$</div>
                 <p class="explanation"><strong>意味:</strong> 静脈内急速投与後、時間\(t\)における血中薬物濃度。</p>
@@ -230,44 +263,36 @@
                 </ul>
                 <p class="explanation">薬物は時間経過とともに指数関数的に減少します。</p>
                 <p class="pdf-ref">資料 P.9, P.10</p>
-
                 <h3>1.2. 分布容積 (V)</h3>
                 <div class="formula-block">$$V = \frac{D}{C_0}$$</div>
                 <p class="explanation"><strong>意味:</strong> 薬物が体内にどれだけ広がって分布しているかを示す見かけの容積。</p>
-                <ul class="list-disc list-inside explanation">
-                    <li><strong>\(D\):</strong> 投与量。</li>
-                </ul>
+                <ul class="list-disc list-inside explanation"><li><strong>\(D\):</strong> 投与量。</li></ul>
                 <p class="pdf-ref">資料 P.8, P.10</p>
-
                 <h3>1.3. 全身クリアランス (CL)</h3>
                 <div class="formula-block">$$CL = k_{el} \cdot V$$</div>
-                <p class="explanation"><strong>意味:</strong> 単位時間あたりに薬物を含む血液が完全に薬物から浄化される量。薬物を体から除去する能力の指標。</p>
+                <p class="explanation"><strong>意味:</strong> 単位時間あたりに薬物を含む血液が完全に薬物から浄化される量。</p>
                 <p class="pdf-ref">資料 P.8</p>
-
                 <h3>1.4. 消失半減期 (\(t_{1/2}\))</h3>
                 <div class="formula-block">$$t_{1/2} = \frac{\ln(2)}{k_{el}} \approx \frac{0.693}{k_{el}}$$</div>
                 <p class="explanation"><strong>意味:</strong> 血中薬物濃度が半分になるまでに要する時間。</p>
                 <p class="pdf-ref">資料 P.10</p>
-
                 <h3>1.5. 血中濃度時間曲線下面積 (AUC)</h3>
                 <div class="formula-block">$$AUC = \int_{0}^{\infty} C(t) dt = \frac{C_0}{k_{el}} = \frac{D}{CL}$$</div>
                 <p class="explanation"><strong>意味:</strong> 薬物が体内にどれだけ曝露されたかの総量を示す指標。</p>
                 <p class="pdf-ref">資料 P.12</p>
             </div>
 
-            <div class="slide">
+            <div class="slide" id="content-slide-2">
                 <h2>2. 1-コンパートメントモデル（経口投与・1次吸収）</h2>
                 <p class="explanation">経口投与の場合、薬物は消化管から吸収され血中に入る過程が加わります。吸収過程が濃度に比例する場合を1次吸収と呼びます。</p>
-
                 <h3>2.1. 血中薬物濃度 (C)</h3>
                 <div class="formula-block">$$C(t) = \frac{F \cdot D \cdot k_a}{V(k_a - k_{el})} (e^{-k_{el}t} - e^{-k_a t})$$</div>
                 <p class="explanation"><strong>意味:</strong> 経口投与後、時間\(t\)における血中薬物濃度。</p>
                 <ul class="list-disc list-inside explanation">
-                    <li><strong>\(F\):</strong> 生物学的利用率（バイオアベイラビリティ）。</li>
+                    <li><strong>\(F\):</strong> 生物学的利用率。</li>
                     <li><strong>\(k_a\):</strong> 吸収速度定数。</li>
                 </ul>
                 <p class="pdf-ref">資料 P.21, P.23, P.24</p>
-
                 <h3>2.2. 最高血中濃度 (\(C_{max}\)) と到達時間 (\(t_{max}\))</h3>
                 <p class="explanation"><strong>\(t_{max}\) (到達時間):</strong></p>
                 <div class="formula-block">$$t_{max} = \frac{\ln(k_a/k_{el})}{k_a - k_{el}}$$</div>
@@ -275,78 +300,64 @@
                 <div class="formula-block">$$C_{max} = \frac{F \cdot D}{V} \left(\frac{k_a}{k_{el}}\right)^{\frac{k_{el}}{k_{el}-k_a}}$$</div>
                 <p class="explanation"> \(C_{max}\)と\(t_{max}\)は薬物の吸収の速さや程度を反映する重要な指標です。</p>
                 <p class="pdf-ref">資料 P.27, P.28</p>
-
                 <h3>2.3. 血中濃度時間曲線下面積 (AUC)</h3>
                 <div class="formula-block">$$AUC_{po} = \frac{F \cdot D_{po}}{CL}$$</div>
-                <p class="explanation"><strong>意味:</strong> 経口投与時の薬物曝露量。静注時のAUCと比較することで、生物学的利用率Fを算出できます。</p>
+                <p class="explanation"><strong>意味:</strong> 経口投与時の薬物曝露量。</p>
                 <p class="pdf-ref">資料 P.26</p>
             </div>
 
-            <div class="slide">
+            <div class="slide" id="content-slide-3">
                 <h2>3. 1-コンパートメントモデル（定速静脈内投与）</h2>
                 <p class="explanation">薬物を一定の速度で静脈内に持続的に注入する場合のモデルです。</p>
-
                 <h3>3.1. 血中薬物濃度 (C)</h3>
                 <div class="formula-block">$$C(t) = \frac{k_0}{CL}(1 - e^{-k_{el}t})$$</div>
                 <p class="explanation"><strong>意味:</strong> 定速静脈内投与開始後、時間\(t\)における血中薬物濃度。</p>
-                <ul class="list-disc list-inside explanation">
-                    <li><strong>\(k_0\):</strong> 薬物の注入速度。</li>
-                </ul>
+                <ul class="list-disc list-inside explanation"><li><strong>\(k_0\):</strong> 薬物の注入速度。</li></ul>
                 <p class="pdf-ref">資料 P.13</p>
-
                 <h3>3.2. 定常状態血中濃度 (\(C_{ss}\))</h3>
                 <div class="formula-block">$$C_{ss} = \frac{k_0}{CL}$$</div>
-                <p class="explanation"><strong>意味:</strong> 定速静脈内投与を長時間続けた場合に到達する一定の血中濃度。治療域を維持するための目標濃度として重要です。</p>
+                <p class="explanation"><strong>意味:</strong> 定速静脈内投与を長時間続けた場合に到達する一定の血中濃度。</p>
                 <p class="explanation"><strong>実質的な定常状態到達時間:</strong> 一般的に、$t_{1/2}$の3.32倍で90%、6.65倍で99%の$C_{ss}$に到達します。</p>
                 <p class="pdf-ref">資料 P.13, P.14</p>
             </div>
 
-            <div class="slide">
+            <div class="slide" id="content-slide-4">
                 <h2>4. 1-コンパートメントモデル（反復投与）</h2>
                 <p class="explanation">薬物を一定の間隔で繰り返し投与する場合、血中濃度は徐々に上昇し、数回投与後には定常状態に至ります。</p>
-
                 <h3>4.1. 定常状態における最高血中濃度 (\(C_{ss,max}\)) (反復静注時)</h3>
                 <div class="formula-block">$$C_{ss,max} = \frac{D/V}{1 - e^{-k_{el}\tau}}$$</div>
-                <p class="explanation"><strong>意味:</strong> 反復静注が定常状態に達したときの、各投与間隔におけるピーク濃度。</p>
-                <ul class="list-disc list-inside explanation">
-                    <li><strong>\(\tau\):</strong> 投与間隔。</li>
-                </ul>
+                <p class="explanation"><strong>意味:</strong> 反復静注が定常状態に達したときのピーク濃度。</p>
+                <ul class="list-disc list-inside explanation"><li><strong>\(\tau\):</strong> 投与間隔。</li></ul>
                 <p class="pdf-ref">資料 P.18</p>
-
                 <h3>4.2. 定常状態における最低血中濃度 (\(C_{ss,min}\)) (反復静注時)</h3>
                 <div class="formula-block">$$C_{ss,min} = C_{ss,max} \cdot e^{-k_{el}\tau} = \frac{(D/V) \cdot e^{-k_{el}\tau}}{1 - e^{-k_{el}\tau}}$$</div>
-                <p class="explanation"><strong>意味:</strong> 反復静注が定常状態に達したときの、次の投与直前の濃度（トラフ濃度）。</p>
+                <p class="explanation"><strong>意味:</strong> 反復静注が定常状態に達したときのトラフ濃度。</p>
                 <p class="pdf-ref">資料 P.18</p>
-
                 <h3>4.3. 定常状態における平均血中濃度 (\(C_{ss,av}\))</h3>
                 <div class="formula-block">$$C_{ss,av} = \frac{AUC_{ss}}{\tau} = \frac{F \cdot (D/\tau)}{CL}$$</div>
                 <p class="explanation">静注 ($F=1$) の場合: \(C_{ss,av} = \frac{D/\tau}{CL}\)</p>
                 <p class="explanation"><strong>意味:</strong> 定常状態における1投与間隔内の平均的な血中濃度。</p>
                 <p class="pdf-ref">資料 P.20, P.29</p>
-
                 <h3>4.4. 蓄積率 (R) (反復静注時)</h3>
                 <div class="formula-block">$$R = \frac{C_{ss,max}}{C_{1,max}} = \frac{1}{1 - e^{-k_{el}\tau}}$$</div>
-                <p class="explanation"><strong>意味:</strong> 初回投与時の最高血中濃度に対する、定常状態での最高血中濃度の比。薬物が体内にどれだけ蓄積するかを示します。</p>
+                <p class="explanation"><strong>意味:</strong> 初回投与時の最高血中濃度に対する、定常状態での最高血中濃度の比。</p>
                 <p class="pdf-ref">資料 P.19</p>
             </div>
 
-            <div class="slide">
+            <div class="slide" id="content-slide-5">
                 <h2>5. 生物学的利用率（バイオアベイラビリティ, F）</h2>
-
                 <h3>5.1. 絶対的生物学的利用率 (F)</h3>
                 <div class="formula-block">$$F = \frac{(AUC_{po} / D_{po})}{(AUC_{iv} / D_{iv})}$$</div>
                 <p class="explanation"><strong>意味:</strong> 経口投与された薬物が、静脈内投与された場合と比較して、どれだけの割合で全身循環に到達したかを示します。</p>
                 <p class="pdf-ref">資料 P.26, P.49</p>
-
                 <h3>5.2. 相対的生物学的利用率 (\(F_{rel}\))</h3>
                 <div class="formula-block">$$F_{rel} = \frac{(AUC_{test} / D_{test})}{(AUC_{std} / D_{std})}$$</div>
-                <p class="explanation"><strong>意味:</strong> 試験製剤の生物学的利用率を、標準製剤と比較したもの。ジェネリック医薬品の評価などに用いられます。</p>
+                <p class="explanation"><strong>意味:</strong> 試験製剤の生物学的利用率を、標準製剤と比較したもの。</p>
                 <p class="pdf-ref">資料 P.49</p>
             </div>
 
-            <div class="slide">
+            <div class="slide" id="content-slide-6">
                 <h2>6. 臓器クリアランスと抽出率</h2>
-
                 <h3>6.1. 臓器クリアランス (\(CL_{org}\))</h3>
                 <div class="formula-block">$$CL_{org} = Q_{org} \cdot E_{org} = Q_{org} \cdot \frac{C_{in} - C_{out}}{C_{in}}$$</div>
                 <p class="explanation"><strong>意味:</strong> 特定の臓器が薬物を除去する能力。</p>
@@ -356,7 +367,6 @@
                     <li><strong>\(C_{in}, C_{out}\):</strong> 臓器への流入・流出血液中薬物濃度。</li>
                 </ul>
                 <p class="pdf-ref">資料 P.57</p>
-
                 <h3>6.2. 肝クリアランス (\(CL_H\)) (ウエルスタードモデル)</h3>
                 <div class="formula-block">$$CL_H = \frac{Q_H \cdot f_{u,B} \cdot CL_{int,H}}{Q_H + f_{u,B} \cdot CL_{int,H}}$$</div>
                 <p class="explanation"><strong>意味:</strong> 肝臓による薬物除去能力。</p>
@@ -366,7 +376,6 @@
                     <li><strong>\(CL_{int,H}\):</strong> 肝固有クリアランス。</li>
                 </ul>
                 <p class="pdf-ref">資料 P.59, P.61</p>
-
                 <h3>6.3. 腎クリアランス (\(CL_R\))</h3>
                 <div class="formula-block">$$CL_R = (\text{GFR} \cdot f_{u,P}) + \text{尿細管分泌} - \text{尿細管再吸収}$$</div>
                 <p class="explanation">糸球体ろ過のみの場合: \(CL_R = \text{GFR} \cdot f_{u,P}\)</p>
@@ -378,10 +387,9 @@
                 <p class="pdf-ref">資料 P.66</p>
             </div>
 
-            <div class="slide">
+            <div class="slide" id="content-slide-7">
                 <h2>7. 2-コンパートメントモデル（静注）</h2>
                 <p class="explanation">薬物が中央コンパートメントと末梢コンパートメントの2つの区画間を移行し、中央コンパートメントから消失するモデル。</p>
-
                 <h3>7.1. 血中薬物濃度 (C)</h3>
                 <div class="formula-block">$$C(t) = A \cdot e^{-\alpha t} + B \cdot e^{-\beta t}$$</div>
                 <p class="explanation"><strong>意味:</strong> 静脈内急速投与後、時間\(t\)における血中薬物濃度。</p>
@@ -391,44 +399,40 @@
                 </ul>
                 <p class="explanation">主なパラメータ:</p>
                 <ul class="list-disc list-inside explanation">
-                    <li>\(V_c = D/(A+B)\) (中央コンパートメント分布容積)</li>
-                    <li>\(k_{10} = CL/V_c\) (中央からの消失速度定数)</li>
+                    <li>\(V_c = D/(A+B)\)</li>
+                    <li>\(k_{10} = CL/V_c\)</li>
                     <li>\(AUC = A/\alpha + B/\beta\)</li>
                     <li>\(CL = D/AUC\)</li>
                 </ul>
                 <p class="pdf-ref">資料 P.38</p>
-
                 <h3>7.2. 定常状態分布容積 (\(V_{ss}\))</h3>
                 <div class="formula-block">$$V_{ss} = V_c \left(1 + \frac{k_{12}}{k_{21}}\right) = V_c + V_t$$</div>
                 <p class="explanation"><strong>意味:</strong> 薬物が血漿と組織の間で分布平衡に達したときの見かけの分布容積。</p>
                 <p class="pdf-ref">資料 P.41</p>
             </div>
 
-            <div class="slide">
+             <div class="slide" id="content-slide-8">
                 <h2>8. 非線形薬物動態（ミカエリス・メンテン式）</h2>
                 <p class="explanation">薬物の代謝や輸送などが酵素や担体によって行われ、それらが飽和する場合、薬物動態は投与量や濃度に比例しなくなります。</p>
-
                 <h3>8.1. 消失速度 (v)</h3>
                 <div class="formula-block">$$v = -\frac{dX}{dt} = \frac{V_{max} \cdot C}{K_m + C}$$</div>
                 <p class="explanation"><strong>意味:</strong> 薬物の消失速度。</p>
                 <ul class="list-disc list-inside explanation">
                     <li><strong>\(V_{max}\):</strong> 最大消失速度。</li>
-                    <li><strong>\(K_m\):</strong> ミカエリス定数 (消失速度が\(V_{max}\)の半分になる濃度)。</li>
+                    <li><strong>\(K_m\):</strong> ミカエリス定数。</li>
                 </ul>
                 <p class="explanation">低濃度域 ($C \ll K_m$): 線形 (1次消失)。高濃度域 ($C \gg K_m$): 非線形・飽和 (0次消失)。</p>
                 <p class="pdf-ref">資料 P.43, P.44</p>
             </div>
 
-            <div class="slide">
+            <div class="slide" id="content-slide-9">
                 <h2>9. モーメント解析</h2>
                 <p class="explanation">コンパートメントモデルに依存しない薬物動態解析法の一つ。</p>
-
                 <h3>9.1. 平均滞留時間 (MRT)</h3>
                 <div class="formula-block">$$MRT_{iv} = \frac{AUMC}{AUC} = \frac{\int_{0}^{\infty} t \cdot C(t) dt}{\int_{0}^{\infty} C(t) dt}$$</div>
                 <p class="explanation">1-コンパートメントモデル (静注): \(MRT_{iv} = 1/k_{el}\)</p>
                 <p class="explanation"><strong>意味:</strong> 薬物分子が体内に平均してどれくらいの時間滞留するかを示す指標。</p>
                 <p class="pdf-ref">資料 P.73, P.75</p>
-
                 <h3>9.2. 平均吸収時間 (MAT)</h3>
                 <div class="formula-block">$$MAT = MRT_{po} - MRT_{iv}$$</div>
                 <p class="explanation">1-コンパートメントモデル (1次吸収): \(MAT = 1/k_a\)</p>
@@ -436,10 +440,9 @@
                 <p class="pdf-ref">資料 P.75</p>
             </div>
 
-            <div class="slide">
+            <div class="slide" id="content-slide-10">
                 <h2>10. PK/PDモデル</h2>
                 <p class="explanation">薬物動態 (PK) と薬力学 (PD) を関連付けるモデル。</p>
-
                 <h3>10.1. Emaxモデル (効果と濃度の関係)</h3>
                 <div class="formula-block">$$E = E_0 + \frac{E_{max} \cdot C^n}{EC_{50}^n + C^n}$$</div>
                 <p class="explanation">または \(E = \frac{E_{max} \cdot C^n}{EC_{50}^n + C^n}\) (ベースライン効果がない場合)</p>
@@ -453,27 +456,27 @@
                 <p class="pdf-ref">資料 P.77</p>
             </div>
 
-            <div class="slide">
+            <div class="slide" id="slide-summary">
                 <h2>まとめ / ご利用にあたって</h2>
                 <p class="explanation">このスライドは、提供されたPDF資料「薬剤学I_資料.pdf」に基づいて頻出と思われる公式をまとめたものです。</p>
                 <p class="explanation">実際の学習や業務においては、必ず元の資料や指定参考書を参照し、より深い理解を得るようにしてください。</p>
                 <p class="explanation"><strong>数式表示について:</strong><br>
-                このスライドでは数式表示にKaTeXライブラリを使用しています。正しく表示されない場合は、ブラウザの開発者コンソール（通常F12キーで起動）でエラーメッセージをご確認ください。KaTeXが特定の数式を解釈できない場合、エラーメッセージが表示されることがあります。</p>
-                <img src="https://placehold.co/600x300/4299e1/ffffff?text=Thank+You" alt="感謝のイメージ" class="mx-auto my-8 rounded-lg shadow-md">
+                このスライドでは数式表示にKaTeXライブラリを使用しています。正しく表示されない場合は、ブラウザの開発者コンソール（通常F12キーで起動）でエラーメッセージをご確認ください。</p>
+                <img src="https://placehold.co/500x200/4299e1/ffffff?text=Thank+You" alt="感謝のイメージ" class="mx-auto my-6 rounded-lg shadow-md">
             </div>
         </div>
 
         <div class="navigation-buttons">
             <button id="prevBtn" onclick="changeSlide(-1)">＜ 前へ</button>
-            <div id="slideCounter" class="slide-counter">1 / 12</div>
+            <div id="slideCounter" class="slide-counter">1 / 13</div>
             <button id="nextBtn" onclick="changeSlide(1)">次へ ＞</button>
         </div>
     </div>
 
     <script>
-        let currentSlide = 0;
+        let currentSlide = 0; // 初期スライドをタイトルスライド（インデックス0）に
         const slides = document.querySelectorAll('.slide');
-        const totalSlides = slides.length;
+        const totalSlides = slides.length; // スライド総数を動的に取得
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
         const slideCounter = document.getElementById('slideCounter');
@@ -489,8 +492,14 @@
             slideCounter.textContent = `${index + 1} / ${totalSlides}`;
         }
 
+        function jumpToSlide(slideIndex) {
+            currentSlide = slideIndex;
+            showSlide(currentSlide);
+        }
+
         function changeSlide(direction) {
             currentSlide += direction;
+            // 範囲チェック
             if (currentSlide < 0) {
                 currentSlide = 0;
             }
@@ -510,10 +519,10 @@
                 try {
                     renderMathInElement(document.body, {
                         delimiters: [
-                            {left: "$$", right: "$$", display: true},  // formula-block 内の数式用
-                            {left: "\\[", right: "\\]", display: true}, // formula-block 内の数式用 (代替)
-                            {left: "\\(", right: "\\)", display: false},// explanation 内の数式用 (インライン)
-                            {left: "$", right: "$", display: false}    // explanation 内の数式用 (インライン)
+                            {left: "$$", right: "$$", display: true},
+                            {left: "\\[", right: "\\]", display: true},
+                            {left: "\\(", right: "\\)", display: false},
+                            {left: "$", right: "$", display: false} 
                         ],
                         throwOnError: false 
                     });
@@ -523,7 +532,7 @@
             } else {
                 console.warn("renderMathInElement is not available on DOMContentLoaded. Auto-rendering might fail.");
             }
-            showSlide(currentSlide); 
+            showSlide(currentSlide); // 初期スライド（タイトル）を表示
         });
     </script>
     </body>
