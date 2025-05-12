@@ -1,0 +1,1552 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>薬剤学1クイズ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/auto-render.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            background-color: #f0f4f8; /* Tailwind slate-100 */
+        }
+        .container { max-width: 900px; margin: 0 auto; padding: 1rem; text-align: center; }
+        @media (min-width: 768px) { .container { padding: 2rem; } }
+
+        #quiz-card-element { 
+            background-color: white; 
+            border-radius: 0.75rem; 
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1); 
+            padding: 1.5rem; 
+            margin-bottom: 1.5rem; 
+            overflow: hidden; 
+            position: relative;
+            transition: margin-bottom 0.3s ease-in-out; 
+        }
+        #quiz-card-element.quiz-content-pusher {
+            margin-bottom: 380px; 
+        }
+
+        @media (min-width: 768px) { 
+            #quiz-card-element { padding: 2rem; } 
+            #quiz-card-element.quiz-content-pusher {
+                margin-bottom: 1.5rem; 
+            }
+        }
+
+        #quiz-card-content { width: 100%; transition: transform 0.35s ease-in-out, opacity 0.35s ease-in-out; will-change: transform, opacity; }
+        #quiz-container { opacity: 0; visibility: hidden; transition: opacity 0.5s ease-in-out, visibility 0s linear 0.5s; }
+        #quiz-container.visible { opacity: 1; visibility: visible; transition-delay: 0s; }
+
+        .question-title { font-size: 1.1rem; font-weight: 600; color: #1e3a8a; margin-bottom: 0.75rem; text-align: left; }
+        .question-text { font-size: 1rem; margin-bottom: 1rem; color: #1f2937; font-weight: 500; text-align: left; line-height: 1.7; }
+        
+        .hint-button {
+            background-color: #e2e8f0; 
+            color: #475569; 
+            padding: 0.3rem 0.8rem;
+            border-radius: 0.375rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            border: 1px solid #cbd5e1; 
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+        .hint-button:hover { background-color: #cbd5e1; }
+        .hint-panel {
+            background-color: #f7fafc; 
+            border: 1px dashed #e2e8f0; 
+            border-radius: 0.375rem;
+            padding: 0.75rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            color: #374151; 
+            text-align: left;
+            line-height: 1.6;
+        }
+        .hint-panel .formula-block { background-color: #eef2f7; padding: 6px; border-radius: 4px; margin: 6px 0; text-align: center; overflow-x: auto;}
+        .hint-panel .katex { font-size: 1.05em !important; }
+
+        .options { display: flex; flex-direction: column; margin-bottom: 1.5rem; }
+        .option { padding: 0.9rem 1.25rem; border: 1px solid #d1d5db; border-radius: 0.5rem; margin-bottom: 0.75rem; cursor: pointer; transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease; background-color: #f9fafb; color: #374151; text-align: left; font-size: 0.95rem; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); }
+        .option:hover:not(.disabled):not(.answered) { background-color: #f3f4f6; transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1); }
+        .option.correct { background-color: #dcfce7; border-color: #4ade80; color: #15803d; font-weight: 600; }
+        .option.incorrect { background-color: #fee2e2; border-color: #f87171; color: #b91c1c; font-weight: 600; }
+        .option.disabled { opacity: 0.7; cursor: not-allowed; }
+        .option.answered:not(.correct):not(.incorrect) { opacity: 0.6; }
+
+        .calculation-input-area { margin-bottom: 1.5rem; text-align: left; }
+        .calculation-input-area label { font-weight: 500; color: #374151; margin-right: 0.5rem; }
+        .calculation-input-area input[type="number"] {
+            padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 1rem; width: 120px;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.075);
+        }
+        .calculation-input-area input[type="number"]:focus { border-color: #2563eb; outline: none; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+        .calculation-input-area span.unit { margin-left: 0.5rem; color: #4b5563; }
+        .submit-answer-btn {
+            background-color: #2563eb; color: white; padding: 0.6rem 1.2rem; border-radius: 0.375rem; font-weight: 500;
+            cursor: pointer; transition: background-color 0.2s; border: none; font-size: 0.95rem;
+        }
+        .submit-answer-btn:hover { background-color: #1d4ed8; }
+        .submit-answer-btn:disabled { background-color: #9ca3af; cursor: not-allowed; }
+
+        .explanation { background-color: #e0f2fe; border-radius: 0.5rem; padding: 1.25rem; margin-top: 1.5rem; margin-bottom: 1.5rem; color: #0c4a6e; text-align: left; font-size: 0.9rem; border: 1px solid #bae6fd; box-shadow: 0 1px 3px rgba(0,0,0,0.05); line-height: 1.6; }
+        .explanation strong { color: #075985; }
+        .explanation .formula-block { background-color: #f0f8ff; padding: 8px; border-radius: 4px; margin: 8px 0; text-align: center; overflow-x: auto;}
+        .explanation .formula-block .katex { font-size: 1.1em !important; }
+        .explanation .references { font-size: 0.8rem; color: #4b5563; margin-top: 0.75rem; }
+
+        .controls { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-top: 2rem; }
+        .quiz-btn { padding: 0.75rem 1.5rem; border-radius: 0.375rem; font-weight: 600; color: white; cursor: pointer; transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease; border: none; font-size: 1rem; box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1), 0 1px 2px 0 rgba(0,0,0,0.06); }
+        .quiz-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .quiz-btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1); }
+        .next-btn { background-color: #16a34a; } .next-btn:hover:not(:disabled) { background-color: #15803d; }
+        .prev-btn { background-color: #0ea5e9; } .prev-btn:hover:not(:disabled) { background-color: #0284c7; }
+        .finish-btn { background-color: #dc2626; } .finish-btn:hover:not(:disabled) { background-color: #b91c1c; }
+        
+        .summary { background-color: white; border-radius: 0.75rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1); padding: 2rem; text-align: center; margin-bottom: 2rem; }
+        .summary h2 { font-size: 1.8rem; margin-bottom: 1.5rem; color: #1f2937; font-weight: 700; }
+        .summary p { font-size: 1.1rem; margin-bottom: 1rem; color: #374151; }
+        #summary-container { display: none; }
+        .restart-btn { background-color: #4f46e5; font-size: 1.1rem; padding: 0.8rem 2rem; }
+        .restart-btn:hover:not(:disabled) { background-color: #4338ca; }
+
+        .feedback { margin-top: 1rem; padding: 0.75rem; border-radius: 0.375rem; text-align: center; font-weight: 600; font-size: 0.95rem; }
+        .feedback.correct { background-color: #dcfce7; border: 1px solid #86efac; color: #166534; }
+        .feedback.incorrect { background-color: #fee2e2; border: 1px solid #fca5a5; color: #991b1b; }
+        
+        #category-select-container { 
+            display: block; 
+            margin-bottom: 2rem; 
+            background-color: white; 
+            padding: 1.5rem; 
+            border-radius: 0.75rem; 
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1); 
+        }
+         @media (min-width: 640px) {
+            #category-select-container { padding: 2rem; }
+        }
+        #category-select, #num-questions-select {
+            padding: 0.75rem 1rem;
+            border-radius: 0.375rem;
+            border: 1px solid #d1d5db;
+            font-size: 1rem;
+            color: #374151;
+            background-color: #f9fafb;
+            transition: border-color 0.2s ease;
+            margin-top: 0.5rem;
+            width: 100%;
+            max-width: 400px; 
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        #category-select:focus, #num-questions-select:focus {
+            outline: none;
+            border-color: #2563eb; 
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        .select-label {
+            display: block; 
+            text-slate-700 text-lg font-semibold mb-2 mt-6; 
+        }
+
+        .start-quiz-btn { background-color: #1e40af; font-size: 1.1rem; padding: 0.8rem 2rem; margin-top: 2.5rem; }
+        .start-quiz-btn:hover:not(:disabled) { background-color: #1e3a8a; }
+
+        .progress-bar-container { width: 100%; background-color: #e5e7eb; border-radius: 0.375rem; margin-bottom: 1rem; overflow: hidden; height: 10px; }
+        .progress-bar { height: 100%; width: 0%; background-color: #2563eb; border-radius: 0.375rem; transition: width 0.3s ease-in-out; }
+        .question-counter { font-size: 0.9rem; color: #6b7280; }
+        .back-to-menu-link {
+            text-decoration: none;
+            color: #2563eb; 
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        .back-to-menu-link:hover {
+            color: #1d4ed8; 
+            text-decoration: underline;
+        }
+
+        #calculator-toggle-btn {
+            position: fixed; bottom: 20px; right: 20px; z-index: 1000;
+            background-color: #fb923c; color: white; padding: 0.75rem 1rem;
+            border-radius: 50%; width: 60px; height: 60px; text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2); font-size: 1.5rem; border: none; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+        }
+        #calculator-container {
+            display: none; position: fixed; bottom: 20px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            width: calc(100% - 40px); 
+            max-width: 320px; 
+            background-color: #fff; border-radius: 8px; box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+            border: 1px solid #e2e8f0; overflow: hidden; z-index: 999;
+        }
+         @media (min-width: 768px) {
+            #calculator-container {
+                bottom: 90px;
+                left: auto;
+                right: 20px;
+                transform: none;
+                width: 300px; 
+            }
+        }
+
+        #calculator-container.visible { display: block; }
+        .calc-header { background-color: #1e3a8a; color: white; padding: 8px 12px; font-size: 0.9rem; text-align: left; }
+        .calc-display-container { padding: 10px; background-color: #f8fafc; }
+        #calc-display {
+            width: 100%; background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 4px;
+            padding: 10px; text-align: right; font-size: 1.6rem; color: #1e293b;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 10px;
+            font-variant-numeric: lining-nums; 
+        }
+         #calc-history {
+            width: 100%; height: 20px; text-align: right; font-size: 0.8rem; color: #64748b;
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+        .calc-buttons { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; background-color: #cbd5e1; }
+        .calc-buttons button {
+            background-color: #f1f5f9; border: none; padding: 12px 0; font-size: 1rem; cursor: pointer;
+            transition: background-color 0.15s; color: #1e293b;
+        }
+        .calc-buttons button:hover { background-color: #e2e8f0; }
+        .calc-buttons button.operator { background-color: #e0f2fe; color: #0c4a6e; }
+        .calc-buttons button.function { background-color: #dbeafe; color: #1e40af; }
+        .calc-buttons button.equals { background-color: #fb923c; color: white; }
+        .calc-buttons button.clear, .calc-buttons button.clear-entry { background-color: #fee2e2; color: #991b1b; }
+
+        .question-text .katex, .option .katex { font-size: 1.1em !important; }
+        .formula-block .katex { font-size: 1.3em !important; }
+
+    </style>
+</head>
+<body class="bg-slate-100">
+    <div class="container">
+        <header id="main-header" class="my-6 md:my-8">
+             <h1 class="text-3xl sm:text-4xl font-bold text-slate-800">薬剤学1クイズ</h1>
+        </header>
+
+        <div id="category-select-container">
+           <h2 class="text-slate-700 text-xl font-semibold mb-4">薬剤学1クイズへようこそ！</h2>
+           <p class="text-slate-600 mb-6">薬物動態学の基本公式、パラメータ計算、臨床応用に関する知識をテストしましょう。</p>
+           
+           <label for="category-select" class="select-label text-slate-700 text-lg font-semibold mb-2">出題カテゴリーを選択してください:</label>
+           <select id="category-select" class="shadow-sm appearance-none border rounded w-full py-3 px-4 text-slate-700 leading-tight focus:outline-none focus:shadow-outline">
+               </select>
+
+           <label for="num-questions-select" class="select-label text-slate-700 text-lg font-semibold mb-2 mt-6">出題数を選択してください:</label>
+           <select id="num-questions-select" class="shadow-sm appearance-none border rounded w-full py-3 px-4 text-slate-700 leading-tight focus:outline-none focus:shadow-outline">
+               <option value="5">5問</option>
+               <option value="10" selected>10問</option>
+               <option value="15">15問</option>
+               <option value="all">全ての問題</option>
+           </select>
+
+           <button id="start-quiz-btn" class="quiz-btn start-quiz-btn">クイズを開始する</button>
+        </div>
+
+        <div id="quiz-container"> 
+            <div id="quiz-card-element"> 
+                 <div class="flex justify-between items-center mb-4">
+                    <a href="#" id="back-to-menu-btn" class="back-to-menu-link">&larr; メニューに戻る</a>
+                    <div class="question-counter" id="question-counter"></div>
+                </div>
+                <div id="quiz-card-content">
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="progress-bar"></div>
+                    </div>
+                    <div id="question-title" class="question-title"></div>
+                    <div id="question-text" class="question-text"></div>
+                    
+                    <div id="hint-container"></div> 
+
+                    <div id="options-container" class="options"></div>
+                    <div id="calculation-input-container" class="calculation-input-area" style="display: none;">
+                        <label for="calc-answer">解答:</label>
+                        <input type="number" id="calc-answer" step="any">
+                        <span id="answer-unit" class="unit"></span>
+                        <button id="submit-calc-answer-btn" class="submit-answer-btn ml-2">解答する</button>
+                    </div>
+
+                    <div id="feedback" class="feedback" style="display: none;"></div>
+                    <div id="explanation" class="explanation" style="display: none;"></div>
+                    <div class="controls">
+                        <button id="prev-btn" class="quiz-btn prev-btn">前へ</button>
+                        <button id="next-btn" class="quiz-btn next-btn">次へ / スキップ</button>
+                        <button id="finish-btn" class="quiz-btn finish-btn" style="display: none;">終了</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="summary-container" class="summary"> 
+            <h2>あなたの成績</h2>
+            <p>正解数: <span id="correct-count">0</span> / <span id="total-questions">0</span></p>
+            <p>正答率: <span id="accuracy">0</span>%</p>
+            <button id="restart-btn" class="quiz-btn restart-btn mt-4">もう一度挑戦する</button>
+        </div>
+    </div>
+
+    <button id="calculator-toggle-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-7 h-7"> <path d="M4 2C2.89543 2 2 2.89543 2 4V20C2 21.1046 2.89543 22 4 22H20C21.1046 22 22 21.1046 22 20V4C22 2.89543 21.1046 2 20 2H4ZM6 6H8V8H6V6ZM6 10H8V12H6V10ZM6 14H8V16H6V14ZM10 6H12V8H10V6ZM10 10H12V12H10V10ZM10 14H12V16H10V14ZM14 6H16V8H14V6ZM14 10H16V12H14V10ZM14 14H18V16H14V14ZM10 18H18V20H10V18Z"/>
+        </svg>
+    </button>
+    <div id="calculator-container">
+        <div class="calc-header">電卓</div>
+        <div class="calc-display-container">
+            <div id="calc-history"></div>
+            <input type="text" id="calc-display" readonly>
+        </div>
+        <div class="calc-buttons">
+            <button class="function" data-value="Math.log(">ln</button>
+            <button class="function" data-value="Math.log10(">log</button>
+            <button class="function" data-value="Math.exp(">exp</button> 
+            <button class="function" data-value="Math.sqrt(">√</button>
+            <button class="function" data-value="**">x<sup>y</sup></button>
+
+            <button data-value="(">(</button>
+            <button data-value=")">)</button>
+            <button class="clear-entry" data-action="clear-entry">CE</button>
+            <button class="clear" data-action="clear">C</button>
+            <button data-action="backspace">&larr;</button>
+
+            <button data-value="7">7</button>
+            <button data-value="8">8</button>
+            <button data-value="9">9</button>
+            <button class="operator" data-value="/">÷</button>
+            <button class="function" data-value="0.693">ln2</button>
+
+            <button data-value="4">4</button>
+            <button data-value="5">5</button>
+            <button data-value="6">6</button>
+            <button class="operator" data-value="*">×</button>
+            <button data-value="Math.PI">π</button>
+
+            <button data-value="1">1</button>
+            <button data-value="2">2</button>
+            <button data-value="3">3</button>
+            <button class="operator" data-value="-">-</button>
+            <button class="operator" data-value="+">+</button>
+
+            <button data-value="0" style="grid-column: span 2;">0</button>
+            <button data-value=".">.</button>
+            <button class="equals" data-action="equals" style="grid-column: span 2;">=</button>
+        </div>
+    </div>
+
+    <script>
+        // Quiz data array containing questions, answers, hints, and explanations for pharmacokinetics.
+        // Each object in the array represents a single quiz question.
+        const pharmacokineticsQuizData = [
+            {
+                id: "pk001", 
+                category: "基本パラメータ（静注）", 
+                type: "calculation", 
+                questionText: "20 mgの投与量を静注後の初濃度が $0.8~\\mu g/mL$ であった。分布容積を求めなさい。", 
+                correctAnswerNumeric: 25, 
+                answerUnit: "L", 
+                tolerance: 0.1, 
+                hint: "分布容積 (V) は、投与量 (D) を初期血中濃度 ($C_0$) で割ることで求められます。<div class='formula-block'>$$V = \\frac{D}{C_0}$$</div>単位換算に注意しましょう (mg と μg)。", 
+                explanation: "分布容積 (V) は、投与量 (D) を初期血中濃度 ($C_0$) で割ることで求められます。<div class='formula-block'>$$V = \\frac{D}{C_0}$$</div><strong>計算:</strong> $$V = \\frac{20 \\text{ mg}}{0.8 \\text{ } \\mu g/mL} = \\frac{20000 \\text{ } \\mu g}{0.8 \\text{ } \\mu g/mL} = 25000 \\text{ mL} = 25 \\text{ L}$$", 
+                references: "演習1: 1-1, 公式まとめ: 1.2" 
+            },
+            {
+                id: "pk002",
+                category: "基本パラメータ（静注）",
+                type: "multiple-choice",
+                questionText: "静脈内急速投与後、時間 \\(t\\) における血中薬物濃度 \\(C(t)\\) を示す1-コンパートメントモデルの基本式はどれか。ただし、\\(C_0\\) は初期血中濃度、\\(k_{el}\\) は消失速度定数とする。",
+                options: [ 
+                    "$$C(t) = C_0 \\cdot (1 - e^{-k_{el}t})$$",
+                    "$$C(t) = C_0 \\cdot e^{-k_{el}t}$$",
+                    "$$C(t) = \\frac{D}{k_{el} \\cdot V}$$",
+                    "$$C(t) = \\frac{F \\cdot D \\cdot k_a}{V(k_a - k_{el})} (e^{-k_{el}t} - e^{-k_a t})$$"
+                ],
+                correctAnswer: "$$C(t) = C_0 \\cdot e^{-k_{el}t}$$", 
+                explanation: "1-コンパートメントモデルにおける静脈内急速投与後の血中薬物濃度は、初期濃度から指数関数的に減少します。この関係は $$C(t) = C_0 \\cdot e^{-k_{el}t}$$ で表されます。",
+                references: "公式まとめ: 1.1"
+            },
+            {
+                id: "pk003",
+                category: "基本パラメータ（静注）",
+                type: "calculation",
+                questionText: "消失半減期が $6~h$ である。消失速度定数 ($h^{-1}$) を求めなさい。（有効数字2桁、$\\ln(2) \\approx 0.693$ としなさい）",
+                correctAnswerNumeric: 0.12,
+                answerUnit: "h<sup>-1</sup>",
+                tolerance: 0.005, 
+                hint: "消失速度定数 ($k_{el}$) と消失半減期 ($t_{1/2}$) の関係式を思い出しましょう。<div class='formula-block'>$$k_{el} = \\frac{\\ln(2)}{t_{1/2}}$$/div>",
+                explanation: "消失速度定数 ($k_{el}$) は、$\\ln(2)$ を消失半減期 ($t_{1/2}$) で割ることで求められます。<div class='formula-block'>$$k_{el} = \\frac{\\ln(2)}{t_{1/2}}$$/div><strong>計算:</strong> $$k_{el} = \\frac{0.693}{6 \\text{ h}} \\approx 0.1155 \\text{ h}^{-1} \\approx 0.12 \\text{ h}^{-1}$$",
+                references: "演習1: 1-3, 公式まとめ: 1.4"
+            },
+            {
+                id: "pk004",
+                category: "基本パラメータ（静注）",
+                type: "calculation",
+                questionText: "消失速度定数が $0.15~h^{-1}$、分布容積が $30~L$ である。全身クリアランス ($L/h$) を求めなさい。",
+                correctAnswerNumeric: 4.5,
+                answerUnit: "L/h",
+                tolerance: 0.01,
+                hint: "全身クリアランス (CL)、消失速度定数 ($k_{el}$)、分布容積 (V) の関係式を利用します。<div class='formula-block'>$$CL = k_{el} \\cdot V$$</div>",
+                explanation: "全身クリアランス (CL) は、消失速度定数 ($k_{el}$) と分布容積 (V) の積で求められます。<div class='formula-block'>$$CL = k_{el} \\cdot V$$</div><strong>計算:</strong> $$CL = 0.15 \\text{ h}^{-1} \\cdot 30 \\text{ L} = 4.5 \\text{ L/h}$$",
+                references: "演習1: 1-5, 公式まとめ: 1.3"
+            },
+            {
+                id: "pk005",
+                category: "1-コンパートメントモデル（定速静脈内投与）",
+                type: "multiple-choice",
+                questionText: "定速静脈内投与を長時間続けた場合に到達する一定の血中濃度を何というか？",
+                options: [
+                    "初期血中濃度 ($C_0$)",
+                    "最高血中濃度 ($C_{max}$)",
+                    "定常状態血中濃度 ($C_{ss}$)",
+                    "平均血中濃度 ($C_{av}$)"
+                ],
+                correctAnswer: "定常状態血中濃度 ($C_{ss}$)",
+                explanation: "定速静脈内投与を長時間続けた場合に到達する一定の血中濃度は定常状態血中濃度 ($C_{ss}$) と呼ばれます。これは治療域を維持するための目標濃度として重要です。",
+                references: "公式まとめ: 3.2"
+            },
+            {
+                id: "pk006",
+                category: "1-コンパートメントモデル（定速静脈内投与）",
+                type: "calculation",
+                questionText: "全身クリアランスが $30~L/h$ で、分布容積が $80~L$ である。定速静注によって定常状態濃度を $0.6~\\mu g/mL$ にしたい。注入速度 ($mg/h$) を求めなさい。",
+                correctAnswerNumeric: 18,
+                answerUnit: "mg/h",
+                tolerance: 0.1,
+                hint: "注入速度 ($k_0$) は、全身クリアランス (CL) と目標とする定常状態血中濃度 ($C_{ss}$) の積で求められます。<div class='formula-block'>$$k_0 = CL \\cdot C_{ss}$$</div>単位換算 (L と mL、μg と mg) に注意してください。",
+                explanation: "注入速度 ($k_0$) は、全身クリアランス (CL) と定常状態血中濃度 ($C_{ss}$) の積で求められます。<div class='formula-block'>$$k_0 = CL \\cdot C_{ss}$$</div><strong>計算:</strong> $$k_0 = 30 \\text{ L/h} \\cdot 0.6 \\text{ } \\mu g/mL = 30000 \\text{ mL/h} \\cdot 0.6 \\text{ } \\mu g/mL = 18000 \\text{ } \\mu g/h = 18 \\text{ mg/h}$$",
+                references: "演習1: 2-1 (1), 公式まとめ: 3.2"
+            },
+            {
+                id: "pk007",
+                category: "生物学的利用率（バイオアベイラビリティ, F）",
+                type: "calculation",
+                questionText: "$100~mg$ の投与量 ($D_{po}$) を経口投与したときの濃度曲線下面積 ($AUC_{po}$) が $3~\\mu g \\cdot h/mL$ で、$50~mg$ の投与量 ($D_{iv}$) を静脈内投与した時の濃度曲線下面積 ($AUC_{iv}$) が $2~\\mu g \\cdot h/mL$ であった。絶対的生物学的利用率 F (%) を求めなさい。",
+                correctAnswerNumeric: 75,
+                answerUnit: "%",
+                tolerance: 0.1,
+                hint: "絶対的生物学的利用率 (F) は、経口投与時と静脈内投与時の (AUC/投与量) の比で計算されます。<div class='formula-block'>$$F = \\frac{(AUC_{po} / D_{po})}{(AUC_{iv} / D_{iv})} \\times 100\\%$$</div>",
+                explanation: "絶対的生物学的利用率 (F) は以下の式で計算されます。<div class='formula-block'>$$F = \\frac{(AUC_{po} / D_{po})}{(AUC_{iv} / D_{iv})} \\times 100\\%$$</div><strong>計算:</strong> $$F = \\frac{(3 \\text{ } \\mu g \\cdot h/mL / 100 \\text{ mg})}{(2 \\text{ } \\mu g \\cdot h/mL / 50 \\text{ mg})} \\times 100 = \\frac{0.03}{0.04} \\times 100 = 0.75 \\times 100 = 75\\%$$",
+                references: "演習1: 3-1, 公式まとめ: 5.1"
+            },
+            {
+                id: "pk008",
+                category: "1-コンパートメントモデル（反復投与）",
+                type: "calculation",
+                questionText: "一定の投与量を $8~h$ の投与間隔で反復静注時の定常状態において、ピーク濃度が $6~\\mu g/mL$ であった。消失半減期は $4~h$ である。トラフ濃度 ($C_{ss,min}$、単位: $\\mu g/mL$) を求めなさい。($\\ln(2) \\approx 0.693$)",
+                correctAnswerNumeric: 1.5,
+                answerUnit: "μg/mL",
+                tolerance: 0.01,
+                hint: "定常状態でのトラフ濃度 ($C_{ss,min}$) は、ピーク濃度 ($C_{ss,max}$)、消失速度定数 ($k_{el}$)、投与間隔 ($\\tau$) を用いて、$C_{ss,min} = C_{ss,max} \\cdot e^{-k_{el}\\tau}$ で計算できます。まず $k_{el}$ を求め、次に $e^{-k_{el}\\tau}$ の値を計算しましょう。$e^{-k_{el}\\tau} = (1/2)^{(\\tau/t_{1/2})}$ も利用できます。",
+                explanation: "定常状態におけるトラフ濃度 ($C_{ss,min}$) は、ピーク濃度 ($C_{ss,max}$) と消失速度定数 ($k_{el}$)、投与間隔 ($\\tau$) を用いて計算できます。$k_{el} = \\ln(2)/t_{1/2}$。$\\tau/t_{1/2} = 8h/4h = 2$ なので、$e^{-k_{el}\\tau} = e^{-\\ln(2) \\cdot (\\tau/t_{1/2})} = (1/2)^{\\tau/t_{1/2}} = (1/2)^2 = 1/4 = 0.25$。<div class='formula-block'>$$C_{ss,min} = C_{ss,max} \\cdot e^{-k_{el}\\tau}$$</div><strong>計算:</strong> $$C_{ss,min} = 6 \\text{ } \\mu g/mL \\cdot (1/2)^{(8h/4h)} = 6 \\text{ } \\mu g/mL \\cdot (1/2)^2 = 6 \\text{ } \\mu g/mL \\cdot 0.25 = 1.5 \\text{ } \\mu g/mL$$",
+                references: "演習1: 2-8, 公式まとめ: 4.2"
+            },
+             {
+                id: "pk009",
+                category: "臓器クリアランスと抽出率",
+                type: "multiple-choice",
+                questionText: "肝クリアランス ($CL_H$) を表すウェルスタードモデルの式はどれか。ただし、$Q_H$: 肝血流速度、$f_{u,B}$: 血液中非結合形分率、$CL_{int,H}$: 肝固有クリアランスとする。",
+                options: [
+                    "$$CL_H = Q_H + f_{u,B} \\cdot CL_{int,H}$$",
+                    "$$CL_H = \\frac{Q_H \\cdot f_{u,B}}{CL_{int,H}}$$",
+                    "$$CL_H = \\frac{Q_H \\cdot CL_{int,H}}{Q_H + f_{u,B} \\cdot CL_{int,H}}$$",
+                    "$$CL_H = \\frac{Q_H \\cdot f_{u,B} \\cdot CL_{int,H}}{Q_H + f_{u,B} \\cdot CL_{int,H}}$$"
+                ],
+                correctAnswer: "$$CL_H = \\frac{Q_H \\cdot f_{u,B} \\cdot CL_{int,H}}{Q_H + f_{u,B} \\cdot CL_{int,H}}$$",
+                explanation: "肝クリアランス ($CL_H$) は、ウェルスタードモデルにおいて、肝血流速度 ($Q_H$)、血液中非結合形分率 ($f_{u,B}$)、肝固有クリアランス ($CL_{int,H}$) を用いて $$CL_H = \\frac{Q_H \\cdot f_{u,B} \\cdot CL_{int,H}}{Q_H + f_{u,B} \\cdot CL_{int,H}}$$ と表されます。",
+                references: "公式まとめ: 6.2"
+            },
+            {
+                id: "pk010",
+                category: "モーメント解析",
+                type: "calculation",
+                questionText: "静注後の濃度曲線下面積 (AUC) が $200~\\mu g \\cdot h/mL$ で、1次モーメント曲線下面積 (AUMC) が $1500~\\mu g \\cdot h^2/mL$ であった。平均滞留時間 (MRT, 単位: h) を求めなさい。",
+                correctAnswerNumeric: 7.5,
+                answerUnit: "h",
+                tolerance: 0.01,
+                hint: "平均滞留時間 (MRT) は、AUMC を AUC で割ることで求められます。<div class='formula-block'>$$MRT_{iv} = \\frac{AUMC}{AUC}$$</div>",
+                explanation: "平均滞留時間 (MRT) は、1次モーメント曲線下面積 (AUMC) を濃度曲線下面積 (AUC) で割ることで求められます。<div class='formula-block'>$$MRT_{iv} = \\frac{AUMC}{AUC}$$</div><strong>計算:</strong> $$MRT = \\frac{1500 \\text{ } \\mu g \\cdot h^2/mL}{200 \\text{ } \\mu g \\cdot h/mL} = 7.5 \\text{ h}$$",
+                references: "演習1: 5-1, 公式まとめ: 9.1"
+            },
+            {
+                id: "pk011",
+                category: "基本パラメータ（静注）",
+                type: "calculation",
+                questionText: "消失半減期が6hで、分布容積が70Lである。全身クリアランス (L/h) を求めなさい。($\\ln(2) \\approx 0.693$)",
+                correctAnswerNumeric: 8.1,
+                answerUnit: "L/h",
+                tolerance: 0.05, 
+                hint: "まず消失速度定数 ($k_{el}$) を求め、次に全身クリアランス (CL) を計算します。<div class='formula-block'>$$k_{el} = \\frac{\\ln(2)}{t_{1/2}}$$/div><div class='formula-block'>$$CL = k_{el} \\cdot V$$</div>",
+                explanation: "消失速度定数 ($k_{el}$) は $k_{el} = \\frac{\\ln(2)}{t_{1/2}} = \\frac{0.693}{6 \\text{ h}} \\approx 0.1155 \\text{ h}^{-1}$ です。全身クリアランス (CL) は $CL = k_{el} \\cdot V = 0.1155 \\text{ h}^{-1} \\cdot 70 \\text{ L} \\approx 8.085 \\text{ L/h}$ となります。有効数字2桁で答えると $8.1 \\text{ L/h}$ です。",
+                references: "演習1: 1-6"
+            },
+            {
+                id: "pk012",
+                category: "基本パラメータ（静注）",
+                type: "calculation",
+                questionText: "投与量が200 mgで、濃度曲線下面積 (AUC) が $8~\\mu g \\cdot h/mL$ であった。全身クリアランス (L/h) を求めなさい。",
+                correctAnswerNumeric: 25,
+                answerUnit: "L/h",
+                tolerance: 0.1,
+                hint: "全身クリアランス (CL) は、投与量 (D) を濃度曲線下面積 (AUC) で割ることで求められます。<div class='formula-block'>$$CL = \\frac{D}{AUC}$$</div>単位換算に注意しましょう (mg と μg)。",
+                explanation: "全身クリアランス (CL) は $CL = \\frac{D}{AUC}$ で計算できます。$$CL = \\frac{200 \\text{ mg}}{8 \\text{ } \\mu g \\cdot h/mL} = \\frac{200000 \\text{ } \\mu g}{8 \\text{ } \\mu g \\cdot h/mL} = 25000 \\text{ mL/h} = 25 \\text{ L/h}$$",
+                references: "演習1: 1-8"
+            },
+            {
+                id: "pk013",
+                category: "基本パラメータ（静注）",
+                type: "calculation",
+                questionText: "初濃度が $40~\\mu g/mL$ で、36h後の濃度が $5~\\mu g/mL$ であった。24h後の濃度 (μg/mL) を求めなさい。",
+                correctAnswerNumeric: 10,
+                answerUnit: "μg/mL",
+                tolerance: 0.1,
+                hint: "36時間で濃度が $40 \\rightarrow 5 \\text{ } \\mu g/mL$ と1/8になったことから半減期を求め、それを用いて24時間後の濃度を計算します。$1/8 = (1/2)^3$ です。",
+                explanation: "36時間で濃度が $1/8$ になったので、$3 \\times t_{1/2} = 36 \\text{ h}$。よって、$t_{1/2} = 12 \\text{ h}$。24時間は半減期の2倍 ($24 \\text{ h} / 12 \\text{ h} = 2$) なので、濃度は初回濃度の $(1/2)^2 = 1/4$ になります。したがって、$C_{24h} = 40 \\text{ } \\mu g/mL \\times \\frac{1}{4} = 10 \\text{ } \\mu g/mL$。",
+                references: "演習1: 1-13"
+            },
+            {
+                id: "pk014",
+                category: "1-コンパートメントモデル（定速静脈内投与）",
+                type: "calculation",
+                questionText: "$5~mg/h$ の注入速度で定速静注時の定常状態濃度が $2~\\mu g/mL$ であった。全身クリアランス (L/h) を求めなさい。",
+                correctAnswerNumeric: 2.5,
+                answerUnit: "L/h",
+                tolerance: 0.05,
+                hint: "全身クリアランス (CL) は、注入速度 ($k_0$) を定常状態血中濃度 ($C_{ss}$) で割ることで求められます。<div class='formula-block'>$$CL = \\frac{k_0}{C_{ss}}$$/div>単位換算に注意しましょう (mg と μg、h と mL)。",
+                explanation: "全身クリアランス (CL) は $CL = \\frac{k_0}{C_{ss}}$ で計算できます。$$CL = \\frac{5 \\text{ mg/h}}{2 \\text{ } \\mu g/mL} = \\frac{5000 \\text{ } \\mu g/h}{2 \\text{ } \\mu g/mL} = 2500 \\text{ mL/h} = 2.5 \\text{ L/h}$$",
+                references: "演習1: 2-2"
+            },
+            {
+                id: "pk015",
+                category: "生物学的利用率（バイオアベイラビリティ, F）",
+                type: "calculation",
+                questionText: "全身クリアランスが $30~L/h$ で、$50~mg$ の投与量を経口投与したときの濃度曲線下面積 (AUC) が $1.2~\\mu g \\cdot h/mL$ であった。バイオアベイラビリティ F (%) を求めなさい。",
+                correctAnswerNumeric: 72,
+                answerUnit: "%",
+                tolerance: 0.5,
+                hint: "バイオアベイラビリティ (F) は、$F = \\frac{AUC_{po} \\cdot CL}{D_{po}}$ で計算できます。単位に注意してください。",
+                explanation: "バイオアベイラビリティ (F) は $F = \\frac{AUC_{po} \\cdot CL}{D_{po}}$ で計算できます。$$F = \\frac{1.2 \\text{ } \\mu g \\cdot h/mL \\cdot 30 \\text{ L/h}}{50 \\text{ mg}} = \\frac{1.2 \\text{ } \\mu g \\cdot h/mL \\cdot 30000 \\text{ mL/h}}{50000 \\text{ } \\mu g} = \\frac{36000}{50000} = 0.72$$したがって、$F = 72\\%$。",
+                references: "演習1: 3-2"
+            },
+            {
+                id: "pk016",
+                category: "1-コンパートメントモデル（反復投与）",
+                type: "calculation",
+                questionText: "ある薬物を、投与量(D)を300 mg, 投与間隔($\\tau$)を8hとして反復静注し、定常状態にした。この薬物の分布容積(V)は25Lで、消失半減期 ($t_{1/2}$) は4hである。定常状態でのピーク濃度 (μg/mL) を求めなさい。($\\ln(2) \\approx 0.693$)",
+                correctAnswerNumeric: 16,
+                answerUnit: "μg/mL",
+                tolerance: 0.5,
+                hint: "定常状態でのピーク濃度 ($C_{ss,max}$) は、$C_{ss,max} = \\frac{D/V}{1 - e^{-k_{el}\\tau}}$ で計算できます。まず $k_{el}$ を求め、次に $e^{-k_{el}\\tau}$ の値を計算します。$e^{-k_{el}\\tau} = (1/2)^{(\\tau/t_{1/2})}$ も利用できます。",
+                explanation: "$t_{1/2} = 4 \\text{ h}$ なので、$k_{el} = \\frac{\\ln(2)}{t_{1/2}} = \\frac{0.693}{4 \\text{ h}} \\approx 0.17325 \\text{ h}^{-1}$。$\\tau = 8 \\text{ h}$。$e^{-k_{el}\\tau} = e^{-0.17325 \\times 8} = e^{-1.386} \\approx 0.25$。または、$\\tau/t_{1/2} = 8/4 = 2$ なので、$e^{-k_{el}\\tau} = (1/2)^2 = 0.25$。初回投与直後の濃度 $C_1 = D/V = 300 \\text{ mg} / 25 \\text{ L} = 300000 \\text{ } \\mu g / 25000 \\text{ mL} = 12 \\text{ } \\mu g/mL$。$C_{ss,max} = \\frac{C_1}{1 - e^{-k_{el}\\tau}} = \\frac{12 \\text{ } \\mu g/mL}{1 - 0.25} = \\frac{12}{0.75} = 16 \\text{ } \\mu g/mL$。",
+                references: "演習2: 1-7 (1)"
+            },
+            {
+                id: "pk017",
+                category: "クリアランスと半減期",
+                type: "calculation",
+                questionText: "ある薬物を、投与量を50 mgとして静注したとき、血漿中濃度曲線下面積は $4~\\mu g \\cdot h/mL$, 尿中総排泄量は12mg, 消失半減期は4.8hであった。同じ投与量で、尿中総排泄量が30mgに増大した。この時の消失半減期 (h) を求めなさい。ただし、腎クリアランスと分布容積に変化はなかったとする。",
+                correctAnswerNumeric: 12,
+                answerUnit: "h",
+                tolerance: 0.5,
+                hint: "変化前のパラメータから $CL_{total}$ と $CL_R$ を求めます。分布容積Vも計算できます。変化後の尿中排泄率 $f_e'$ から変化後の $CL_{total}'$ を求め、$t_{1/2}' = (\\ln(2) \\cdot V) / CL_{total}'$ で計算します。",
+                explanation: "変化前: $CL_{total} = D/AUC = 50 \\text{ mg} / (4 \\text{ } \\mu g \\cdot h/mL) = 12.5 \\text{ L/h}$。$CL_R = X_{e,\\infty}/AUC = 12 \\text{ mg} / (4 \\text{ } \\mu g \\cdot h/mL) = 3 \\text{ L/h}$。$V = CL_{total} \\cdot t_{1/2} / \\ln(2) = 12.5 \\text{ L/h} \\cdot 4.8 \\text{ h} / 0.693 \\approx 86.58 \\text{ L}$。変化後: 尿中総排泄量 $X_{e,\\infty}' = 30 \\text{ mg}$。$CL_R$ は変化しない ($3 \\text{ L/h}$)。新しい尿中排泄率 $f_e' = X_{e,\\infty}' / D = 30 \\text{ mg} / 50 \\text{ mg} = 0.6$。$CL_R = f_e' \\cdot CL_{total}'$ なので、$CL_{total}' = CL_R / f_e' = 3 \\text{ L/h} / 0.6 = 5 \\text{ L/h}$。新しい消失半減期 $t_{1/2}' = (\\ln(2) \\cdot V) / CL_{total}' = (0.693 \\cdot 86.58 \\text{ L}) / 5 \\text{ L/h} \\approx 11.999 \\text{ h} \\approx 12 \\text{ h}$。",
+                references: "演習2: 1-10"
+            },
+            {
+                id: "pk018",
+                category: "基本パラメータ（静注）",
+                type: "calculation",
+                questionText: "分布容積が200Lである。80mgの投与量を静注後の初濃度 (μg/mL) を求めなさい。",
+                correctAnswerNumeric: 0.40,
+                answerUnit: "μg/mL",
+                tolerance: 0.005,
+                hint: "初期血中濃度 ($C_0$) は、投与量 (D) を分布容積 (V) で割ることで求められます。<div class='formula-block'>$$C_0 = \\frac{D}{V}$$</div>単位換算に注意しましょう (mg と μg、L と mL)。",
+                explanation: "初期血中濃度 ($C_0$) は $C_0 = \\frac{D}{V}$ で計算できます。$$C_0 = \\frac{80 \\text{ mg}}{200 \\text{ L}} = \\frac{80000 \\text{ } \\mu g}{200000 \\text{ mL}} = 0.4 \\text{ } \\mu g/mL$$",
+                references: "演習1: 1-2"
+            },
+            {
+                id: "pk019",
+                category: "基本パラメータ（静注）",
+                type: "calculation",
+                questionText: "消失速度定数が $0.231~h^{-1}$ である。消失半減期 (h) を求めなさい。($\\ln(2) \\approx 0.693$)",
+                correctAnswerNumeric: 3.0,
+                answerUnit: "h",
+                tolerance: 0.05,
+                hint: "消失半減期 ($t_{1/2}$) は、$\\ln(2)$ を消失速度定数 ($k_{el}$) で割ることで求められます。<div class='formula-block'>$$t_{1/2} = \\frac{\\ln(2)}{k_{el}}$$/div>",
+                explanation: "消失半減期 ($t_{1/2}$) は $t_{1/2} = \\frac{\\ln(2)}{k_{el}}$ で計算できます。$$t_{1/2} = \\frac{0.693}{0.231 \\text{ h}^{-1}} = 3.0 \\text{ h}$$",
+                references: "演習1: 1-4"
+            },
+            {
+                id: "pk020",
+                category: "基本パラメータ（静注）",
+                type: "calculation",
+                questionText: "全身クリアランスが18L/hで、消失速度定数が $0.25~h^{-1}$ である。分布容積 (L) を求めなさい。",
+                correctAnswerNumeric: 72,
+                answerUnit: "L",
+                tolerance: 0.5,
+                hint: "分布容積 (V) は、全身クリアランス (CL) を消失速度定数 ($k_{el}$) で割ることで求められます。<div class='formula-block'>$$V = \\frac{CL}{k_{el}}$$/div>",
+                explanation: "分布容積 (V) は $V = \\frac{CL}{k_{el}}$ で計算できます。$$V = \\frac{18 \\text{ L/h}}{0.25 \\text{ h}^{-1}} = 72 \\text{ L}$$",
+                references: "演習1: 1-7"
+            },
+            {
+                id: "pk021",
+                category: "基本パラメータ（静注）",
+                type: "calculation",
+                questionText: "投与量が300mgで、全身クリアランスが40L/hである。濃度曲線下面積 (AUC, $\\mu g \\cdot h/mL$) を求めなさい。",
+                correctAnswerNumeric: 7.5,
+                answerUnit: "μg・h/mL",
+                tolerance: 0.05,
+                hint: "濃度曲線下面積 (AUC) は、投与量 (D) を全身クリアランス (CL) で割ることで求められます。<div class='formula-block'>$$AUC = \\frac{D}{CL}$$</div>単位換算に注意しましょう (mg と μg、L と mL)。",
+                explanation: "濃度曲線下面積 (AUC) は $AUC = \\frac{D}{CL}$ で計算できます。$$AUC = \\frac{300 \\text{ mg}}{40 \\text{ L/h}} = \\frac{300000 \\text{ } \\mu g}{40000 \\text{ mL/h}} = 7.5 \\text{ } \\mu g \\cdot h/mL$$",
+                references: "演習1: 1-9"
+            },
+            {
+                id: "pk022",
+                category: "基本パラメータ（静注）",
+                type: "calculation",
+                questionText: "20 mgの投与量を静注後の初濃度が $0.5~\\mu g/mL$ で、消失半減期が10hであった。(1) 分布容積 (L) を求めなさい。(2) 全身クリアランス (L/h) を求めなさい。解答は (1) の値を入力してください。",
+                correctAnswerNumeric: 40, // For V
+                answerUnit: "L (分布容積)",
+                tolerance: 0.1,
+                hint: "(1) $V = D/C_0$ (2) $k_{el} = \\ln(2)/t_{1/2}$、$CL = k_{el} \\cdot V$",
+                explanation: "(1) 分布容積 $V = \\frac{D}{C_0} = \\frac{20 \\text{ mg}}{0.5 \\text{ } \\mu g/mL} = \\frac{20000 \\text{ } \\mu g}{0.5 \\text{ } \\mu g/mL} = 40000 \\text{ mL} = 40 \\text{ L}$。(2) 消失速度定数 $k_{el} = \\frac{\\ln(2)}{t_{1/2}} = \\frac{0.693}{10 \\text{ h}} = 0.0693 \\text{ h}^{-1}$。全身クリアランス $CL = k_{el} \\cdot V = 0.0693 \\text{ h}^{-1} \\cdot 40 \\text{ L} \\approx 2.772 \\text{ L/h}$。問題は(1)の分布容積を問うているため、正解は40L。",
+                references: "演習1: 1-10"
+            },
+            {
+                id: "pk023",
+                category: "基本パラメータ（静注）",
+                type: "calculation",
+                questionText: "500 mgの投与量を静注後の濃度が、3h後に $10~\\mu g/mL$ で、9h後に $2.5~\\mu g/mL$ であった。(1) 消失速度定数 ($h^{-1}$) を求めなさい。(2) 分布容積 (L) を求めなさい。解答は (1) の値を入力してください。(有効数字2桁)",
+                correctAnswerNumeric: 0.23, 
+                answerUnit: "h<sup>-1</sup> (消失速度定数)",
+                tolerance: 0.005, // 0.231 -> 0.23
+                hint: "(1) $k_{el} = \\frac{\\ln(C_1/C_2)}{t_2 - t_1}$ (2) $C_0 = C_t \\cdot e^{k_{el}t}$、$V = D/C_0$",
+                explanation: "(1) 消失速度定数 $k_{el} = \\frac{\\ln(C_{3h}/C_{9h})}{9 \\text{ h} - 3 \\text{ h}} = \\frac{\\ln(10/2.5)}{6 \\text{ h}} = \\frac{\\ln(4)}{6 \\text{ h}} = \\frac{2 \\ln(2)}{6 \\text{ h}} = \\frac{2 \\times 0.693}{6 \\text{ h}} \\approx 0.231 \\text{ h}^{-1}$。有効数字2桁で0.23 $h^{-1}$。(2) $C_0 = C_{3h} \\cdot e^{k_{el} \\cdot 3h} = 10 \\text{ } \\mu g/mL \\cdot e^{0.231 \\times 3} = 10 \\text{ } \\mu g/mL \\cdot e^{0.693} = 10 \\text{ } \\mu g/mL \\cdot 2 = 20 \\text{ } \\mu g/mL$。分布容積 $V = \\frac{D}{C_0} = \\frac{500 \\text{ mg}}{20 \\text{ } \\mu g/mL} = \\frac{500000 \\text{ } \\mu g}{20 \\text{ } \\mu g/mL} = 25000 \\text{ mL} = 25 \\text{ L}$。問題は(1)の消失速度定数を問うているため、正解は0.23 $h^{-1}$。",
+                references: "演習1: 1-11"
+            },
+            {
+                id: "pk024",
+                category: "基本パラメータ（静注）",
+                type: "calculation",
+                questionText: "初濃度が $6~\\mu g/mL$ で、消失半減期が8hであった。24h後の濃度 (μg/mL) を求めなさい。",
+                correctAnswerNumeric: 0.75,
+                answerUnit: "μg/mL",
+                tolerance: 0.005,
+                hint: "24時間は半減期の何倍かを確認し、$C_t = C_0 \\cdot (1/2)^n$ ($n = t/t_{1/2}$) を用いて計算します。",
+                explanation: "$t = 24 \\text{ h}$、$t_{1/2} = 8 \\text{ h}$ なので、$n = t/t_{1/2} = 24/8 = 3$。24時間後の濃度 $C_{24h} = C_0 \\cdot (1/2)^3 = 6 \\text{ } \\mu g/mL \\cdot (1/8) = 0.75 \\text{ } \\mu g/mL$。",
+                references: "演習1: 1-12"
+            },
+            {
+                id: "pk025",
+                category: "体内薬物量",
+                type: "calculation",
+                questionText: "消失半減期が6hである。100mgの投与量を静注後, 12hでの体内薬物量 (mg) を求めなさい。",
+                correctAnswerNumeric: 25,
+                answerUnit: "mg",
+                tolerance: 0.1,
+                hint: "12時間は半減期の何倍かを確認し、$X_t = D \\cdot (1/2)^n$ ($n = t/t_{1/2}$) を用いて計算します。",
+                explanation: "$t = 12 \\text{ h}$、$t_{1/2} = 6 \\text{ h}$ なので、$n = t/t_{1/2} = 12/6 = 2$。12時間後の体内薬物量 $X_{12h} = D \\cdot (1/2)^2 = 100 \\text{ mg} \\cdot (1/4) = 25 \\text{ mg}$。",
+                references: "演習1: 1-14"
+            },
+            {
+                id: "pk026",
+                category: "体内薬物量",
+                type: "calculation",
+                questionText: "消失半減期が4hである。80mgの投与量を静注後, 12hまでの体内からの消失量 (mg) を求めなさい。",
+                correctAnswerNumeric: 70,
+                answerUnit: "mg",
+                tolerance: 0.1,
+                hint: "まず12時間後の体内残存量を計算し、初期投与量から引くことで消失量を求めます。$X_{el} = D - X_t$。",
+                explanation: "$t = 12 \\text{ h}$、$t_{1/2} = 4 \\text{ h}$ なので、$n = t/t_{1/2} = 12/4 = 3$。12時間後の体内残存量 $X_{12h} = D \\cdot (1/2)^3 = 80 \\text{ mg} \\cdot (1/8) = 10 \\text{ mg}$。したがって、12時間までの消失量 $X_{el} = D - X_{12h} = 80 \\text{ mg} - 10 \\text{ mg} = 70 \\text{ mg}$。",
+                references: "演習1: 1-15"
+            },
+            {
+                id: "pk027",
+                category: "1-コンパートメントモデル（定速静脈内投与）",
+                type: "calculation",
+                questionText: "全身クリアランスが30L/hで、分布容積が80Lである。定速静注によって定常状態濃度を $0.6~\\mu g/mL$ にしたい。注入速度 ($mg/h$) を求めなさい。",
+                correctAnswerNumeric: 18,
+                answerUnit: "mg/h",
+                tolerance: 0.1,
+                hint: "注入速度 ($k_0$) は、全身クリアランス (CL) と目標とする定常状態血中濃度 ($C_{ss}$) の積で求められます。<div class='formula-block'>$$k_0 = CL \\cdot C_{ss}$$</div>単位換算に注意してください。",
+                explanation: "注入速度 ($k_0$) は $k_0 = CL \\cdot C_{ss}$ で計算できます。$$k_0 = 30 \\text{ L/h} \\cdot 0.6 \\text{ } \\mu g/mL = 30000 \\text{ mL/h} \\cdot 0.6 \\text{ } \\mu g/mL = 18000 \\text{ } \\mu g/h = 18 \\text{ mg/h}$$",
+                references: "演習1: 2-1 (1)"
+            },
+            {
+                id: "pk028",
+                category: "1-コンパートメントモデル（定速静脈内投与）",
+                type: "calculation",
+                questionText: "全身クリアランスが30L/hで、分布容積が80Lである。定速静注によって定常状態濃度を $0.6~\\mu g/mL$ にしたい。注入開始時から定常状態にするための負荷投与量 ($mg$) を求めなさい。",
+                correctAnswerNumeric: 48,
+                answerUnit: "mg",
+                tolerance: 0.1,
+                hint: "負荷投与量 ($D_L$) は、目標とする定常状態血中濃度 ($C_{ss}$) と分布容積 (V) の積で求められます。<div class='formula-block'>$$D_L = C_{ss} \\cdot V$$</div>単位換算に注意してください。",
+                explanation: "負荷投与量 ($D_L$) は $D_L = C_{ss} \\cdot V$ で計算できます。$$D_L = 0.6 \\text{ } \\mu g/mL \\cdot 80 \\text{ L} = 0.6 \\text{ } \\mu g/mL \\cdot 80000 \\text{ mL} = 48000 \\text{ } \\mu g = 48 \\text{ mg}$$",
+                references: "演習1: 2-1 (2)"
+            },
+            {
+                id: "pk029",
+                category: "1-コンパートメントモデル（定速静脈内投与）",
+                type: "calculation",
+                questionText: "消失速度定数が $0.5~h^{-1}$ であり, $1.5~mg/h$ の注入速度で定速静注する。注入開始時から定常状態にするための負荷投与量 ($mg$) を求めなさい。",
+                correctAnswerNumeric: 3.0,
+                answerUnit: "mg",
+                tolerance: 0.05,
+                hint: "負荷投与量 ($D_L$) は、注入速度 ($k_0$) を消失速度定数 ($k_{el}$) で割ることでも求められます。<div class='formula-block'>$$D_L = \\frac{k_0}{k_{el}}$$/div>",
+                explanation: "負荷投与量 ($D_L$) は $D_L = \\frac{k_0}{k_{el}}$ で計算できます。$$D_L = \\frac{1.5 \\text{ mg/h}}{0.5 \\text{ h}^{-1}} = 3.0 \\text{ mg}$$",
+                references: "演習1: 2-3"
+            },
+            {
+                id: "pk030",
+                category: "1-コンパートメントモデル（反復投与）",
+                type: "calculation",
+                questionText: "全身クリアランスが15L/hである。反復静注(一定の投与量と投与間隔)して、定常状態平均濃度を $0.5~\\mu g/mL$ にしたい。投与速度 ($mg/h$) を求めなさい。",
+                correctAnswerNumeric: 7.5,
+                answerUnit: "mg/h",
+                tolerance: 0.05,
+                hint: "投与速度 ($D/\\tau$) は、全身クリアランス (CL) と定常状態平均濃度 ($C_{ss,av}$) の積で求められます。<div class='formula-block'>$$\\frac{D}{\\tau} = CL \\cdot C_{ss,av}$$</div>",
+                explanation: "投与速度 ($D/\\tau$) は $\\frac{D}{\\tau} = CL \\cdot C_{ss,av}$ で計算できます。$$\\frac{D}{\\tau} = 15 \\text{ L/h} \\cdot 0.5 \\text{ } \\mu g/mL = 15000 \\text{ mL/h} \\cdot 0.5 \\text{ } \\mu g/mL = 7500 \\text{ } \\mu g/h = 7.5 \\text{ mg/h}$$",
+                references: "演習1: 2-4"
+            },
+            {
+                id: "pk031",
+                category: "1-コンパートメントモデル（反復投与）",
+                type: "calculation",
+                questionText: "全身クリアランスが20L/hである。一定の投与量を8hの投与間隔で反復静注して定常状態平均濃度を $0.15~\\mu g/mL$ にしたい。投与量 (mg) を求めなさい。",
+                correctAnswerNumeric: 24,
+                answerUnit: "mg",
+                tolerance: 0.1,
+                hint: "投与量 (D) は、$D = CL \\cdot C_{ss,av} \\cdot \\tau$ で計算できます。",
+                explanation: "投与量 (D) は $D = CL \\cdot C_{ss,av} \\cdot \\tau$ で計算できます。$$D = 20 \\text{ L/h} \\cdot 0.15 \\text{ } \\mu g/mL \\cdot 8 \\text{ h} = 20000 \\text{ mL/h} \\cdot 0.15 \\text{ } \\mu g/mL \\cdot 8 \\text{ h} = 24000 \\text{ } \\mu g = 24 \\text{ mg}$$",
+                references: "演習1: 2-5"
+            },
+            {
+                id: "pk032",
+                category: "1-コンパートメントモデル（反復投与）",
+                type: "calculation",
+                questionText: "50 mgの投与量を静注後の濃度曲線下面積が $20~\\mu g \\cdot h/mL$ であった。一定の投与量を8hの投与間隔で反復静注して、定常状態平均濃度を $2~\\mu g/mL$ にしたい。投与量 (mg) を求めなさい。",
+                correctAnswerNumeric: 40,
+                answerUnit: "mg",
+                tolerance: 0.1,
+                hint: "まず全身クリアランス (CL) を $CL=D_{iv}/AUC_{iv}$ で求め、次に維持投与量 $D_M = CL \\cdot C_{ss,av} \\cdot \\tau$ を計算します。",
+                explanation: "まず全身クリアランス (CL) を求めます: $CL = \\frac{50 \\text{ mg}}{20 \\text{ } \\mu g \\cdot h/mL} = \\frac{50000 \\text{ } \\mu g}{20 \\text{ } \\mu g \\cdot h/mL} = 2500 \\text{ mL/h} = 2.5 \\text{ L/h}$。次に投与量 (D) を計算します: $D = CL \\cdot C_{ss,av} \\cdot \\tau = 2.5 \\text{ L/h} \\cdot 2 \\text{ } \\mu g/mL \\cdot 8 \\text{ h} = 2500 \\text{ mL/h} \\cdot 2 \\text{ } \\mu g/mL \\cdot 8 \\text{ h} = 40000 \\text{ } \\mu g = 40 \\text{ mg}$。",
+                references: "演習1: 2-6"
+            },
+            {
+                id: "pk033",
+                category: "1-コンパートメントモデル（反復投与）",
+                type: "calculation",
+                questionText: "全身クリアランスが5L/hである。100mgの投与量を8hの投与間隔で反復静注したときの定常状態平均濃度 (μg/mL) を求めなさい。",
+                correctAnswerNumeric: 2.5,
+                answerUnit: "μg/mL",
+                tolerance: 0.05,
+                hint: "定常状態平均濃度 ($C_{ss,av}$) は、$C_{ss,av} = \\frac{D/\\tau}{CL}$ で計算できます。",
+                explanation: "定常状態平均濃度 ($C_{ss,av}$) は $C_{ss,av} = \\frac{D/\\tau}{CL}$ で計算できます。$$C_{ss,av} = \\frac{100 \\text{ mg} / 8 \\text{ h}}{5 \\text{ L/h}} = \\frac{12.5 \\text{ mg/h}}{5 \\text{ L/h}} = \\frac{12500 \\text{ } \\mu g/h}{5000 \\text{ mL/h}} = 2.5 \\text{ } \\mu g/mL$$",
+                references: "演習1: 2-7"
+            },
+            {
+                id: "pk034",
+                category: "1-コンパートメントモデル（反復投与）",
+                type: "calculation",
+                questionText: "分布容積が500Lで、消失半減期が6hである。60mgの投与量を12hの投与間隔で反復静注して定常状態になった。(1) ピーク濃度 (μg/mL) を求めなさい。",
+                correctAnswerNumeric: 0.16,
+                answerUnit: "μg/mL (ピーク)",
+                tolerance: 0.005,
+                hint: "$C_{ss,max} = \\frac{D/V}{1 - e^{-k_{el}\\tau}}$。まず $k_{el}$ を求め、$e^{-k_{el}\\tau}$ を計算します。$e^{-k_{el}\\tau} = (1/2)^{(\\tau/t_{1/2})}$ も利用可能です。",
+                explanation: "$t_{1/2} = 6 \\text{ h} \\implies k_{el} = \\ln(2)/6 \\approx 0.1155 \\text{ h}^{-1}$。$\\tau = 12 \\text{ h}$。$e^{-k_{el}\\tau} = (1/2)^{12/6} = (1/2)^2 = 0.25$。$C_1 = D/V = 60 \\text{ mg} / 500 \\text{ L} = 60000 \\text{ } \\mu g / 500000 \\text{ mL} = 0.12 \\text{ } \\mu g/mL$。$C_{ss,max} = \\frac{0.12 \\text{ } \\mu g/mL}{1 - 0.25} = \\frac{0.12}{0.75} = 0.16 \\text{ } \\mu g/mL$。",
+                references: "演習1: 2-9 (1)"
+            },
+            {
+                id: "pk035",
+                category: "1-コンパートメントモデル（反復投与）",
+                type: "calculation",
+                questionText: "分布容積が500Lで、消失半減期が6hである。60mgの投与量を12hの投与間隔で反復静注して定常状態になった。(2) トラフ濃度 (μg/mL) を求めなさい。 (ピーク濃度が $0.16~\\mu g/mL$ と仮定)",
+                correctAnswerNumeric: 0.04,
+                answerUnit: "μg/mL (トラフ)",
+                tolerance: 0.001,
+                hint: "$C_{ss,min} = C_{ss,max} \\cdot e^{-k_{el}\\tau}$。$e^{-k_{el}\\tau}$ は前の問題 (またはヒントから) 計算できます。",
+                explanation: "$e^{-k_{el}\\tau} = 0.25$ (演習1: 2-9 (1)より)。$C_{ss,min} = C_{ss,max} \\cdot e^{-k_{el}\\tau} = 0.16 \\text{ } \\mu g/mL \\cdot 0.25 = 0.04 \\text{ } \\mu g/mL$。",
+                references: "演習1: 2-9 (2)"
+            },
+            {
+                id: "pk036",
+                category: "1-コンパートメントモデル（反復投与）",
+                type: "calculation",
+                questionText: "分布容積が500Lで、消失半減期が6hである。60mgの投与量を12hの投与間隔で反復静注して定常状態になった。(3) 平均濃度 (μg/mL) を求めなさい。",
+                correctAnswerNumeric: 0.087,
+                answerUnit: "μg/mL (平均)",
+                tolerance: 0.0005,
+                hint: "$C_{ss,av} = \\frac{D/\\tau}{CL}$。まずCLを計算します。$CL = k_{el}V$。",
+                explanation: "$k_{el} = \\ln(2)/6 \\approx 0.1155 \\text{ h}^{-1}$。$CL = k_{el}V = 0.1155 \\text{ h}^{-1} \\cdot 500 \\text{ L} = 57.75 \\text{ L/h}$。$C_{ss,av} = \\frac{D/\\tau}{CL} = \\frac{60 \\text{ mg} / 12 \\text{ h}}{57.75 \\text{ L/h}} = \\frac{5 \\text{ mg/h}}{57.75 \\text{ L/h}} = \\frac{5000 \\text{ } \\mu g/h}{57750 \\text{ mL/h}} \\approx 0.08658 \\text{ } \\mu g/mL$。有効数字2桁で $0.087 \\text{ } \\mu g/mL$。",
+                references: "演習1: 2-9 (3)"
+            },
+            {
+                id: "pk037",
+                category: "1-コンパートメントモデル（反復投与）",
+                type: "calculation",
+                questionText: "分布容積が500Lで、消失半減期が6hである。60mgの投与量を12hの投与間隔で反復静注して定常状態になった。(4) 初回投与から定常状態にするための初回の負荷投与量 (mg) を求めなさい。(ピーク濃度が $0.16~\\mu g/mL$ と仮定)",
+                correctAnswerNumeric: 80,
+                answerUnit: "mg (負荷投与量)",
+                tolerance: 0.5,
+                hint: "$D_L = C_{ss,max} \\cdot V$。",
+                explanation: "$D_L = C_{ss,max} \\cdot V = 0.16 \\text{ } \\mu g/mL \\cdot 500 \\text{ L} = 0.16 \\text{ } \\mu g/mL \\cdot 500000 \\text{ mL} = 80000 \\text{ } \\mu g = 80 \\text{ mg}$。",
+                references: "演習1: 2-9 (4)"
+            },
+            {
+                id: "pk038",
+                category: "生物学的利用率（バイオアベイラビリティ, F）",
+                type: "calculation",
+                questionText: "全身クリアランスが25 L/hで、経口投与時のバイオアベイラビリティが70%である。50 mgの投与量を経口投与したときの濃度曲線下面積 (AUC, $\\mu g \\cdot h/mL$) を求めなさい。",
+                correctAnswerNumeric: 1.4,
+                answerUnit: "μg・h/mL",
+                tolerance: 0.05,
+                hint: "$AUC_{po} = \\frac{F \\cdot D_{po}}{CL}$。",
+                explanation: "$AUC_{po} = \\frac{F \\cdot D_{po}}{CL} = \\frac{0.70 \\cdot 50 \\text{ mg}}{25 \\text{ L/h}} = \\frac{35 \\text{ mg}}{25 \\text{ L/h}} = \\frac{35000 \\text{ } \\mu g}{25000 \\text{ mL/h}} = 1.4 \\text{ } \\mu g \\cdot h/mL$。",
+                references: "演習1: 3-3"
+            },
+            {
+                id: "pk039",
+                category: "生物学的利用率（バイオアベイラビリティ, F）",
+                type: "calculation",
+                questionText: "全身クリアランスが20 L/hである。反復経口投与(一定の投与量と投与間隔)して、定常状態平均濃度を $5~\\mu g/mL$ にしたい。バイオアベイラビリティは40%である。投与速度 (mg/h) を求めなさい。",
+                correctAnswerNumeric: 250,
+                answerUnit: "mg/h",
+                tolerance: 1,
+                hint: "投与速度 ($D/\\tau$) は $\\frac{D}{\\tau} = \\frac{CL \\cdot C_{ss,av}}{F}$ で計算できます。",
+                explanation: "投与速度 ($D/\\tau$) は $\\frac{D}{\\tau} = \\frac{CL \\cdot C_{ss,av}}{F} = \\frac{20 \\text{ L/h} \\cdot 5 \\text{ } \\mu g/mL}{0.40} = \\frac{100 \\text{ mg/h}}{0.40} = 250 \\text{ mg/h}$。",
+                references: "演習1: 3-4"
+            },
+            {
+                id: "pk040",
+                category: "生物学的利用率（バイオアベイラビリティ, F）",
+                type: "calculation",
+                questionText: "40 mgの投与量を経口投与後の濃度曲線下面積が $42~\\mu g \\cdot h/mL$ であった。一定の投与量を12hの投与間隔で反復経口投与して、定常状態平均濃度を $7~\\mu g/mL$ にしたい。投与量 (mg) を求めなさい。",
+                correctAnswerNumeric: 80,
+                answerUnit: "mg",
+                tolerance: 0.5,
+                hint: "まず経口クリアランス $CL_{po} = D_{po}/AUC_{po}$ を求め、次に $D_M = CL_{po} \\cdot C_{ss,av} \\cdot \\tau / F$ ですが、$CL_{po}/F = CL_{total}$ なので、$D_M = (D_{po}/AUC_{po}) \\cdot C_{ss,av} \\cdot \\tau$ を利用するか、または $D_M = D_{single} \\frac{AUC_{ss}}{AUC_{single}}$ ($AUC_{ss} = C_{ss,av} \\cdot \\tau$) を利用します。",
+                explanation: "$AUC_{ss} = C_{ss,av} \\cdot \\tau = 7 \\text{ } \\mu g/mL \\cdot 12 \\text{ h} = 84 \\text{ } \\mu g \\cdot h/mL$。投与量 $D_M = D_{single} \\frac{AUC_{ss}}{AUC_{single}} = 40 \\text{ mg} \\cdot \\frac{84 \\text{ } \\mu g \\cdot h/mL}{42 \\text{ } \\mu g \\cdot h/mL} = 40 \\text{ mg} \\cdot 2 = 80 \\text{ mg}$。",
+                references: "演習1: 3-5"
+            },
+            {
+                id: "pk041",
+                category: "生物学的利用率（バイオアベイラビリティ, F）",
+                type: "calculation",
+                questionText: "40 mgを静注後の濃度曲線下面積が $50~\\mu g \\cdot h/mL$ であった。一定の投与量を8hの投与間隔で反復経口投与して、定常状態平均濃度を $3~\\mu g/mL$ にしたい。バイオアベイラビリティは60%である。投与量 (mg) を求めなさい。",
+                correctAnswerNumeric: 32,
+                answerUnit: "mg",
+                tolerance: 0.5,
+                hint: "まず全身クリアランス $CL = D_{iv}/AUC_{iv}$ を求め、次に経口投与量 $D_{po,M} = \\frac{CL \\cdot C_{ss,av} \\cdot \\tau}{F}$ を計算します。",
+                explanation: "$CL = \\frac{40 \\text{ mg}}{50 \\text{ } \\mu g \\cdot h/mL} = \\frac{40000 \\text{ } \\mu g}{50 \\text{ } \\mu g \\cdot h/mL} = 800 \\text{ mL/h} = 0.8 \\text{ L/h}$。$D_{po,M} = \\frac{CL \\cdot C_{ss,av} \\cdot \\tau}{F} = \\frac{0.8 \\text{ L/h} \\cdot 3 \\text{ } \\mu g/mL \\cdot 8 \\text{ h}}{0.60} = \\frac{19.2 \\text{ mg}}{0.60} = 32 \\text{ mg}$。",
+                references: "演習1: 3-6"
+            },
+            {
+                id: "pk042",
+                category: "腎クリアランス・肝クリアランス",
+                type: "calculation",
+                questionText: "80 mgの投与量を静脈内投与後の濃度曲線下面積が $5~\\mu g \\cdot h/mL$ で、尿中総排泄量が32 mgであった。(1) 腎クリアランス (L/h) を求めなさい。",
+                correctAnswerNumeric: 6.4,
+                answerUnit: "L/h (腎CL)",
+                tolerance: 0.05,
+                hint: "腎クリアランス ($CL_R$) は、$CL_R = X_{e,\\infty}/AUC$ で計算できます。",
+                explanation: "腎クリアランス ($CL_R$) は $CL_R = \\frac{X_{e,\\infty}}{AUC} = \\frac{32 \\text{ mg}}{5 \\text{ } \\mu g \\cdot h/mL} = \\frac{32000 \\text{ } \\mu g}{5 \\text{ } \\mu g \\cdot h/mL} = 6400 \\text{ mL/h} = 6.4 \\text{ L/h}$。",
+                references: "演習1: 3-7 (1)"
+            },
+            {
+                id: "pk043",
+                category: "腎クリアランス・肝クリアランス",
+                type: "calculation",
+                questionText: "80 mgの投与量を静脈内投与後の濃度曲線下面積が $5~\\mu g \\cdot h/mL$ で、尿中総排泄量が32 mgであった。(2) 肝クリアランス (L/h) を求めなさい。(腎CLが $6.4~L/h$ と仮定)",
+                correctAnswerNumeric: 9.6,
+                answerUnit: "L/h (肝CL)",
+                tolerance: 0.05,
+                hint: "まず全身クリアランス $CL = D/AUC$ を求め、次に肝クリアランス $CL_H = CL - CL_R$ を計算します。",
+                explanation: "全身クリアランス $CL = \\frac{D}{AUC} = \\frac{80 \\text{ mg}}{5 \\text{ } \\mu g \\cdot h/mL} = \\frac{80000 \\text{ } \\mu g}{5 \\text{ } \\mu g \\cdot h/mL} = 16000 \\text{ mL/h} = 16 \\text{ L/h}$。肝クリアランス $CL_H = CL - CL_R = 16 \\text{ L/h} - 6.4 \\text{ L/h} = 9.6 \\text{ L/h}$。",
+                references: "演習1: 3-7 (2)"
+            },
+            {
+                id: "pk044",
+                category: "腎クリアランス・肝クリアランス",
+                type: "calculation",
+                questionText: "100 mgの投与量を静脈内投与後の濃度曲線下面積が $5~\\mu g \\cdot h/mL$ で、代謝物の尿中総排泄量(未変化体換算)が24 mgであった。肝クリアランス (L/h) を求めなさい。",
+                correctAnswerNumeric: 4.8,
+                answerUnit: "L/h",
+                tolerance: 0.05,
+                hint: "肝クリアランス ($CL_H$) は、肝代謝により生成し尿中に排泄された代謝物総量 ($X_{m,\\infty}$) をAUCで割ることで求められます。$CL_H = X_{m,\\infty}/AUC$。",
+                explanation: "肝クリアランス ($CL_H$) は $CL_H = \\frac{X_{m,\\infty}}{AUC} = \\frac{24 \\text{ mg}}{5 \\text{ } \\mu g \\cdot h/mL} = \\frac{24000 \\text{ } \\mu g}{5 \\text{ } \\mu g \\cdot h/mL} = 4800 \\text{ mL/h} = 4.8 \\text{ L/h}$。",
+                references: "演習1: 3-8"
+            },
+            {
+                id: "pk045",
+                category: "肝抽出率・バイオアベイラビリティ",
+                type: "calculation",
+                questionText: "240 mgの投与量を静脈内投与後の濃度曲線下面積が $4.8~\\mu g \\cdot h/mL$ で、尿中総排泄量が96 mgであった。肝血流速度は90 L/hとする。(1) 肝抽出率 (%) を求めなさい。",
+                correctAnswerNumeric: 33,
+                answerUnit: "% (肝抽出率)",
+                tolerance: 0.5, // 33.33...
+                hint: "まず全身CL、腎CLを求め、肝CL ($CL_H = CL - CL_R$) を計算します。次に肝抽出率 $E_H = CL_H/Q_H$ を計算します。",
+                explanation: "$CL = D/AUC = 240/4.8 = 50 \\text{ L/h}$。$CL_R = X_{e,\\infty}/AUC = 96/4.8 = 20 \\text{ L/h}$。$CL_H = CL - CL_R = 50 - 20 = 30 \\text{ L/h}$。肝抽出率 $E_H = CL_H/Q_H = 30 \\text{ L/h} / 90 \\text{ L/h} = 1/3 \\approx 0.333$。よって、$33\\%$。",
+                references: "演習1: 4-1 (1)"
+            },
+            {
+                id: "pk046",
+                category: "肝抽出率・バイオアベイラビリティ",
+                type: "calculation",
+                questionText: "240 mgの投与量を静脈内投与後のAUCが $4.8~\\mu g \\cdot h/mL$、尿中総排泄量が96 mg。肝血流速度90 L/h、消化管からの吸収率が60%。(2) 経口投与でのバイオアベイラビリティ (%) を求めなさい。(肝抽出率が33.3%と仮定)",
+                correctAnswerNumeric: 40,
+                answerUnit: "% (BA)",
+                tolerance: 0.5,
+                hint: "肝アベイラビリティ $F_H = 1 - E_H$ を計算し、次に全身のバイオアベイラビリティ $F = F_H \\cdot F_a$ を計算します。",
+                explanation: "肝抽出率 $E_H \\approx 0.333$。肝アベイラビリティ $F_H = 1 - E_H = 1 - 0.333 = 0.667$。消化管からの吸収率 $F_a = 0.60$。バイオアベイラビリティ $F = F_H \\cdot F_a = 0.667 \\cdot 0.60 \\approx 0.4002$。よって、$40\\%$。",
+                references: "演習1: 4-1 (2)"
+            },
+            {
+                id: "pk047",
+                category: "尿中排泄",
+                type: "calculation",
+                questionText: "消失半減期が4hで、40mgの投与量を静注後、8hまでの尿中排泄量が12mgであった。尿中総排泄量 (mg) を求めなさい。",
+                correctAnswerNumeric: 16,
+                answerUnit: "mg",
+                tolerance: 0.1,
+                hint: "8hは半減期の2倍なので、8hまでに消失する薬物量は $D(1-(1/2)^2) = D \\cdot 3/4$。尿中排泄率 $f_e = Xe_{0-8h} / X_{el, 0-8h}$。尿中総排泄量 $X_{e,\\infty} = f_e \\cdot D$。",
+                explanation: "8h後 ($2 \\times t_{1/2}$) の体内残存量 $X_{8h} = D \\cdot (1/2)^2 = 40 \\text{ mg} \\cdot 1/4 = 10 \\text{ mg}$。8hまでに消失した薬物量 $X_{el,0-8h} = D - X_{8h} = 40 - 10 = 30 \\text{ mg}$。尿中排泄率 $f_e = Xe_{0-8h} / X_{el,0-8h} = 12 \\text{ mg} / 30 \\text{ mg} = 0.4$。尿中総排泄量 $X_{e,\\infty} = f_e \\cdot D = 0.4 \\cdot 40 \\text{ mg} = 16 \\text{ mg}$。",
+                references: "演習1: 4-2"
+            },
+            {
+                id: "pk048",
+                category: "腎クリアランス",
+                type: "calculation",
+                questionText: "定速静注での定常状態において、濃度が $3~\\mu g/mL$ で、尿中排泄速度が $54~mg/h$ であった。腎クリアランス (L/h) を求めなさい。",
+                correctAnswerNumeric: 18,
+                answerUnit: "L/h",
+                tolerance: 0.1,
+                hint: "腎クリアランス ($CL_R$) は、定常状態での尿中排泄速度 ($v_{e,ss}$) を定常状態血漿中濃度 ($C_{ss}$) で割ることで求められます。<div class='formula-block'>$$CL_R = \\frac{v_{e,ss}}{C_{ss}}$$/div>",
+                explanation: "腎クリアランス ($CL_R$) は $CL_R = \\frac{v_{e,ss}}{C_{ss}} = \\frac{54 \\text{ mg/h}}{3 \\text{ } \\mu g/mL} = \\frac{54000 \\text{ } \\mu g/h}{3 \\text{ } \\mu g/mL} = 18000 \\text{ mL/h} = 18 \\text{ L/h}$。",
+                references: "演習1: 4-3"
+            },
+            {
+                id: "pk049",
+                category: "尿中排泄",
+                type: "calculation",
+                questionText: "腎クリアランスが40 L/hで、定速静注での定常状態濃度が $1.2~\\mu g/mL$ であった。定常状態における2hの尿中排泄量 (mg) を求めなさい。",
+                correctAnswerNumeric: 96,
+                answerUnit: "mg",
+                tolerance: 0.5,
+                hint: "定常状態における尿中排泄量 ($X_e$) は、$X_e = CL_R \\cdot C_{ss} \\cdot t$ で計算できます。",
+                explanation: "尿中排泄量 ($X_e$) は $X_e = CL_R \\cdot C_{ss} \\cdot t = 40 \\text{ L/h} \\cdot 1.2 \\text{ } \\mu g/mL \\cdot 2 \\text{ h} = 40000 \\text{ mL/h} \\cdot 1.2 \\text{ } \\mu g/mL \\cdot 2 \\text{ h} = 96000 \\text{ } \\mu g = 96 \\text{ mg}$。",
+                references: "演習1: 4-4"
+            },
+            {
+                id: "pk050",
+                category: "1-コンパートメントモデル（定速静脈内投与）",
+                type: "calculation",
+                questionText: "尿中排泄率が80%で、定速静注での定常状態における尿中排泄速度が $1.2~mg/h$ であった。注入速度 ($k_0$, mg/h) を求めなさい。",
+                correctAnswerNumeric: 1.5,
+                answerUnit: "mg/h",
+                tolerance: 0.05,
+                hint: "注入速度 ($k_0$) は、定常状態での尿中排泄速度 ($v_{e,ss}$) を尿中排泄率 ($f_e$) で割ることで求められます。<div class='formula-block'>$$k_0 = \\frac{v_{e,ss}}{f_e}$$/div>",
+                explanation: "注入速度 ($k_0$) は $k_0 = \\frac{v_{e,ss}}{f_e} = \\frac{1.2 \\text{ mg/h}}{0.80} = 1.5 \\text{ mg/h}$。",
+                references: "演習1: 4-5"
+            },
+            {
+                id: "pk051",
+                category: "腎クリアランス",
+                type: "calculation",
+                questionText: "一定の投与量の12h間隔での反復投与において、定常状態平均濃度が $1.5~\\mu g/mL$ で、1投与間隔での尿中排泄量が81mgであった。腎クリアランス (L/h) を求めなさい。",
+                correctAnswerNumeric: 4.5,
+                answerUnit: "L/h",
+                tolerance: 0.05,
+                hint: "腎クリアランス ($CL_R$) は、$CL_R = \\frac{X_{e,ss}/\\tau}{C_{ss,av}}$ で計算できます。",
+                explanation: "腎クリアランス ($CL_R$) は $CL_R = \\frac{X_{e,ss}/\\tau}{C_{ss,av}} = \\frac{81 \\text{ mg} / 12 \\text{ h}}{1.5 \\text{ } \\mu g/mL} = \\frac{6.75 \\text{ mg/h}}{1.5 \\text{ } \\mu g/mL} = \\frac{6750 \\text{ } \\mu g/h}{1.5 \\text{ } \\mu g/mL} = 4500 \\text{ mL/h} = 4.5 \\text{ L/h}$。",
+                references: "演習1: 4-6"
+            },
+            {
+                id: "pk052",
+                category: "モーメント解析",
+                type: "calculation",
+                questionText: "経口投与後の濃度曲線下面積が $30~\\mu g \\cdot h/mL$ で、1次モーメント曲線下面積が $240~\\mu g \\cdot h^2/mL$ であった。静注後の平均滞留時間は5.5hであった。平均吸収時間 (MAT, h) を求めなさい。",
+                correctAnswerNumeric: 2.5,
+                answerUnit: "h",
+                tolerance: 0.05,
+                hint: "まず経口投与時の平均滞留時間 $MRT_{po} = AUMC_{po}/AUC_{po}$ を計算し、次に平均吸収時間 $MAT = MRT_{po} - MRT_{iv}$ を計算します。",
+                explanation: "$MRT_{po} = \\frac{AUMC_{po}}{AUC_{po}} = \\frac{240 \\text{ } \\mu g \\cdot h^2/mL}{30 \\text{ } \\mu g \\cdot h/mL} = 8.0 \\text{ h}$。$MAT = MRT_{po} - MRT_{iv} = 8.0 \\text{ h} - 5.5 \\text{ h} = 2.5 \\text{ h}$。",
+                references: "演習1: 5-2"
+            },
+            {
+                id: "pk053",
+                category: "モーメント解析",
+                type: "calculation",
+                questionText: "消失速度定数が $0.04~h^{-1}$ である。静注後の平均滞留時間 (MRT, h) を求めなさい。",
+                correctAnswerNumeric: 25,
+                answerUnit: "h",
+                tolerance: 0.1,
+                hint: "1-コンパートメントモデルの静注の場合、平均滞留時間 (MRT) は消失速度定数 ($k_{el}$) の逆数です。<div class='formula-block'>$$MRT = \\frac{1}{k_{el}}$$/div>",
+                explanation: "$MRT = \\frac{1}{k_{el}} = \\frac{1}{0.04 \\text{ h}^{-1}} = 25 \\text{ h}$。",
+                references: "演習1: 5-3"
+            },
+            {
+                id: "pk054",
+                category: "モーメント解析",
+                type: "calculation",
+                questionText: "静注後の平均滞留時間が5hである。消失半減期 (h) を求めなさい。($\\ln(2) \\approx 0.693$)",
+                correctAnswerNumeric: 3.5, // 3.465 -> 3.5
+                answerUnit: "h",
+                tolerance: 0.05,
+                hint: "まず消失速度定数 $k_{el} = 1/MRT$ を計算し、次に $t_{1/2} = \\ln(2)/k_{el}$ を計算します。",
+                explanation: "$k_{el} = \\frac{1}{MRT} = \\frac{1}{5 \\text{ h}} = 0.2 \\text{ h}^{-1}$。$t_{1/2} = \\frac{\\ln(2)}{k_{el}} = \\frac{0.693}{0.2 \\text{ h}^{-1}} = 3.465 \\text{ h}$。有効数字2桁で $3.5 \\text{ h}$。",
+                references: "演習1: 5-4"
+            }
+        ];
+        let currentQuestionIndex = 0; // Index of the current question
+        let score = 0; // User's current score
+        let userAnswers = []; // Stores user's answers: { questionId, answer, isCorrect }
+        let quizQuestions = []; // Holds the currently selected questions for the quiz
+
+        // DOM element references
+        const questionTitleElement = document.getElementById('question-title');
+        const questionTextElement = document.getElementById('question-text');
+        const hintContainer = document.getElementById('hint-container');
+        const optionsContainer = document.getElementById('options-container');
+        const calcInputContainer = document.getElementById('calculation-input-container');
+        const calcAnswerInput = document.getElementById('calc-answer');
+        const answerUnitElement = document.getElementById('answer-unit');
+        const submitCalcAnswerBtn = document.getElementById('submit-calc-answer-btn');
+        
+        const explanationElement = document.getElementById('explanation');
+        const feedbackElement = document.getElementById('feedback');
+        const nextButton = document.getElementById('next-btn');
+        const prevButton = document.getElementById('prev-btn');
+        const finishButton = document.getElementById('finish-btn');
+        const quizContainer = document.getElementById('quiz-container');
+        const summaryContainer = document.getElementById('summary-container');
+        const correctCountElement = document.getElementById('correct-count');
+        const totalQuestionsElement = document.getElementById('total-questions');
+        const accuracyElement = document.getElementById('accuracy');
+        const restartButton = document.getElementById('restart-btn');
+        const categorySelectContainer = document.getElementById('category-select-container');
+        const categorySelect = document.getElementById('category-select');
+        const numQuestionsSelect = document.getElementById('num-questions-select');
+        const startQuizButton = document.getElementById('start-quiz-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const questionCounterElement = document.getElementById('question-counter');
+        const mainHeader = document.getElementById('main-header');
+        const quizCardElement = document.getElementById('quiz-card-element'); 
+        const quizCardContent = document.getElementById('quiz-card-content');
+        const backToMenuButton = document.getElementById('back-to-menu-btn');
+
+
+        // Calculator elements and state
+        const calculatorToggleBtn = document.getElementById('calculator-toggle-btn');
+        const calculatorContainer = document.getElementById('calculator-container');
+        const calcDisplay = document.getElementById('calc-display');
+        const calcHistory = document.getElementById('calc-history');
+        const calcButtons = document.querySelector('.calc-buttons');
+        let calcCurrentInput = ''; 
+        let calcCurrentHistory = ''; 
+        let resetInputOnNextDigit = false; 
+
+        /**
+         * Shuffles an array in place.
+         * @param {Array} array - The array to shuffle.
+         */
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+        
+        /**
+         * Renders all mathematical expressions on the page using KaTeX.
+         */
+        function renderAllMath() {
+            if (typeof renderMathInElement === 'function') {
+                try {
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true}, 
+                            {left: "\\(", right: "\\)", display: false}, 
+                            {left: "$", right: "$", display: false}    
+                        ],
+                        throwOnError: false 
+                    });
+                } catch (error) {
+                    console.error("KaTeX rendering error:", error);
+                }
+            }
+        }
+
+        /**
+         * Animates the transition to a new question and loads it.
+         * @param {number} newIndex - The index of the new question to load.
+         * @param {string} direction - The direction of the transition ('next' or 'prev').
+         */
+        function animateAndLoadQuestion(newIndex, direction) {
+            quizCardContent.style.opacity = '0';
+            if (direction === 'next') quizCardContent.style.transform = 'translateX(-50px)';
+            else quizCardContent.style.transform = 'translateX(50px)';
+
+            setTimeout(() => {
+                loadQuestion(newIndex); 
+                quizCardContent.style.transition = 'none'; 
+                if (direction === 'next') quizCardContent.style.transform = 'translateX(50px)';
+                else quizCardContent.style.transform = 'translateX(-50px)';
+                
+                quizCardContent.offsetHeight; 
+
+                quizCardContent.style.transition = 'transform 0.3s ease-out, opacity 0.3s ease-out';
+                quizCardContent.style.opacity = '1';
+                quizCardContent.style.transform = 'translateX(0)';
+            }, 300); 
+        }
+
+        /**
+         * Loads and displays a question by its index from the `quizQuestions` array.
+         * @param {number} index - The index of the question in `quizQuestions`.
+         */
+        function loadQuestion(index) {
+            if (index < 0 || index >= quizQuestions.length) return; // Boundary check
+
+            currentQuestionIndex = index;
+            const questionData = quizQuestions[index];
+
+            questionTitleElement.textContent = `Q${index + 1}. ${questionData.category || ''}`;
+            questionTextElement.innerHTML = questionData.questionText; 
+            
+            hintContainer.innerHTML = ''; 
+            optionsContainer.innerHTML = '';
+            calcInputContainer.style.display = 'none';
+            submitCalcAnswerBtn.disabled = true; 
+            calcAnswerInput.value = ''; 
+
+            if (questionData.type === 'multiple-choice') {
+                optionsContainer.style.display = 'flex';
+                questionData.options.forEach(optionText => {
+                    const optionDiv = document.createElement('div');
+                    optionDiv.classList.add('option');
+                    optionDiv.innerHTML = optionText; 
+                    optionDiv.addEventListener('click', () => selectOption(optionDiv, optionText, questionData));
+                    optionsContainer.appendChild(optionDiv);
+                });
+            } else if (questionData.type === 'calculation') {
+                optionsContainer.style.display = 'none';
+                calcInputContainer.style.display = 'flex'; 
+                answerUnitElement.innerHTML = questionData.answerUnit || ''; 
+                submitCalcAnswerBtn.disabled = false; 
+
+                if (questionData.hint) {
+                    const hintButton = document.createElement('button');
+                    hintButton.classList.add('hint-button');
+                    hintButton.textContent = 'ヒントを表示';
+                    
+                    const hintPanel = document.createElement('div');
+                    hintPanel.classList.add('hint-panel');
+                    hintPanel.innerHTML = questionData.hint; 
+                    hintPanel.style.display = 'none'; 
+
+                    hintButton.addEventListener('click', () => {
+                        const isHidden = hintPanel.style.display === 'none';
+                        hintPanel.style.display = isHidden ? 'block' : 'none';
+                        hintButton.textContent = isHidden ? 'ヒントを隠す' : 'ヒントを表示';
+                        if(isHidden) renderAllMath(); 
+                    });
+                    hintContainer.appendChild(hintButton);
+                    hintContainer.appendChild(hintPanel);
+                }
+            }
+            
+            feedbackElement.style.display = 'none';
+            explanationElement.style.display = 'none';
+
+            const userAnswer = userAnswers.find(ans => ans.questionId === questionData.id);
+            if (userAnswer) {
+                displayAnswerResult(userAnswer.isCorrect, userAnswer.answer, questionData);
+                if (questionData.type === 'calculation') {
+                    calcAnswerInput.value = userAnswer.answer; 
+                    submitCalcAnswerBtn.disabled = true; 
+                    const existingHintPanel = hintContainer.querySelector('.hint-panel');
+                    if (existingHintPanel && existingHintPanel.style.display === 'block') {
+                         const existingHintButton = hintContainer.querySelector('.hint-button');
+                         if(existingHintButton) existingHintButton.textContent = 'ヒントを隠す';
+                    }
+                }
+            } else {
+                 nextButton.textContent = "次へ / スキップ"; 
+            }
+
+            updateNavigationButtons(); 
+            updateProgressBar(); 
+            renderAllMath(); 
+        }
+
+        /**
+         * Handles the selection of an option in a multiple-choice question.
+         */
+        function selectOption(selectedDiv, selectedOptionText, questionData) {
+            if (userAnswers.find(ans => ans.questionId === questionData.id)) return;
+
+            const isCorrect = selectedOptionText === questionData.correctAnswer;
+            userAnswers.push({ questionId: questionData.id, answer: selectedOptionText, isCorrect: isCorrect });
+            if (isCorrect) score++; 
+            
+            displayAnswerResult(isCorrect, selectedOptionText, questionData); 
+            nextButton.textContent = "次へ"; 
+        }
+
+        /**
+         * Handles the submission of an answer for a calculation question.
+         */
+        function submitCalculation() {
+            const questionData = quizQuestions[currentQuestionIndex]; // Use quizQuestions
+            if (userAnswers.find(ans => ans.questionId === questionData.id) || !calcAnswerInput.value) return;
+
+            const userAnswerNum = parseFloat(calcAnswerInput.value);
+            const correctAnswerNum = questionData.correctAnswerNumeric;
+            const tolerance = questionData.tolerance !== undefined ? questionData.tolerance : 0.01 * Math.abs(correctAnswerNum); 
+            
+            const isCorrect = Math.abs(userAnswerNum - correctAnswerNum) <= tolerance;
+
+            userAnswers.push({ questionId: questionData.id, answer: userAnswerNum, isCorrect: isCorrect });
+            if (isCorrect) score++; 
+
+            displayAnswerResult(isCorrect, userAnswerNum, questionData); 
+            submitCalcAnswerBtn.disabled = true; 
+            nextButton.textContent = "次へ"; 
+        }
+        
+        /**
+         * Displays the result of an answer (feedback and explanation).
+         */
+        function displayAnswerResult(isCorrect, answer, questionData) {
+            if (questionData.type === 'multiple-choice') {
+                optionsContainer.childNodes.forEach(optDiv => {
+                    optDiv.classList.add('disabled', 'answered'); 
+                    if (optDiv.innerHTML === questionData.correctAnswer) {
+                        optDiv.classList.add('correct'); 
+                    } else if (optDiv.innerHTML === answer) {
+                        optDiv.classList.add('incorrect'); 
+                    }
+                });
+            }
+
+            feedbackElement.textContent = isCorrect ? '正解です！' : '不正解です。';
+            feedbackElement.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect'); 
+            feedbackElement.style.display = 'block';
+
+            explanationElement.innerHTML = `<strong>解説:</strong><br>${questionData.explanation}<br><div class="references">参考: ${questionData.references || 'N/A'}</div>`;
+            explanationElement.style.display = 'block';
+            renderAllMath(); 
+            updateNavigationButtons(); 
+        }
+
+        /**
+         * Updates the state (enabled/disabled, visible/hidden) of navigation buttons.
+         */
+        function updateNavigationButtons() {
+            prevButton.disabled = currentQuestionIndex === 0; 
+            const answeredCurrent = userAnswers.find(ans => ans.questionId === quizQuestions[currentQuestionIndex].id);
+            
+            if (currentQuestionIndex === quizQuestions.length - 1) { 
+                nextButton.style.display = 'none'; 
+                finishButton.style.display = 'inline-block'; 
+                finishButton.disabled = !answeredCurrent && quizQuestions[currentQuestionIndex].type === 'calculation' && !calcAnswerInput.value;
+            } else { 
+                nextButton.style.display = 'inline-block'; 
+                finishButton.style.display = 'none'; 
+                nextButton.disabled = false; 
+            }
+        }
+
+        /**
+         * Updates the progress bar and question counter.
+         */
+        function updateProgressBar() {
+            const progress = quizQuestions.length > 0 ? ((currentQuestionIndex + 1) / quizQuestions.length) * 100 : 0;
+            progressBar.style.width = `${progress}%`;
+            questionCounterElement.textContent = `問題 ${currentQuestionIndex + 1} / ${quizQuestions.length}`;
+        }
+
+        /**
+         * Displays the quiz summary/results screen.
+         */
+        function showSummary() {
+            quizContainer.classList.remove('visible'); 
+             setTimeout(() => { quizContainer.style.display = 'none';}, 500); 
+            summaryContainer.style.display = 'block'; 
+            categorySelectContainer.style.display = 'none'; 
+            mainHeader.style.display = 'none'; 
+
+            correctCountElement.textContent = score;
+            totalQuestionsElement.textContent = quizQuestions.length; // Use length of filtered questions
+            const accuracy = quizQuestions.length > 0 ? Math.round((score / quizQuestions.length) * 100) : 0;
+            accuracyElement.textContent = accuracy;
+        }
+        
+        /**
+         * Resets the quiz state for a new attempt.
+         */
+        function resetQuizState() {
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers = [];
+            quizQuestions = []; // Clear the selected questions
+            calcCurrentInput = '';
+            calcCurrentHistory = '';
+            updateCalcDisplay(); 
+            resetInputOnNextDigit = false;
+            // No need to shuffle pharmacokineticsQuizData here, it's done during initialization
+        }
+
+        /**
+         * Populates the category select dropdown.
+         */
+        function populateCategories() {
+            const categories = new Set();
+            pharmacokineticsQuizData.forEach(q => categories.add(q.category));
+            
+            categorySelect.innerHTML = '<option value="all">全てのカテゴリ</option>'; // Default option
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category;
+                categorySelect.appendChild(option);
+            });
+        }
+        
+        /**
+         * Initializes quiz data based on selected category and number of questions.
+         * @returns {boolean} True if quiz can start, false otherwise.
+         */
+        function initializeQuizData() {
+            const selectedCategoryValue = categorySelect.value;
+            const numQuestionsValue = numQuestionsSelect.value;
+
+            let filteredQuestions = pharmacokineticsQuizData;
+
+            // Filter by category
+            if (selectedCategoryValue !== "all") {
+                filteredQuestions = filteredQuestions.filter(q => q.category === selectedCategoryValue);
+            }
+
+            if (filteredQuestions.length === 0) {
+                alert("選択されたカテゴリに該当する問題がありません。");
+                return false;
+            }
+
+            shuffleArray(filteredQuestions); // Shuffle the filtered questions
+
+            // Filter by number of questions
+            if (numQuestionsValue !== "all") {
+                const num = parseInt(numQuestionsValue);
+                quizQuestions = filteredQuestions.slice(0, num);
+            } else {
+                quizQuestions = filteredQuestions; // Use all filtered questions
+            }
+            
+            if (quizQuestions.length === 0) {
+                 alert("出題できる問題がありません。条件を変更してください。");
+                 return false;
+            }
+            return true;
+        }
+
+
+        // Event listener for the "Start Quiz" button
+        startQuizButton.addEventListener('click', () => {
+            resetQuizState(); 
+            if (!initializeQuizData()) { // Initialize and check if questions are available
+                mainHeader.style.display = 'block'; // Show header if quiz doesn't start
+                categorySelectContainer.style.display = 'block'; // Show category selection
+                return;
+            }
+
+            mainHeader.style.display = 'none';
+            categorySelectContainer.style.display = 'none';
+            quizContainer.style.display = 'block'; 
+            setTimeout(() => { quizContainer.classList.add('visible'); }, 10); 
+            
+            quizCardContent.style.opacity = '0';
+            quizCardContent.style.transform = 'translateY(20px)';
+            loadQuestion(0); 
+            setTimeout(() => {
+                quizCardContent.style.transition = 'opacity 0.4s ease-out, transform 0.4s ease-out';
+                quizCardContent.style.opacity = '1';
+                quizCardContent.style.transform = 'translateY(0px)';
+            }, 50);
+        });
+
+        // Event listener for the "Next" button
+        nextButton.addEventListener('click', () => {
+            if (currentQuestionIndex < quizQuestions.length - 1) {
+                animateAndLoadQuestion(currentQuestionIndex + 1, 'next'); 
+            }
+        });
+
+        // Event listener for the "Previous" button
+        prevButton.addEventListener('click', () => {
+            if (currentQuestionIndex > 0) {
+                animateAndLoadQuestion(currentQuestionIndex - 1, 'prev'); 
+            }
+        });
+        
+        // Event listeners for calculation answer submission
+        submitCalcAnswerBtn.addEventListener('click', submitCalculation);
+        calcAnswerInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') submitCalculation(); 
+        });
+
+        // Event listener for the "Finish" button
+        finishButton.addEventListener('click', () => {
+             const questionData = quizQuestions[currentQuestionIndex];
+             const answeredCurrent = userAnswers.find(ans => ans.questionId === questionData.id);
+             if (!answeredCurrent && questionData.type === 'calculation' && calcAnswerInput.value) {
+                submitCalculation(); 
+             }
+            showSummary(); 
+        });
+
+        // Event listener for the "Restart Quiz" button on summary page
+        restartButton.addEventListener('click', () => {
+            // resetQuizState(); // Already called by backToMenu
+            backToMenuButton.click(); // Simulate click on back to menu
+        });
+        
+        // Event listener for "Back to Menu" button
+        backToMenuButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            resetQuizState();
+            mainHeader.style.display = 'block';
+            summaryContainer.style.display = 'none';
+            quizContainer.classList.remove('visible');
+            quizContainer.style.display = 'none'; // Hide immediately then transition out
+            categorySelectContainer.style.display = 'block';
+            // Ensure content pusher is removed if calculator was open
+            quizCardElement.classList.remove('quiz-content-pusher');
+        });
+
+
+        // --- Calculator Logic ---
+        function formatDisplayValue(inputString) {
+            if (inputString === null || inputString === undefined) return '';
+            return inputString
+                .replace(/Math\.log\(/g, 'ln(')      
+                .replace(/Math\.log10\(/g, 'log(')   
+                .replace(/Math\.exp\(/g, 'exp(')     
+                .replace(/Math\.sqrt\(/g, '√(')      
+                .replace(/\*\*/g, '^')             
+                .replace(/\*/g, '×')              
+                .replace(/\//g, '÷');             
+        }
+
+        calculatorToggleBtn.addEventListener('click', () => {
+            const isVisible = calculatorContainer.classList.toggle('visible'); 
+            if (window.innerWidth < 768) { 
+                 quizCardElement.classList.toggle('quiz-content-pusher', isVisible);
+            }
+        });
+
+        calcButtons.addEventListener('click', (e) => {
+            if (!e.target.matches('button')) return; 
+            const button = e.target;
+            const value = button.dataset.value; 
+            const action = button.dataset.action; 
+
+            if (resetInputOnNextDigit && !action && !button.classList.contains('operator') && value !== '(' && value !== ')') {
+                calcCurrentInput = '';
+                resetInputOnNextDigit = false;
+            }
+            
+            if (value) { 
+                if (value === '.' && calcCurrentInput.includes('.')) return; 
+                if (calcCurrentInput === '0' && value !== '.' && !value.startsWith('Math.')) calcCurrentInput = ''; 
+                calcCurrentInput += value;
+            } else if (action) { 
+                performCalcAction(action);
+            }
+            updateCalcDisplay(); 
+        });
+        
+        function performCalcAction(action) {
+            switch (action) {
+                case 'clear': 
+                    calcCurrentInput = '';
+                    calcCurrentHistory = '';
+                    break;
+                case 'clear-entry': 
+                    calcCurrentInput = '';
+                    break;
+                case 'backspace': 
+                    if (calcCurrentInput.endsWith('**')) { 
+                        calcCurrentInput = calcCurrentInput.slice(0, -2);
+                    } else if (calcCurrentInput.match(/Math\.(log10|log|exp|sqrt)\($/)) { 
+                        calcCurrentInput = calcCurrentInput.replace(/Math\.(log10|log|exp|sqrt)\($/, '');
+                    } else if (calcCurrentInput.endsWith('Math.PI')) {
+                         calcCurrentInput = calcCurrentInput.slice(0, -7);
+                    }
+                     else {
+                        calcCurrentInput = calcCurrentInput.slice(0, -1);
+                    }
+                    break;
+                case 'equals': 
+                    try {
+                        let expressionToEvaluate = calcCurrentInput;
+                        let result = new Function('return ' + expressionToEvaluate)();
+                        
+                        if (result === Infinity || result === -Infinity || isNaN(result)) {
+                             calcCurrentHistory = calcCurrentInput + '='; 
+                             calcCurrentInput = 'Error'; 
+                        } else {
+                            calcCurrentHistory = formatDisplayValue(calcCurrentInput) + '='; 
+                            calcCurrentInput = result.toString(); 
+                        }
+                        resetInputOnNextDigit = true; 
+                    } catch (err) {
+                        console.error("Calculator Error:", err, "Input was:", calcCurrentInput);
+                        calcCurrentHistory = formatDisplayValue(calcCurrentInput) + '='; 
+                        calcCurrentInput = 'Error'; 
+                        resetInputOnNextDigit = true;
+                    }
+                    break;
+            }
+            updateCalcDisplay(); 
+        }
+
+        function updateCalcDisplay() {
+            calcDisplay.value = formatDisplayValue(calcCurrentInput || '0'); 
+            calcHistory.textContent = formatDisplayValue(calcCurrentHistory); 
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            populateCategories(); // Populate categories on load
+            categorySelectContainer.style.display = 'block'; 
+            quizContainer.style.display = 'none'; 
+            summaryContainer.style.display = 'none'; 
+            mainHeader.style.display = 'block'; 
+            updateCalcDisplay(); 
+            renderAllMath(); 
+        });
+
+        window.addEventListener('resize', () => {
+            const calculatorIsVisible = calculatorContainer.classList.contains('visible');
+            if (window.innerWidth >= 768) {
+                quizCardElement.classList.remove('quiz-content-pusher');
+            } else {
+                if (calculatorIsVisible) {
+                    quizCardElement.classList.add('quiz-content-pusher');
+                } else {
+                    quizCardElement.classList.remove('quiz-content-pusher');
+                }
+            }
+        });
+
+    </script>
+</body>
+</html>
