@@ -26,20 +26,18 @@
             margin-bottom: 1.5rem; 
             overflow: hidden; 
             position: relative;
-            transition: margin-bottom 0.3s ease-in-out; /* Added for smooth transition */
+            transition: margin-bottom 0.3s ease-in-out; 
         }
-        /* This class will be added to push content up when calculator is open */
         #quiz-card-element.quiz-content-pusher {
-            margin-bottom: 380px; /* Adjust this value based on calculator height + desired spacing */
+            margin-bottom: 380px; 
         }
 
         @media (min-width: 768px) { 
             #quiz-card-element { padding: 2rem; } 
             #quiz-card-element.quiz-content-pusher {
-                margin-bottom: 1.5rem; /* Reset margin for larger screens if calculator is not overlapping */
+                margin-bottom: 1.5rem; 
             }
         }
-
 
         #quiz-card-content { width: 100%; transition: transform 0.35s ease-in-out, opacity 0.35s ease-in-out; will-change: transform, opacity; }
         #quiz-container { opacity: 0; visibility: hidden; transition: opacity 0.5s ease-in-out, visibility 0s linear 0.5s; }
@@ -48,34 +46,32 @@
         .question-title { font-size: 1.1rem; font-weight: 600; color: #1e3a8a; margin-bottom: 0.75rem; text-align: left; }
         .question-text { font-size: 1rem; margin-bottom: 1rem; color: #1f2937; font-weight: 500; text-align: left; line-height: 1.7; }
         
-        /* Hint Button and Panel Styles */
         .hint-button {
-            background-color: #e2e8f0; /* slate-200 */
-            color: #475569; /* slate-600 */
+            background-color: #e2e8f0; 
+            color: #475569; 
             padding: 0.3rem 0.8rem;
             border-radius: 0.375rem;
             font-size: 0.8rem;
             font-weight: 500;
             cursor: pointer;
-            border: 1px solid #cbd5e1; /* slate-300 */
+            border: 1px solid #cbd5e1; 
             margin-bottom: 1rem;
             display: inline-block;
         }
         .hint-button:hover { background-color: #cbd5e1; }
         .hint-panel {
-            background-color: #f7fafc; /* gray-50 */
-            border: 1px dashed #e2e8f0; /* slate-200 */
+            background-color: #f7fafc; 
+            border: 1px dashed #e2e8f0; 
             border-radius: 0.375rem;
             padding: 0.75rem;
             margin-bottom: 1.5rem;
             font-size: 0.9rem;
-            color: #374151; /* gray-700 */
+            color: #374151; 
             text-align: left;
             line-height: 1.6;
         }
         .hint-panel .formula-block { background-color: #eef2f7; padding: 6px; border-radius: 4px; margin: 6px 0; text-align: center; overflow-x: auto;}
         .hint-panel .katex { font-size: 1.05em !important; }
-
 
         .options { display: flex; flex-direction: column; margin-bottom: 1.5rem; }
         .option { padding: 0.9rem 1.25rem; border: 1px solid #d1d5db; border-radius: 0.5rem; margin-bottom: 0.75rem; cursor: pointer; transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease; background-color: #f9fafb; color: #374151; text-align: left; font-size: 0.95rem; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); }
@@ -106,7 +102,6 @@
         .explanation .formula-block .katex { font-size: 1.1em !important; }
         .explanation .references { font-size: 0.8rem; color: #4b5563; margin-top: 0.75rem; }
 
-
         .controls { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-top: 2rem; }
         .quiz-btn { padding: 0.75rem 1.5rem; border-radius: 0.375rem; font-weight: 600; color: white; cursor: pointer; transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease; border: none; font-size: 1rem; box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1), 0 1px 2px 0 rgba(0,0,0,0.06); }
         .quiz-btn:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -126,13 +121,60 @@
         .feedback.correct { background-color: #dcfce7; border: 1px solid #86efac; color: #166534; }
         .feedback.incorrect { background-color: #fee2e2; border: 1px solid #fca5a5; color: #991b1b; }
         
-        #category-select-container { display: block; margin-bottom: 2rem; background-color: white; padding: 1.5rem; border-radius: 0.75rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1); }
-        .start-quiz-btn { background-color: #1e40af; font-size: 1.1rem; padding: 0.8rem 2rem; margin-top: 1.5rem; }
+        #category-select-container { 
+            display: block; 
+            margin-bottom: 2rem; 
+            background-color: white; 
+            padding: 1.5rem; 
+            border-radius: 0.75rem; 
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1); 
+        }
+         @media (min-width: 640px) {
+            #category-select-container { padding: 2rem; }
+        }
+        #category-select, #num-questions-select {
+            padding: 0.75rem 1rem;
+            border-radius: 0.375rem;
+            border: 1px solid #d1d5db;
+            font-size: 1rem;
+            color: #374151;
+            background-color: #f9fafb;
+            transition: border-color 0.2s ease;
+            margin-top: 0.5rem;
+            width: 100%;
+            max-width: 400px; /* Limit width of select dropdowns */
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        #category-select:focus, #num-questions-select:focus {
+            outline: none;
+            border-color: #2563eb; 
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        .select-label {
+            display: block; 
+            text-slate-700 text-lg font-semibold mb-2 mt-6; /* Adjusted margin-top */
+        }
+
+
+        .start-quiz-btn { background-color: #1e40af; font-size: 1.1rem; padding: 0.8rem 2rem; margin-top: 2.5rem; }
         .start-quiz-btn:hover:not(:disabled) { background-color: #1e3a8a; }
 
         .progress-bar-container { width: 100%; background-color: #e5e7eb; border-radius: 0.375rem; margin-bottom: 1rem; overflow: hidden; height: 10px; }
         .progress-bar { height: 100%; width: 0%; background-color: #2563eb; border-radius: 0.375rem; transition: width 0.3s ease-in-out; }
         .question-counter { font-size: 0.9rem; color: #6b7280; }
+        .back-to-menu-link {
+            text-decoration: none;
+            color: #2563eb; 
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        .back-to-menu-link:hover {
+            color: #1d4ed8; 
+            text-decoration: underline;
+        }
+
 
         /* Calculator Styles */
         #calculator-toggle-btn {
@@ -143,22 +185,21 @@
             display: flex; align-items: center; justify-content: center;
         }
         #calculator-container {
-            display: none; position: fixed; bottom: 20px; /* Adjusted for mobile, toggle button is above */
-            left: 50%; /* Center horizontally */
-            transform: translateX(-50%); /* Adjust for centering */
-            width: calc(100% - 40px); /* Full width with some padding */
-            max-width: 320px; /* Max width for calculator */
+            display: none; position: fixed; bottom: 20px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            width: calc(100% - 40px); 
+            max-width: 320px; 
             background-color: #fff; border-radius: 8px; box-shadow: 0 8px 20px rgba(0,0,0,0.25);
             border: 1px solid #e2e8f0; overflow: hidden; z-index: 999;
         }
-        /* On larger screens, position it to the bottom right */
          @media (min-width: 768px) {
             #calculator-container {
                 bottom: 90px;
                 left: auto;
                 right: 20px;
                 transform: none;
-                width: 300px; /* Original width for larger screens */
+                width: 300px; 
             }
         }
 
@@ -201,15 +242,29 @@
         <div id="category-select-container">
            <h2 class="text-slate-700 text-xl font-semibold mb-4">薬剤学 動態学クイズへようこそ！</h2>
            <p class="text-slate-600 mb-6">薬物動態学の基本公式、パラメータ計算、臨床応用に関する知識をテストしましょう。</p>
+           
+           <label for="category-select" class="select-label text-slate-700 text-lg font-semibold mb-2">出題カテゴリーを選択してください:</label>
+           <select id="category-select" class="shadow-sm appearance-none border rounded w-full py-3 px-4 text-slate-700 leading-tight focus:outline-none focus:shadow-outline">
+               </select>
+
+           <label for="num-questions-select" class="select-label text-slate-700 text-lg font-semibold mb-2 mt-6">出題数を選択してください:</label>
+           <select id="num-questions-select" class="shadow-sm appearance-none border rounded w-full py-3 px-4 text-slate-700 leading-tight focus:outline-none focus:shadow-outline">
+               <option value="5">5問</option>
+               <option value="10" selected>10問</option>
+               <option value="15">15問</option>
+               <option value="all">全ての問題</option>
+           </select>
+
            <button id="start-quiz-btn" class="quiz-btn start-quiz-btn">クイズを開始する</button>
         </div>
 
         <div id="quiz-container"> 
             <div id="quiz-card-element"> 
+                 <div class="flex justify-between items-center mb-4">
+                    <a href="#" id="back-to-menu-btn" class="back-to-menu-link">&larr; メニューに戻る</a>
+                    <div class="question-counter" id="question-counter"></div>
+                </div>
                 <div id="quiz-card-content">
-                    <div class="flex justify-between items-center mb-2">
-                        <div class="question-counter" id="question-counter"></div>
-                    </div>
                     <div class="progress-bar-container">
                         <div class="progress-bar" id="progress-bar"></div>
                     </div>
@@ -517,6 +572,7 @@
         let currentQuestionIndex = 0; // Index of the current question
         let score = 0; // User's current score
         let userAnswers = []; // Stores user's answers: { questionId, answer, isCorrect }
+        let quizQuestions = []; // Holds the currently selected questions for the quiz
 
         // DOM element references
         const questionTitleElement = document.getElementById('question-title');
@@ -540,12 +596,15 @@
         const accuracyElement = document.getElementById('accuracy');
         const restartButton = document.getElementById('restart-btn');
         const categorySelectContainer = document.getElementById('category-select-container');
+        const categorySelect = document.getElementById('category-select');
+        const numQuestionsSelect = document.getElementById('num-questions-select');
         const startQuizButton = document.getElementById('start-quiz-btn');
         const progressBar = document.getElementById('progress-bar');
         const questionCounterElement = document.getElementById('question-counter');
         const mainHeader = document.getElementById('main-header');
         const quizCardElement = document.getElementById('quiz-card-element'); 
         const quizCardContent = document.getElementById('quiz-card-content');
+        const backToMenuButton = document.getElementById('back-to-menu-btn');
 
 
         // Calculator elements and state
@@ -554,9 +613,9 @@
         const calcDisplay = document.getElementById('calc-display');
         const calcHistory = document.getElementById('calc-history');
         const calcButtons = document.querySelector('.calc-buttons');
-        let calcCurrentInput = ''; // Current input string for the calculator (internal representation)
-        let calcCurrentHistory = ''; // History string for the calculator display (internal representation)
-        let resetInputOnNextDigit = false; // Flag to reset input on the next digit press after an operation
+        let calcCurrentInput = ''; 
+        let calcCurrentHistory = ''; 
+        let resetInputOnNextDigit = false; 
 
         /**
          * Shuffles an array in place.
@@ -577,11 +636,11 @@
                 try {
                     renderMathInElement(document.body, {
                         delimiters: [
-                            {left: "$$", right: "$$", display: true}, // For display mode math
-                            {left: "\\(", right: "\\)", display: false}, // For inline math (LaTeX style)
-                            {left: "$", right: "$", display: false}    // For inline math (Markdown style)
+                            {left: "$$", right: "$$", display: true}, 
+                            {left: "\\(", right: "\\)", display: false}, 
+                            {left: "$", right: "$", display: false}    
                         ],
-                        throwOnError: false // Don't throw errors, just log them
+                        throwOnError: false 
                     });
                 } catch (error) {
                     console.error("KaTeX rendering error:", error);
@@ -600,57 +659,53 @@
             else quizCardContent.style.transform = 'translateX(50px)';
 
             setTimeout(() => {
-                loadQuestion(newIndex); // Load the new question content
-                quizCardContent.style.transition = 'none'; // Temporarily disable transition for repositioning
+                loadQuestion(newIndex); 
+                quizCardContent.style.transition = 'none'; 
                 if (direction === 'next') quizCardContent.style.transform = 'translateX(50px)';
                 else quizCardContent.style.transform = 'translateX(-50px)';
                 
-                quizCardContent.offsetHeight; // Trigger reflow to apply the transform before animation
+                quizCardContent.offsetHeight; 
 
-                // Re-enable transition for smooth animation to final position
                 quizCardContent.style.transition = 'transform 0.3s ease-out, opacity 0.3s ease-out';
                 quizCardContent.style.opacity = '1';
                 quizCardContent.style.transform = 'translateX(0)';
-            }, 300); // Duration of the fade-out animation
+            }, 300); 
         }
 
         /**
-         * Loads and displays a question by its index.
-         * @param {number} index - The index of the question in pharmacokineticsQuizData.
+         * Loads and displays a question by its index from the `quizQuestions` array.
+         * @param {number} index - The index of the question in `quizQuestions`.
          */
         function loadQuestion(index) {
-            currentQuestionIndex = index;
-            const questionData = pharmacokineticsQuizData[index];
+            if (index < 0 || index >= quizQuestions.length) return; // Boundary check
 
-            // Set question title and text
+            currentQuestionIndex = index;
+            const questionData = quizQuestions[index];
+
             questionTitleElement.textContent = `Q${index + 1}. ${questionData.category || ''}`;
-            questionTextElement.innerHTML = questionData.questionText; // Use innerHTML to render KaTeX
+            questionTextElement.innerHTML = questionData.questionText; 
             
-            // Clear previous hint, options, and hide calculation input
             hintContainer.innerHTML = ''; 
             optionsContainer.innerHTML = '';
             calcInputContainer.style.display = 'none';
-            submitCalcAnswerBtn.disabled = true; // Disable submit button initially
-            calcAnswerInput.value = ''; // Clear previous calculation answer
+            submitCalcAnswerBtn.disabled = true; 
+            calcAnswerInput.value = ''; 
 
-            // Display options for multiple-choice questions
             if (questionData.type === 'multiple-choice') {
                 optionsContainer.style.display = 'flex';
                 questionData.options.forEach(optionText => {
                     const optionDiv = document.createElement('div');
                     optionDiv.classList.add('option');
-                    optionDiv.innerHTML = optionText; // Use innerHTML for KaTeX
+                    optionDiv.innerHTML = optionText; 
                     optionDiv.addEventListener('click', () => selectOption(optionDiv, optionText, questionData));
                     optionsContainer.appendChild(optionDiv);
                 });
-            // Display input area for calculation questions
             } else if (questionData.type === 'calculation') {
                 optionsContainer.style.display = 'none';
-                calcInputContainer.style.display = 'flex'; // Show calculation input area
-                answerUnitElement.innerHTML = questionData.answerUnit || ''; // Display answer unit
-                submitCalcAnswerBtn.disabled = false; // Enable submit button
+                calcInputContainer.style.display = 'flex'; 
+                answerUnitElement.innerHTML = questionData.answerUnit || ''; 
+                submitCalcAnswerBtn.disabled = false; 
 
-                // Add hint button and panel if a hint is available for the question
                 if (questionData.hint) {
                     const hintButton = document.createElement('button');
                     hintButton.classList.add('hint-button');
@@ -658,33 +713,29 @@
                     
                     const hintPanel = document.createElement('div');
                     hintPanel.classList.add('hint-panel');
-                    hintPanel.innerHTML = questionData.hint; // Hint can contain HTML and KaTeX
-                    hintPanel.style.display = 'none'; // Hint panel is initially hidden
+                    hintPanel.innerHTML = questionData.hint; 
+                    hintPanel.style.display = 'none'; 
 
-                    // Event listener for the hint button to toggle hint panel visibility
                     hintButton.addEventListener('click', () => {
                         const isHidden = hintPanel.style.display === 'none';
                         hintPanel.style.display = isHidden ? 'block' : 'none';
                         hintButton.textContent = isHidden ? 'ヒントを隠す' : 'ヒントを表示';
-                        if(isHidden) renderAllMath(); // Re-render KaTeX when hint is shown
+                        if(isHidden) renderAllMath(); 
                     });
                     hintContainer.appendChild(hintButton);
                     hintContainer.appendChild(hintPanel);
                 }
             }
             
-            // Hide feedback and explanation initially
             feedbackElement.style.display = 'none';
             explanationElement.style.display = 'none';
 
-            // If the question has been answered before, display the result
             const userAnswer = userAnswers.find(ans => ans.questionId === questionData.id);
             if (userAnswer) {
                 displayAnswerResult(userAnswer.isCorrect, userAnswer.answer, questionData);
                 if (questionData.type === 'calculation') {
-                    calcAnswerInput.value = userAnswer.answer; // Show previous numeric answer
-                    submitCalcAnswerBtn.disabled = true; // Disable if already answered
-                    // If hint was shown, keep it shown and update button text
+                    calcAnswerInput.value = userAnswer.answer; 
+                    submitCalcAnswerBtn.disabled = true; 
                     const existingHintPanel = hintContainer.querySelector('.hint-panel');
                     if (existingHintPanel && existingHintPanel.style.display === 'block') {
                          const existingHintButton = hintContainer.querySelector('.hint-button');
@@ -692,103 +743,89 @@
                     }
                 }
             } else {
-                 nextButton.textContent = "次へ / スキップ"; // If not answered, allow skipping
+                 nextButton.textContent = "次へ / スキップ"; 
             }
 
-            updateNavigationButtons(); // Update states of navigation buttons
-            updateProgressBar(); // Update progress bar
-            renderAllMath(); // Render KaTeX for the new question and options/hint
+            updateNavigationButtons(); 
+            updateProgressBar(); 
+            renderAllMath(); 
         }
 
         /**
          * Handles the selection of an option in a multiple-choice question.
-         * @param {HTMLElement} selectedDiv - The div element of the selected option.
-         * @param {string} selectedOptionText - The text of the selected option.
-         * @param {object} questionData - The data object for the current question.
          */
         function selectOption(selectedDiv, selectedOptionText, questionData) {
-            // Prevent re-answering
             if (userAnswers.find(ans => ans.questionId === questionData.id)) return;
 
             const isCorrect = selectedOptionText === questionData.correctAnswer;
             userAnswers.push({ questionId: questionData.id, answer: selectedOptionText, isCorrect: isCorrect });
-            if (isCorrect) score++; // Increment score if correct
+            if (isCorrect) score++; 
             
-            displayAnswerResult(isCorrect, selectedOptionText, questionData); // Display feedback and explanation
-            nextButton.textContent = "次へ"; // Change button text after answering
+            displayAnswerResult(isCorrect, selectedOptionText, questionData); 
+            nextButton.textContent = "次へ"; 
         }
 
         /**
          * Handles the submission of an answer for a calculation question.
          */
         function submitCalculation() {
-            const questionData = pharmacokineticsQuizData[currentQuestionIndex];
-            // Prevent re-answering or submitting empty answer
+            const questionData = quizQuestions[currentQuestionIndex]; // Use quizQuestions
             if (userAnswers.find(ans => ans.questionId === questionData.id) || !calcAnswerInput.value) return;
 
             const userAnswerNum = parseFloat(calcAnswerInput.value);
             const correctAnswerNum = questionData.correctAnswerNumeric;
-            // Calculate tolerance: use provided tolerance or default to 1% of the correct answer
             const tolerance = questionData.tolerance !== undefined ? questionData.tolerance : 0.01 * Math.abs(correctAnswerNum); 
             
             const isCorrect = Math.abs(userAnswerNum - correctAnswerNum) <= tolerance;
 
             userAnswers.push({ questionId: questionData.id, answer: userAnswerNum, isCorrect: isCorrect });
-            if (isCorrect) score++; // Increment score if correct
+            if (isCorrect) score++; 
 
-            displayAnswerResult(isCorrect, userAnswerNum, questionData); // Display feedback and explanation
-            submitCalcAnswerBtn.disabled = true; // Disable submit button after answering
-            nextButton.textContent = "次へ"; // Change button text after answering
+            displayAnswerResult(isCorrect, userAnswerNum, questionData); 
+            submitCalcAnswerBtn.disabled = true; 
+            nextButton.textContent = "次へ"; 
         }
         
         /**
          * Displays the result of an answer (feedback and explanation).
-         * @param {boolean} isCorrect - Whether the user's answer was correct.
-         * @param {string|number} answer - The user's answer.
-         * @param {object} questionData - The data object for the current question.
          */
         function displayAnswerResult(isCorrect, answer, questionData) {
-            // Style options for multiple-choice questions based on correctness
             if (questionData.type === 'multiple-choice') {
                 optionsContainer.childNodes.forEach(optDiv => {
-                    optDiv.classList.add('disabled', 'answered'); // Mark all options as answered
+                    optDiv.classList.add('disabled', 'answered'); 
                     if (optDiv.innerHTML === questionData.correctAnswer) {
-                        optDiv.classList.add('correct'); // Highlight correct answer
+                        optDiv.classList.add('correct'); 
                     } else if (optDiv.innerHTML === answer) {
-                        optDiv.classList.add('incorrect'); // Highlight user's incorrect answer
+                        optDiv.classList.add('incorrect'); 
                     }
                 });
             }
 
-            // Display feedback message
             feedbackElement.textContent = isCorrect ? '正解です！' : '不正解です。';
-            feedbackElement.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect'); // Apply correct/incorrect styling
+            feedbackElement.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect'); 
             feedbackElement.style.display = 'block';
 
-            // Display explanation
             explanationElement.innerHTML = `<strong>解説:</strong><br>${questionData.explanation}<br><div class="references">参考: ${questionData.references || 'N/A'}</div>`;
             explanationElement.style.display = 'block';
-            renderAllMath(); // Re-render KaTeX for explanation content
-            updateNavigationButtons(); // Update navigation buttons state
+            renderAllMath(); 
+            updateNavigationButtons(); 
         }
 
         /**
          * Updates the state (enabled/disabled, visible/hidden) of navigation buttons.
          */
         function updateNavigationButtons() {
-            prevButton.disabled = currentQuestionIndex === 0; // Disable "Prev" on first question
-            const answeredCurrent = userAnswers.find(ans => ans.questionId === pharmacokineticsQuizData[currentQuestionIndex].id);
+            prevButton.disabled = currentQuestionIndex === 0; 
+            const answeredCurrent = userAnswers.find(ans => ans.questionId === quizQuestions[currentQuestionIndex].id);
             
-            // Handle "Next" and "Finish" button visibility and state
-            if (currentQuestionIndex === pharmacokineticsQuizData.length - 1) { // Last question
-                nextButton.style.display = 'none'; // Hide "Next"
-                finishButton.style.display = 'inline-block'; // Show "Finish"
-                // Disable "Finish" if calculation question is unanswered and has input
-                finishButton.disabled = !answeredCurrent && pharmacokineticsQuizData[currentQuestionIndex].type === 'calculation' && !calcAnswerInput.value;
-            } else { // Not the last question
-                nextButton.style.display = 'inline-block'; // Show "Next"
-                finishButton.style.display = 'none'; // Hide "Finish"
-                nextButton.disabled = false; // Always allow skipping or moving to next if answered
+            if (currentQuestionIndex === quizQuestions.length - 1) { 
+                nextButton.style.display = 'none'; 
+                finishButton.style.display = 'inline-block'; 
+                finishButton.disabled = !answeredCurrent && quizQuestions[currentQuestionIndex].type === 'calculation' && !calcAnswerInput.value;
+            } else { 
+                nextButton.style.display = 'inline-block'; 
+                finishButton.style.display = 'none'; 
+                nextButton.disabled = false; 
             }
         }
 
@@ -796,25 +833,24 @@
          * Updates the progress bar and question counter.
          */
         function updateProgressBar() {
-            const progress = ((currentQuestionIndex + 1) / pharmacokineticsQuizData.length) * 100;
+            const progress = quizQuestions.length > 0 ? ((currentQuestionIndex + 1) / quizQuestions.length) * 100 : 0;
             progressBar.style.width = `${progress}%`;
-            questionCounterElement.textContent = `問題 ${currentQuestionIndex + 1} / ${pharmacokineticsQuizData.length}`;
+            questionCounterElement.textContent = `問題 ${currentQuestionIndex + 1} / ${quizQuestions.length}`;
         }
 
         /**
          * Displays the quiz summary/results screen.
          */
         function showSummary() {
-            quizContainer.classList.remove('visible'); // Hide quiz container
-             setTimeout(() => { quizContainer.style.display = 'none';}, 500); // Fully hide after transition
-            summaryContainer.style.display = 'block'; // Show summary container
-            categorySelectContainer.style.display = 'none'; // Hide category selection
-            mainHeader.style.display = 'none'; // Hide main header
+            quizContainer.classList.remove('visible'); 
+             setTimeout(() => { quizContainer.style.display = 'none';}, 500); 
+            summaryContainer.style.display = 'block'; 
+            categorySelectContainer.style.display = 'none'; 
+            mainHeader.style.display = 'none'; 
 
-            // Display score and accuracy
             correctCountElement.textContent = score;
-            totalQuestionsElement.textContent = pharmacokineticsQuizData.length;
-            const accuracy = pharmacokineticsQuizData.length > 0 ? Math.round((score / pharmacokineticsQuizData.length) * 100) : 0;
+            totalQuestionsElement.textContent = quizQuestions.length; // Use length of filtered questions
+            const accuracy = quizQuestions.length > 0 ? Math.round((score / quizQuestions.length) * 100) : 0;
             accuracyElement.textContent = accuracy;
         }
         
@@ -825,26 +861,85 @@
             currentQuestionIndex = 0;
             score = 0;
             userAnswers = [];
-            // Reset calculator state
+            quizQuestions = []; // Clear the selected questions
             calcCurrentInput = '';
             calcCurrentHistory = '';
-            updateCalcDisplay(); // Update display to '0' and clear history
+            updateCalcDisplay(); 
             resetInputOnNextDigit = false;
-            shuffleArray(pharmacokineticsQuizData); // Shuffle questions for a new attempt
+            // No need to shuffle pharmacokineticsQuizData here, it's done during initialization
         }
+
+        /**
+         * Populates the category select dropdown.
+         */
+        function populateCategories() {
+            const categories = new Set();
+            pharmacokineticsQuizData.forEach(q => categories.add(q.category));
+            
+            categorySelect.innerHTML = '<option value="all">全てのカテゴリ</option>'; // Default option
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category;
+                categorySelect.appendChild(option);
+            });
+        }
+        
+        /**
+         * Initializes quiz data based on selected category and number of questions.
+         * @returns {boolean} True if quiz can start, false otherwise.
+         */
+        function initializeQuizData() {
+            const selectedCategoryValue = categorySelect.value;
+            const numQuestionsValue = numQuestionsSelect.value;
+
+            let filteredQuestions = pharmacokineticsQuizData;
+
+            // Filter by category
+            if (selectedCategoryValue !== "all") {
+                filteredQuestions = filteredQuestions.filter(q => q.category === selectedCategoryValue);
+            }
+
+            if (filteredQuestions.length === 0) {
+                alert("選択されたカテゴリに該当する問題がありません。");
+                return false;
+            }
+
+            shuffleArray(filteredQuestions); // Shuffle the filtered questions
+
+            // Filter by number of questions
+            if (numQuestionsValue !== "all") {
+                const num = parseInt(numQuestionsValue);
+                quizQuestions = filteredQuestions.slice(0, num);
+            } else {
+                quizQuestions = filteredQuestions; // Use all filtered questions
+            }
+            
+            if (quizQuestions.length === 0) {
+                 alert("出題できる問題がありません。条件を変更してください。");
+                 return false;
+            }
+            return true;
+        }
+
 
         // Event listener for the "Start Quiz" button
         startQuizButton.addEventListener('click', () => {
-            resetQuizState(); // Reset quiz before starting
+            resetQuizState(); 
+            if (!initializeQuizData()) { // Initialize and check if questions are available
+                mainHeader.style.display = 'block'; // Show header if quiz doesn't start
+                categorySelectContainer.style.display = 'block'; // Show category selection
+                return;
+            }
+
             mainHeader.style.display = 'none';
             categorySelectContainer.style.display = 'none';
-            quizContainer.style.display = 'block'; // Make quiz container visible
-            setTimeout(() => { quizContainer.classList.add('visible'); }, 10); // Add class for fade-in animation
+            quizContainer.style.display = 'block'; 
+            setTimeout(() => { quizContainer.classList.add('visible'); }, 10); 
             
-            // Animate the first question appearing
             quizCardContent.style.opacity = '0';
             quizCardContent.style.transform = 'translateY(20px)';
-            loadQuestion(0); // Load the first question
+            loadQuestion(0); 
             setTimeout(() => {
                 quizCardContent.style.transition = 'opacity 0.4s ease-out, transform 0.4s ease-out';
                 quizCardContent.style.opacity = '1';
@@ -854,116 +949,105 @@
 
         // Event listener for the "Next" button
         nextButton.addEventListener('click', () => {
-            if (currentQuestionIndex < pharmacokineticsQuizData.length - 1) {
-                animateAndLoadQuestion(currentQuestionIndex + 1, 'next'); // Load next question
+            if (currentQuestionIndex < quizQuestions.length - 1) {
+                animateAndLoadQuestion(currentQuestionIndex + 1, 'next'); 
             }
         });
 
         // Event listener for the "Previous" button
         prevButton.addEventListener('click', () => {
             if (currentQuestionIndex > 0) {
-                animateAndLoadQuestion(currentQuestionIndex - 1, 'prev'); // Load previous question
+                animateAndLoadQuestion(currentQuestionIndex - 1, 'prev'); 
             }
         });
         
         // Event listeners for calculation answer submission
         submitCalcAnswerBtn.addEventListener('click', submitCalculation);
         calcAnswerInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') submitCalculation(); // Allow submission with Enter key
+            if (e.key === 'Enter') submitCalculation(); 
         });
 
         // Event listener for the "Finish" button
         finishButton.addEventListener('click', () => {
-             const questionData = pharmacokineticsQuizData[currentQuestionIndex];
+             const questionData = quizQuestions[currentQuestionIndex];
              const answeredCurrent = userAnswers.find(ans => ans.questionId === questionData.id);
-             // If on the last question and it's an unanswered calculation with input, submit it
              if (!answeredCurrent && questionData.type === 'calculation' && calcAnswerInput.value) {
                 submitCalculation(); 
              }
-            showSummary(); // Display summary screen
+            showSummary(); 
         });
 
-        // Event listener for the "Restart Quiz" button
+        // Event listener for the "Restart Quiz" button on summary page
         restartButton.addEventListener('click', () => {
+            // resetQuizState(); // Already called by backToMenu
+            backToMenuButton.click(); // Simulate click on back to menu
+        });
+        
+        // Event listener for "Back to Menu" button
+        backToMenuButton.addEventListener('click', (e) => {
+            e.preventDefault();
             resetQuizState();
             mainHeader.style.display = 'block';
             summaryContainer.style.display = 'none';
             quizContainer.classList.remove('visible');
-            setTimeout(() => { quizContainer.style.display = 'none';}, 500);
+            quizContainer.style.display = 'none'; // Hide immediately then transition out
             categorySelectContainer.style.display = 'block';
+            // Ensure content pusher is removed if calculator was open
+            quizCardElement.classList.remove('quiz-content-pusher');
         });
 
-        // --- Calculator Logic ---
 
-        /**
-         * Formats the internal calculator string for display.
-         * Replaces JavaScript operators and function calls with display symbols.
-         * @param {string} inputString - The internal calculator string.
-         * @returns {string} The formatted string for display.
-         */
+        // --- Calculator Logic ---
         function formatDisplayValue(inputString) {
             if (inputString === null || inputString === undefined) return '';
             return inputString
-                .replace(/Math\.log\(/g, 'ln(')      // Replace Math.log( with ln(
-                .replace(/Math\.log10\(/g, 'log(')   // Replace Math.log10( with log(
-                .replace(/Math\.exp\(/g, 'exp(')     // Replace Math.exp( with exp(
-                .replace(/Math\.sqrt\(/g, '√(')      // Replace Math.sqrt( with √ (
-                .replace(/\*\*/g, '^')             // Replace ** with ^ for exponentiation
-                .replace(/\*/g, '×')              // Replace * with × for multiplication
-                .replace(/\//g, '÷');             // Replace / with ÷ for division
+                .replace(/Math\.log\(/g, 'ln(')      
+                .replace(/Math\.log10\(/g, 'log(')   
+                .replace(/Math\.exp\(/g, 'exp(')     
+                .replace(/Math\.sqrt\(/g, '√(')      
+                .replace(/\*\*/g, '^')             
+                .replace(/\*/g, '×')              
+                .replace(/\//g, '÷');             
         }
 
-
-        // Event listener for the calculator toggle button
         calculatorToggleBtn.addEventListener('click', () => {
-            const isVisible = calculatorContainer.classList.toggle('visible'); // Toggle calculator visibility
-            // Add/remove class to push content if calculator is visible and on small screen
-            if (window.innerWidth < 768) { // Apply only on smaller screens
+            const isVisible = calculatorContainer.classList.toggle('visible'); 
+            if (window.innerWidth < 768) { 
                  quizCardElement.classList.toggle('quiz-content-pusher', isVisible);
             }
         });
 
-        // Event listener for calculator buttons
         calcButtons.addEventListener('click', (e) => {
-            if (!e.target.matches('button')) return; // Ignore clicks not on buttons
+            if (!e.target.matches('button')) return; 
             const button = e.target;
-            const value = button.dataset.value; // Get value from data-value attribute
-            const action = button.dataset.action; // Get action from data-action attribute
+            const value = button.dataset.value; 
+            const action = button.dataset.action; 
 
-            // If an operation was just performed, and a new digit/function is pressed (not an operator or action), clear the input
             if (resetInputOnNextDigit && !action && !button.classList.contains('operator') && value !== '(' && value !== ')') {
                 calcCurrentInput = '';
                 resetInputOnNextDigit = false;
             }
             
-            if (value) { // If the button has a value (digit, operator, function)
-                if (value === '.' && calcCurrentInput.includes('.')) return; // Prevent multiple decimal points
-                if (calcCurrentInput === '0' && value !== '.' && !value.startsWith('Math.')) calcCurrentInput = ''; // Avoid leading zero like "07", unless it's "0." or a function call
-                
-                // Append the raw value (e.g., "Math.log(", "**", "7") to the internal input string
+            if (value) { 
+                if (value === '.' && calcCurrentInput.includes('.')) return; 
+                if (calcCurrentInput === '0' && value !== '.' && !value.startsWith('Math.')) calcCurrentInput = ''; 
                 calcCurrentInput += value;
-
-            } else if (action) { // If the button has an action (clear, equals, backspace)
+            } else if (action) { 
                 performCalcAction(action);
             }
-            updateCalcDisplay(); // Update the calculator display
+            updateCalcDisplay(); 
         });
         
-        /**
-         * Performs a calculator action (clear, equals, etc.).
-         * @param {string} action - The action to perform.
-         */
         function performCalcAction(action) {
             switch (action) {
-                case 'clear': // Clear all input and history
+                case 'clear': 
                     calcCurrentInput = '';
                     calcCurrentHistory = '';
                     break;
-                case 'clear-entry': // Clear current entry
+                case 'clear-entry': 
                     calcCurrentInput = '';
                     break;
-                case 'backspace': // Delete last character
-                    // More robust backspace for function calls and operators
+                case 'backspace': 
                     if (calcCurrentInput.endsWith('**')) { 
                         calcCurrentInput = calcCurrentInput.slice(0, -2);
                     } else if (calcCurrentInput.match(/Math\.(log10|log|exp|sqrt)\($/)) { 
@@ -975,18 +1059,15 @@
                         calcCurrentInput = calcCurrentInput.slice(0, -1);
                     }
                     break;
-                case 'equals': // Evaluate the expression
+                case 'equals': 
                     try {
                         let expressionToEvaluate = calcCurrentInput;
-                        // No need to replace display symbols here, as calcCurrentInput uses JS syntax.
-                        
                         let result = new Function('return ' + expressionToEvaluate)();
                         
                         if (result === Infinity || result === -Infinity || isNaN(result)) {
                              calcCurrentHistory = calcCurrentInput + '='; 
                              calcCurrentInput = 'Error'; 
                         } else {
-                            // For display in history, format the original input
                             calcCurrentHistory = formatDisplayValue(calcCurrentInput) + '='; 
                             calcCurrentInput = result.toString(); 
                         }
@@ -999,20 +1080,16 @@
                     }
                     break;
             }
-            updateCalcDisplay(); // Update display after action
+            updateCalcDisplay(); 
         }
 
-        /**
-         * Updates the calculator's display with the current input and history,
-         * formatting them for user readability.
-         */
         function updateCalcDisplay() {
             calcDisplay.value = formatDisplayValue(calcCurrentInput || '0'); 
             calcHistory.textContent = formatDisplayValue(calcCurrentHistory); 
         }
         
-        // Initial setup when the DOM is fully loaded
         document.addEventListener('DOMContentLoaded', () => {
+            populateCategories(); // Populate categories on load
             categorySelectContainer.style.display = 'block'; 
             quizContainer.style.display = 'none'; 
             summaryContainer.style.display = 'none'; 
@@ -1021,7 +1098,6 @@
             renderAllMath(); 
         });
 
-        // Adjust content pusher on window resize
         window.addEventListener('resize', () => {
             const calculatorIsVisible = calculatorContainer.classList.contains('visible');
             if (window.innerWidth >= 768) {
