@@ -18,8 +18,28 @@
         .container { max-width: 900px; margin: 0 auto; padding: 1rem; text-align: center; }
         @media (min-width: 768px) { .container { padding: 2rem; } }
 
-        #quiz-card-element { background-color: white; border-radius: 0.75rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1); padding: 1.5rem; margin-bottom: 1.5rem; overflow: hidden; position: relative; }
-        @media (min-width: 768px) { #quiz-card-element { padding: 2rem; } }
+        #quiz-card-element { 
+            background-color: white; 
+            border-radius: 0.75rem; 
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1); 
+            padding: 1.5rem; 
+            margin-bottom: 1.5rem; 
+            overflow: hidden; 
+            position: relative;
+            transition: margin-bottom 0.3s ease-in-out; /* Added for smooth transition */
+        }
+        /* This class will be added to push content up when calculator is open */
+        #quiz-card-element.quiz-content-pusher {
+            margin-bottom: 380px; /* Adjust this value based on calculator height + desired spacing */
+        }
+
+        @media (min-width: 768px) { 
+            #quiz-card-element { padding: 2rem; } 
+            #quiz-card-element.quiz-content-pusher {
+                margin-bottom: 1.5rem; /* Reset margin for larger screens if calculator is not overlapping */
+            }
+        }
+
 
         #quiz-card-content { width: 100%; transition: transform 0.35s ease-in-out, opacity 0.35s ease-in-out; will-change: transform, opacity; }
         #quiz-container { opacity: 0; visibility: hidden; transition: opacity 0.5s ease-in-out, visibility 0s linear 0.5s; }
@@ -123,10 +143,25 @@
             display: flex; align-items: center; justify-content: center;
         }
         #calculator-container {
-            display: none; position: fixed; bottom: 90px; right: 20px; z-index: 999;
-            width: 300px; background-color: #fff; border-radius: 8px; box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-            border: 1px solid #e2e8f0; overflow: hidden;
+            display: none; position: fixed; bottom: 20px; /* Adjusted for mobile, toggle button is above */
+            left: 50%; /* Center horizontally */
+            transform: translateX(-50%); /* Adjust for centering */
+            width: calc(100% - 40px); /* Full width with some padding */
+            max-width: 320px; /* Max width for calculator */
+            background-color: #fff; border-radius: 8px; box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+            border: 1px solid #e2e8f0; overflow: hidden; z-index: 999;
         }
+        /* On larger screens, position it to the bottom right */
+         @media (min-width: 768px) {
+            #calculator-container {
+                bottom: 90px;
+                left: auto;
+                right: 20px;
+                transform: none;
+                width: 300px; /* Original width for larger screens */
+            }
+        }
+
         #calculator-container.visible { display: block; }
         .calc-header { background-color: #1e3a8a; color: white; padding: 8px 12px; font-size: 0.9rem; text-align: left; }
         .calc-display-container { padding: 10px; background-color: #f8fafc; }
@@ -134,7 +169,7 @@
             width: 100%; background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 4px;
             padding: 10px; text-align: right; font-size: 1.6rem; color: #1e293b;
             box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 10px;
-            font-variant-numeric: lining-nums; /* Ensures consistent number appearance */
+            font-variant-numeric: lining-nums; 
         }
          #calc-history {
             width: 100%; height: 20px; text-align: right; font-size: 0.8rem; color: #64748b;
@@ -223,7 +258,8 @@
         <div class="calc-buttons">
             <button class="function" data-value="Math.log(">ln</button>
             <button class="function" data-value="Math.log10(">log</button>
-            <button class="function" data-value="Math.exp(">exp</button> <button class="function" data-value="Math.sqrt(">√</button>
+            <button class="function" data-value="Math.exp(">exp</button> 
+            <button class="function" data-value="Math.sqrt(">√</button>
             <button class="function" data-value="**">x<sup>y</sup></button>
 
             <button data-value="(">(</button>
@@ -422,7 +458,9 @@
         const progressBar = document.getElementById('progress-bar');
         const questionCounterElement = document.getElementById('question-counter');
         const mainHeader = document.getElementById('main-header');
+        const quizCardElement = document.getElementById('quiz-card-element'); // Added for content pushing
         const quizCardContent = document.getElementById('quiz-card-content');
+
 
         // Calculator elements and state
         const calculatorToggleBtn = document.getElementById('calculator-toggle-btn');
@@ -782,7 +820,7 @@
             return inputString
                 .replace(/Math\.log\(/g, 'ln(')      // Replace Math.log( with ln(
                 .replace(/Math\.log10\(/g, 'log(')   // Replace Math.log10( with log(
-                .replace(/Math\.exp\(/g, 'exp(')     // Replace Math.exp( with exp( - Reverted
+                .replace(/Math\.exp\(/g, 'exp(')     // Replace Math.exp( with exp(
                 .replace(/Math\.sqrt\(/g, '√(')      // Replace Math.sqrt( with √ (
                 .replace(/\*\*/g, '^')             // Replace ** with ^ for exponentiation
                 .replace(/\*/g, '×')              // Replace * with × for multiplication
@@ -792,7 +830,11 @@
 
         // Event listener for the calculator toggle button
         calculatorToggleBtn.addEventListener('click', () => {
-            calculatorContainer.classList.toggle('visible'); // Toggle calculator visibility
+            const isVisible = calculatorContainer.classList.toggle('visible'); // Toggle calculator visibility
+            // Add/remove class to push content if calculator is visible and on small screen
+            if (window.innerWidth < 768) { // Apply only on smaller screens
+                 quizCardElement.classList.toggle('quiz-content-pusher', isVisible);
+            }
         });
 
         // Event listener for calculator buttons
@@ -891,6 +933,20 @@
             mainHeader.style.display = 'block'; 
             updateCalcDisplay(); 
             renderAllMath(); 
+        });
+
+        // Adjust content pusher on window resize
+        window.addEventListener('resize', () => {
+            const calculatorIsVisible = calculatorContainer.classList.contains('visible');
+            if (window.innerWidth >= 768) {
+                quizCardElement.classList.remove('quiz-content-pusher');
+            } else {
+                if (calculatorIsVisible) {
+                    quizCardElement.classList.add('quiz-content-pusher');
+                } else {
+                    quizCardElement.classList.remove('quiz-content-pusher');
+                }
+            }
         });
 
     </script>
