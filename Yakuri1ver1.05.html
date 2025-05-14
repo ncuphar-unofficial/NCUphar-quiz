@@ -41,21 +41,19 @@
         #quiz-card-content {
             width: 100%;
             transition: transform 0.35s ease-in-out, opacity 0.35s ease-in-out;
-            will-change: transform, opacity; /* Hint for browser optimization */
+            will-change: transform, opacity; 
         }
 
-        /* Styling for fade-in of the quiz container */
         #quiz-container {
             opacity: 0;
             visibility: hidden;
-            transition: opacity 0.5s ease-in-out, visibility 0s linear 0.5s; /* Delay visibility change */
+            transition: opacity 0.5s ease-in-out, visibility 0s linear 0.5s; 
         }
         #quiz-container.visible {
             opacity: 1;
             visibility: visible;
-            transition-delay: 0s; /* Apply opacity transition immediately when visible */
+            transition-delay: 0s; 
         }
-
 
         .question {
             font-size: 1.05rem; 
@@ -129,6 +127,32 @@
             color: #991b1b; 
             font-weight: 600;
         }
+        /* Styles for typed answer input */
+        #typed-answer-container {
+            margin-bottom: 1.5rem;
+        }
+        #typed-answer-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            font-size: 1rem;
+            color: #374151;
+            margin-bottom: 0.75rem;
+        }
+        #typed-answer-input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        #submit-typed-answer-btn {
+            background-color: #10b981; /* Tailwind emerald-500 */
+        }
+        #submit-typed-answer-btn:hover:not(:disabled) {
+            background-color: #059669; /* Tailwind emerald-600 */
+        }
+
+
         .explanation {
             background-color: #e0f2fe; 
             border-radius: 0.5rem;
@@ -176,7 +200,7 @@
             background-color: #2563eb; 
             font-size: 1.1rem; 
             padding: 0.8rem 2rem;
-            margin-top: 2.5rem;
+            margin-top: 1rem; /* Reduced margin-top slightly */
         }
         .start-quiz-btn:hover:not(:disabled) {
             background-color: #1d4ed8; 
@@ -321,6 +345,20 @@
             color: #1d4ed8; 
             text-decoration: underline;
         }
+        /* Answer mode selection styling */
+        #answer-mode-select-container {
+            margin-top: 1.5rem; /* mt-6 */
+            margin-bottom: 1rem; /* mb-4 */
+        }
+        #answer-mode-select-container label {
+            margin-right: 0.75rem; /* mr-3 */
+            font-size: 0.95rem;
+            color: #374151; /* gray-700 */
+        }
+        #answer-mode-select-container input[type="radio"] {
+            margin-right: 0.25rem; /* mr-1 */
+            accent-color: #2563eb; /* blue-600 */
+        }
 
     </style>
 </head>
@@ -352,6 +390,16 @@
                <option value="all">全ての問題</option>
            </select>
 
+           <div id="answer-mode-select-container">
+                <label class="block text-slate-700 text-lg font-semibold mb-2 mt-6">解答形式を選択してください:</label>
+                <div>
+                    <input type="radio" id="mode-multiple-choice" name="answer-mode" value="multiple-choice" checked>
+                    <label for="mode-multiple-choice">選択式</label>
+                    <input type="radio" id="mode-typed-input" name="answer-mode" value="typed-input" class="ml-4">
+                    <label for="mode-typed-input">単語入力式</label>
+                </div>
+           </div>
+
            <button id="start-quiz-btn" class="quiz-btn start-quiz-btn">クイズを開始する</button>
         </div>
 
@@ -366,8 +414,11 @@
                         <div class="progress-bar" id="progress-bar"></div>
                     </div>
                     <div id="question" class="question"></div>
-                    <div id="options" class="options">
-                        </div>
+                    <div id="options" class="options"></div>
+                    <div id="typed-answer-container" style="display: none;">
+                        <input type="text" id="typed-answer-input" placeholder="薬物名を入力してください">
+                        <button id="submit-typed-answer-btn" class="quiz-btn w-full">解答する</button>
+                    </div>
                     <div id="feedback" class="feedback" style="display: none;"></div>
                     <div id="explanation" class="explanation" style="display: none;"></div>
                     <div class="controls">
@@ -475,11 +526,15 @@
         let score = 0;
         let userAnswers = [];
         let selectedCategory = 'all';
+        let answerMode = 'multiple-choice'; // 'multiple-choice' or 'typed-input'
         let isReviewMode = false; 
         let reviewSourceQuestions = []; 
 
         const questionElement = document.getElementById('question');
         const optionsElement = document.getElementById('options');
+        const typedAnswerContainer = document.getElementById('typed-answer-container');
+        const typedAnswerInput = document.getElementById('typed-answer-input');
+        const submitTypedAnswerBtn = document.getElementById('submit-typed-answer-btn');
         const explanationElement = document.getElementById('explanation');
         const feedbackElement = document.getElementById('feedback');
         const nextButton = document.getElementById('next-btn');
@@ -516,9 +571,10 @@
             }
         }
 
-        function initializeQuizData(category, numQuestionsRequestedStr) {
+        function initializeQuizData(category, numQuestionsRequestedStr, mode) { // Added mode
             isReviewMode = false; 
             selectedCategory = category;
+            answerMode = mode; // Set answer mode
             let filteredDrugs = drugData;
 
             if (category !== 'all') {
@@ -578,39 +634,41 @@
                     </div>
                     <p class="question-prompt"><strong>この説明に該当する薬物はどれですか？</strong></p>`;
                 
-                let distractors = drugData
-                    .filter(d => d.name !== correctDrug.name) 
-                    .map(d => d.name);
-                shuffleArray(distractors);
-                
-                let finalDistractors = [];
-                let usedNamesInOptions = new Set([correctDrug.name]);
+                let optionsArray = [];
+                if (answerMode === 'multiple-choice') {
+                    let distractors = drugData
+                        .filter(d => d.name !== correctDrug.name) 
+                        .map(d => d.name);
+                    shuffleArray(distractors);
+                    
+                    let finalDistractors = [];
+                    let usedNamesInOptions = new Set([correctDrug.name]);
 
-                for (const distractorName of distractors) {
-                    if (finalDistractors.length < 3 && !usedNamesInOptions.has(distractorName)) {
-                        finalDistractors.push(distractorName);
-                        usedNamesInOptions.add(distractorName);
+                    for (const distractorName of distractors) {
+                        if (finalDistractors.length < 3 && !usedNamesInOptions.has(distractorName)) {
+                            finalDistractors.push(distractorName);
+                            usedNamesInOptions.add(distractorName);
+                        }
+                        if (finalDistractors.length >= 3) break;
                     }
-                     if (finalDistractors.length >= 3) break;
+                    
+                    while(finalDistractors.length < 3 && drugData.length > finalDistractors.length + 1) { 
+                        const randomDrugIndex = Math.floor(Math.random() * drugData.length);
+                        const randomDrugName = drugData[randomDrugIndex].name;
+                        if (!usedNamesInOptions.has(randomDrugName)) { 
+                            finalDistractors.push(randomDrugName);
+                            usedNamesInOptions.add(randomDrugName);
+                        }
+                        if (finalDistractors.length >=3) break;
+                    }
+                    finalDistractors = finalDistractors.slice(0,3);
+                    optionsArray = [correctDrug.name, ...finalDistractors];
+                    shuffleArray(optionsArray);
                 }
-                
-                 while(finalDistractors.length < 3 && drugData.length > finalDistractors.length + 1) { 
-                    const randomDrugIndex = Math.floor(Math.random() * drugData.length);
-                    const randomDrugName = drugData[randomDrugIndex].name;
-                     if (!usedNamesInOptions.has(randomDrugName)) { 
-                         finalDistractors.push(randomDrugName);
-                         usedNamesInOptions.add(randomDrugName);
-                     }
-                     if (finalDistractors.length >=3) break;
-                 }
-                 finalDistractors = finalDistractors.slice(0,3);
-
-                const options = [correctDrug.name, ...finalDistractors];
-                shuffleArray(options);
 
                 return {
                     questionText: questionText,
-                    options: options,
+                    options: optionsArray, // Empty if typed-input mode
                     correctAnswer: correctDrug.name,
                     explanationText: `<strong>${correctDrug.name}</strong><br>作用機序: ${correctDrug.mechanism}<br>薬理学的特徴: ${correctDrug.characteristics}<br>主な適応: ${correctDrug.applications}`,
                     drugDetails: correctDrug 
@@ -661,15 +719,27 @@
 
             questionElement.innerHTML = questionData.questionText;
             optionsElement.innerHTML = ''; 
+            typedAnswerInput.value = ''; // Clear previous typed answer
 
-            questionData.options.forEach((optionName) => {
-                const optionDiv = document.createElement('div');
-                optionDiv.classList.add('option');
-                optionDiv.textContent = optionName;
-                optionDiv.dataset.optionName = optionName;
-                optionDiv.addEventListener('click', () => selectOption(optionDiv, questionData));
-                optionsElement.appendChild(optionDiv);
-            });
+            if (answerMode === 'multiple-choice') {
+                optionsElement.style.display = 'flex';
+                typedAnswerContainer.style.display = 'none';
+                questionData.options.forEach((optionName) => {
+                    const optionDiv = document.createElement('div');
+                    optionDiv.classList.add('option');
+                    optionDiv.textContent = optionName;
+                    optionDiv.dataset.optionName = optionName; 
+                    optionDiv.addEventListener('click', () => selectOption(optionDiv, questionData));
+                    optionsElement.appendChild(optionDiv);
+                });
+            } else { // typed-input mode
+                optionsElement.style.display = 'none';
+                typedAnswerContainer.style.display = 'block';
+                typedAnswerInput.disabled = false;
+                submitTypedAnswerBtn.disabled = false;
+                typedAnswerInput.focus();
+            }
+
 
             explanationElement.style.display = 'none';
             feedbackElement.style.display = 'none';
@@ -678,15 +748,22 @@
 
             const answered = userAnswers[index];
             if (answered) {
-                optionsElement.childNodes.forEach(optDiv => {
-                    optDiv.classList.add('answered');
-                    optDiv.classList.add('disabled');
-                    if (optDiv.dataset.optionName === questionData.correctAnswer) {
-                        optDiv.classList.add('correct');
-                    } else if (optDiv.dataset.optionName === answered.selectedDrugName) {
-                        optDiv.classList.add('incorrect');
-                    }
-                });
+                if (answerMode === 'multiple-choice') {
+                    optionsElement.childNodes.forEach(optDiv => {
+                        optDiv.classList.add('answered');
+                        optDiv.classList.add('disabled');
+                        if (optDiv.dataset.optionName === questionData.correctAnswer) {
+                            optDiv.classList.add('correct');
+                        } else if (optDiv.dataset.optionName === answered.selectedDrugName) {
+                            optDiv.classList.add('incorrect');
+                        }
+                    });
+                } else { // typed-input mode - restore typed answer and disable
+                    typedAnswerInput.value = answered.selectedDrugName || ''; // Use selectedDrugName for typed answer
+                    typedAnswerInput.disabled = true;
+                    submitTypedAnswerBtn.disabled = true;
+                    // Apply correct/incorrect styling to input if needed, or just use feedback text
+                }
                 feedbackElement.textContent = answered.isCorrect ? '正解です！' : '不正解です。';
                 feedbackElement.classList.add(answered.isCorrect ? 'correct' : 'incorrect');
                 feedbackElement.style.display = 'block';
@@ -729,7 +806,8 @@
 
             userAnswers[currentQuestionIndex] = {
                 questionIndex: currentQuestionIndex,
-                selectedDrugName: selectedDrugName,
+                selectedDrugName: selectedDrugName, // For multiple choice, this is the selected option
+                typedAnswer: null, // Not used in multiple choice
                 correctAnswerName: questionData.correctAnswer,
                 isCorrect: isCorrect,
                 questionText: questionData.questionText,
@@ -767,6 +845,60 @@
             }
         }
 
+        function submitTypedAnswer() {
+            if (userAnswers[currentQuestionIndex]) return; // Prevent re-answering
+
+            const questionData = quizQuestions[currentQuestionIndex];
+            const userAnswerText = typedAnswerInput.value.trim();
+            
+            // Normalize answers: convert to lowercase and remove spaces for comparison
+            // You might want to add more normalization (e.g., Katakana to Hiragana)
+            const normalizedUserAnswer = userAnswerText.toLowerCase().replace(/\s+/g, '');
+            const normalizedCorrectAnswer = questionData.correctAnswer.toLowerCase().replace(/\s+/g, '');
+
+            const isCorrect = normalizedUserAnswer === normalizedCorrectAnswer;
+
+            userAnswers[currentQuestionIndex] = {
+                questionIndex: currentQuestionIndex,
+                selectedDrugName: null, // Not used in typed input
+                typedAnswer: userAnswerText, // Store the user's typed answer
+                correctAnswerName: questionData.correctAnswer,
+                isCorrect: isCorrect,
+                questionText: questionData.questionText,
+                drugDetails: questionData.drugDetails
+            };
+
+            if (isCorrect) {
+                score++;
+                feedbackElement.textContent = '正解です！';
+                feedbackElement.classList.add('correct');
+                typedAnswerInput.classList.add('border-green-500', 'ring-2', 'ring-green-200'); // Green border for correct
+            } else {
+                feedbackElement.textContent = `不正解です。正解は「${questionData.correctAnswer}」です。`;
+                feedbackElement.classList.add('incorrect');
+                typedAnswerInput.classList.add('border-red-500', 'ring-2', 'ring-red-200'); // Red border for incorrect
+            }
+
+            feedbackElement.style.display = 'block';
+            explanationElement.innerHTML = questionData.explanationText;
+            explanationElement.style.display = 'block';
+
+            typedAnswerInput.disabled = true;
+            submitTypedAnswerBtn.disabled = true;
+
+            nextButton.disabled = false;
+            if (currentQuestionIndex === quizQuestions.length - 1) {
+                finishButton.disabled = false;
+            }
+        }
+        submitTypedAnswerBtn.addEventListener('click', submitTypedAnswer);
+        typedAnswerInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter' && !submitTypedAnswerBtn.disabled) {
+                submitTypedAnswer();
+            }
+        });
+
+
         function showSummary() {
             quizContainer.classList.remove('visible');
             setTimeout(() => {
@@ -797,7 +929,8 @@
                 incorrectAnswersForDisplay.forEach(ans => {
                     const listItem = document.createElement('li');
                     listItem.className = 'text-sm text-gray-700 leading-relaxed';
-                    listItem.innerHTML = `<strong class="text-base text-slate-800">問題 ${ans.questionIndex + 1}: ${ans.drugDetails.name}</strong> (あなたの回答: ${ans.selectedDrugName})<br>
+                    const userAnswerDisplay = ans.typedAnswer !== null ? ans.typedAnswer : ans.selectedDrugName;
+                    listItem.innerHTML = `<strong class="text-base text-slate-800">問題 ${ans.questionIndex + 1}: ${ans.drugDetails.name}</strong> (あなたの回答: ${userAnswerDisplay})<br>
                                           <div class="pl-2 mt-1 text-xs space-y-0.5">
                                               <p><strong>作用機序:</strong> ${ans.drugDetails.mechanism}</p>
                                               <p><strong>薬理学的特徴:</strong> ${ans.drugDetails.characteristics}</p>
@@ -840,6 +973,7 @@
             nextButton.disabled = true;
             prevButton.disabled = true;
             isReviewMode = false; 
+            typedAnswerInput.classList.remove('border-green-500', 'ring-2', 'ring-green-200', 'border-red-500', 'ring-red-200');
         }
 
         function startReviewQuiz() {
@@ -848,6 +982,9 @@
                 return;
             }
             isReviewMode = true;
+            // Determine answer mode for review - could be fixed or based on original error, here fixed to multiple choice for simplicity
+            answerMode = 'multiple-choice'; // Or make this configurable for review
+            
             currentQuestionIndex = 0;
             score = 0;
             userAnswers = []; 
@@ -916,10 +1053,12 @@
         startQuizButton.addEventListener('click', () => {
             const category = categorySelect.value;
             const numQuestions = numQuestionsSelect.value; 
+            const selectedMode = document.querySelector('input[name="answer-mode"]:checked').value;
+            
             resetQuizState(); 
             reviewSourceQuestions = []; 
             mainHeader.style.display = 'none'; 
-            if (initializeQuizData(category, numQuestions)) { 
+            if (initializeQuizData(category, numQuestions, selectedMode)) { 
                 categorySelectContainer.style.display = 'none';
                 
                 quizContainer.style.display = 'block'; 
