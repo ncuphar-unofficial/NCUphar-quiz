@@ -127,8 +127,8 @@
         let startCoords = { x: 0, y: 0 };
         let messageTimeout;
 
-        function showMessage(text, isError = true, duration = 4000) {
-            messageTextEl.textContent = text;
+        function showMessage(text, isError = true, duration = 4000, detail = "") {
+            messageTextEl.textContent = text + (detail ? ` (${detail})` : ""); // 詳細メッセージを追加
             messageBoxEl.className = `fixed bottom-5 right-5 p-4 rounded-lg shadow-xl text-white transition-opacity duration-300 ${isError ? 'bg-red-600' : 'bg-green-600'}`;
             messageBoxEl.style.display = 'block';
             setTimeout(() => messageBoxEl.style.opacity = '1', 10); // Fade in
@@ -156,7 +156,10 @@
             showLoading(true);
             try {
                 currentPdfData = await file.arrayBuffer();
-                pdfDoc = await pdfjsLib.getDocument({ data: new Uint8Array(currentPdfData) }).promise;
+                // PDF.js に ArrayBuffer のコピーを渡すために .slice(0) を使用
+                const pdfDataForPdfJs = new Uint8Array(currentPdfData.slice(0));
+                pdfDoc = await pdfjsLib.getDocument({ data: pdfDataForPdfJs }).promise;
+                
                 totalPages = pdfDoc.numPages;
                 currentPageNumber = 1;
                 await renderPageToCanvas(currentPageNumber);
@@ -166,7 +169,7 @@
                 updateSelectionDiv();
             } catch (error) {
                 console.error('Error loading PDF:', error);
-                showMessage(`PDFの読み込みに失敗しました: ${error.message}`, true);
+                showMessage('PDFの読み込みに失敗しました', true, 4000, error.message || '不明なエラー');
                 pdfPreviewContainerEl.style.display = 'none';
                 cropButtonContainerEl.style.display = 'none';
             } finally {
@@ -187,7 +190,8 @@
                 currentPdfJsPage = await pdfDoc.getPage(pageNum);
                 
                 const viewport = currentPdfJsPage.getViewport({ scale: 1 });
-                const containerWidth = pdfCanvasEl.parentElement.getBoundingClientRect().width * 0.98; // 親要素の幅の98%
+                // 親要素のclientWidthを使用し、パディングを考慮
+                const containerWidth = pdfCanvasEl.parentElement.clientWidth * 0.98; 
                 
                 currentVisiblePageScale = Math.min(containerWidth / viewport.width, 2.0); // 最大スケール2.0
                 const scaledViewport = currentPdfJsPage.getViewport({ scale: currentVisiblePageScale });
@@ -195,7 +199,6 @@
                 pdfCanvasEl.height = scaledViewport.height;
                 pdfCanvasEl.width = scaledViewport.width;
                 
-                // CSSで表示サイズを調整 (アスペクト比を保ちつつコンテナにフィット)
                 pdfCanvasEl.style.width = '100%'; 
                 pdfCanvasEl.style.maxWidth = `${scaledViewport.width}px`;
                 pdfCanvasEl.style.height = 'auto';
@@ -214,7 +217,7 @@
                     console.log('Rendering cancelled');
                 } else {
                     console.error('Error rendering page:', error);
-                    showMessage(`ページの描画に失敗しました: ${error.message}`, true);
+                    showMessage('ページの描画に失敗しました', true, 4000, error.message || '不明なエラー');
                 }
             } finally {
                 showLoading(false);
@@ -245,13 +248,11 @@
         // --- Selection Logic ---
         function getCanvasCoordinates(event) {
             const rect = pdfCanvasEl.getBoundingClientRect();
-            // マウス座標をキャンバスの実際のピクセル座標に変換
             const scaleX = pdfCanvasEl.width / rect.width;
             const scaleY = pdfCanvasEl.height / rect.height;
             let x = (event.clientX - rect.left) * scaleX;
             let y = (event.clientY - rect.top) * scaleY;
 
-            // 座標がキャンバスの範囲内に収まるようにする
             x = Math.max(0, Math.min(x, pdfCanvasEl.width));
             y = Math.max(0, Math.min(y, pdfCanvasEl.height));
             return { x, y };
@@ -259,8 +260,6 @@
         
         function updateSelectionDiv() {
             if (selectionRect && selectionRect.width > 0 && selectionRect.height > 0) {
-                // selectionRectの座標はキャンバスのピクセル座標
-                // selectionDivの座標はキャンバスの表示サイズに対する相対位置
                 const canvasBoundingRect = pdfCanvasEl.getBoundingClientRect();
                 const displayScaleX = canvasBoundingRect.width / pdfCanvasEl.width;
                 const displayScaleY = canvasBoundingRect.height / pdfCanvasEl.height;
@@ -281,7 +280,7 @@
             isSelecting = true;
             startCoords = getCanvasCoordinates(e);
             selectionRect = { x: startCoords.x, y: startCoords.y, width: 0, height: 0 };
-            updateSelectionDiv(); // Initially hide or reset
+            updateSelectionDiv(); 
         });
 
         pdfCanvasEl.addEventListener('mousemove', (e) => {
@@ -298,23 +297,20 @@
             if (!isSelecting || !currentPdfJsPage) return;
             isSelecting = false;
             const finalCoords = getCanvasCoordinates(e);
-            // Update final selection rect dimensions
             selectionRect.x = Math.min(startCoords.x, finalCoords.x);
             selectionRect.y = Math.min(startCoords.y, finalCoords.y);
             selectionRect.width = Math.abs(startCoords.x - finalCoords.x);
             selectionRect.height = Math.abs(startCoords.y - finalCoords.y);
 
-            if (selectionRect.width < 5 || selectionRect.height < 5) { // 小さすぎる選択は無視
+            if (selectionRect.width < 5 || selectionRect.height < 5) { 
                 selectionRect = null;
             }
             updateSelectionDiv();
         });
         
         pdfCanvasEl.addEventListener('mouseleave', (e) => {
-            if (isSelecting) { // もしキャンバス外に出たら選択を終了
+            if (isSelecting) { 
                  isSelecting = false;
-                 // mouseup と同様のロジックで selectionRect を確定させるか、
-                 // または現在の状態で確定させる。ここでは現在の状態で確定。
                  if (selectionRect && (selectionRect.width < 5 || selectionRect.height < 5)) {
                      selectionRect = null;
                  }
@@ -336,7 +332,8 @@
             showLoading(true);
             try {
                 const { PDFDocument } = PDFLib; // pdf-libからPDFDocumentを取得
-                const pdfToModify = await PDFDocument.load(currentPdfData);
+                // currentPdfData は元の ArrayBuffer をそのまま使用
+                const pdfToModify = await PDFDocument.load(currentPdfData); 
                 const pageToCrop = pdfToModify.getPages()[currentPageNumber - 1];
 
                 // PDF.jsのページから元のサイズ（scale=1）を取得
@@ -344,23 +341,60 @@
                 const originalViewport = pdfjsPageForSize.getViewport({ scale: 1 });
                 const { width: originalPdfWidth, height: originalPdfHeight } = originalViewport;
 
-                // selectionRectの座標はcanvasのピクセル座標
-                // これらをPDFのポイント座標 (pt) に変換
-                // currentVisiblePageScale は PDFポイントからCanvasピクセルへのスケール
-                const cropBoxPdfX = selectionRect.x / currentVisiblePageScale;
-                const cropBoxPdfY_fromTop = selectionRect.y / currentVisiblePageScale;
-                const cropBoxPdfWidth = selectionRect.width / currentVisiblePageScale;
-                const cropBoxPdfHeight = selectionRect.height / currentVisiblePageScale;
+                let sX_pdf_tl = selectionRect.x / currentVisiblePageScale;
+                let sY_pdf_tl = selectionRect.y / currentVisiblePageScale;
+                let sWidth_pdf = selectionRect.width / currentVisiblePageScale;
+                let sHeight_pdf = selectionRect.height / currentVisiblePageScale;
 
-                // pdf-libのsetCropBoxは左下隅からのY座標を要求する
-                const cropBoxPdfY = originalPdfHeight - (cropBoxPdfY_fromTop + cropBoxPdfHeight);
+                console.log("--- Crop Calculation ---");
+                console.log("Canvas Selection (pixels):", selectionRect);
+                console.log("currentVisiblePageScale:", currentVisiblePageScale);
+                console.log("Original PDF dimensions (points, from pdf.js):", { width: originalPdfWidth, height: originalPdfHeight });
+                console.log("Initial PDF selection (points, top-left origin):", { x: sX_pdf_tl, y: sY_pdf_tl, w: sWidth_pdf, h: sHeight_pdf });
 
-                pageToCrop.setCropBox(cropBoxPdfX, cropBoxPdfY, cropBoxPdfWidth, cropBoxPdfHeight);
+                sX_pdf_tl = Math.max(0, sX_pdf_tl);
+                sY_pdf_tl = Math.max(0, sY_pdf_tl);
+
+                if (sX_pdf_tl + sWidth_pdf > originalPdfWidth) {
+                    sWidth_pdf = originalPdfWidth - sX_pdf_tl;
+                }
+                if (sY_pdf_tl + sHeight_pdf > originalPdfHeight) {
+                    sHeight_pdf = originalPdfHeight - sY_pdf_tl;
+                }
                 
-                // MediaBoxもCropBoxに合わせる場合 (オプション)
-                // pageToCrop.setMediaBox(cropBoxPdfX, cropBoxPdfY, cropBoxPdfWidth, cropBoxPdfHeight);
+                if (sWidth_pdf <= 0.1 || sHeight_pdf <= 0.1) {
+                    showMessage('切り抜き範囲が無効です（サイズが小さすぎます）。', true);
+                    showLoading(false);
+                    return;
+                }
+                console.log("Clamped PDF selection (points, top-left origin):", { x: sX_pdf_tl, y: sY_pdf_tl, w: sWidth_pdf, h: sHeight_pdf });
 
+                const cropBoxX_forPdfLib = sX_pdf_tl;
+                const cropBoxY_forPdfLib = originalPdfHeight - (sY_pdf_tl + sHeight_pdf); 
+                const cropBoxWidth_forPdfLib = sWidth_pdf;
+                const cropBoxHeight_forPdfLib = sHeight_pdf;
 
+                console.log("Calculated CropBox for pdf-lib (points, bottom-left origin):", { x: cropBoxX_forPdfLib, y: cropBoxY_forPdfLib, w: cropBoxWidth_forPdfLib, h: cropBoxHeight_forPdfLib });
+
+                const tolerance = 0.01; 
+                if (cropBoxX_forPdfLib < -tolerance || 
+                    cropBoxY_forPdfLib < -tolerance ||
+                    cropBoxWidth_forPdfLib <= tolerance / 10 || 
+                    cropBoxHeight_forPdfLib <= tolerance / 10 ||
+                    cropBoxX_forPdfLib + cropBoxWidth_forPdfLib > originalPdfWidth + tolerance ||
+                    cropBoxY_forPdfLib + cropBoxHeight_forPdfLib > originalPdfHeight + tolerance) {
+                    
+                    console.error("Invalid crop box dimensions for pdf-lib after all calculations:", 
+                        { x: cropBoxX_forPdfLib, y: cropBoxY_forPdfLib, w: cropBoxWidth_forPdfLib, h: cropBoxHeight_forPdfLib },
+                        "Page dimensions:", { width: originalPdfWidth, height: originalPdfHeight }
+                    );
+                    showMessage('計算された切り抜き範囲がPDFの有効範囲外です。選択範囲を調整してください。', true);
+                    showLoading(false);
+                    return;
+                }
+
+                pageToCrop.setCropBox(cropBoxX_forPdfLib, cropBoxY_forPdfLib, cropBoxWidth_forPdfLib, cropBoxHeight_forPdfLib);
+                
                 const croppedPdfBytes = await pdfToModify.save();
 
                 const blob = new Blob([croppedPdfBytes], { type: 'application/pdf' });
@@ -377,7 +411,7 @@
 
             } catch (error) {
                 console.error('Error cropping PDF:', error);
-                showMessage(`PDFの切り抜きに失敗しました: ${error.message}`, true);
+                showMessage('PDFの切り抜きに失敗しました', true, 4000, error.message || '不明なエラー');
             } finally {
                 showLoading(false);
             }
