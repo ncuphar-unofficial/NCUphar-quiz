@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDFクロッパー</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Tailwind JIT が有効でない場合、カスタムスピナーアニメーション用 */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+        #pdfCanvas {
+            cursor: crosshair;
+            max-width: 100%; /* キャンバスがコンテナを超えないようにする */
+            height: auto; /* アスペクト比を維持 */
+            display: block; /* 中央揃えのため */
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .selection-rect { /* 選択範囲のスタイル（JavaScriptで動的に適用） */
+            position: absolute;
+            border: 1px dashed blue;
+            background-color: rgba(0, 0, 255, 0.1);
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+
+    <div class="container mx-auto p-4 sm:p-6 md:p-8 max-w-4xl">
+        <h1 class="text-3xl sm:text-4xl font-bold mb-6 sm:mb-8 text-center text-gray-800">PDFクロッパー</h1>
+
+        <div class="bg-white shadow-xl rounded-lg p-6 mb-6">
+            <label for="pdfFile" class="block text-sm font-medium text-gray-700 mb-2">PDFファイルを選択してください:</label>
+            <input type="file" id="pdfFile" accept=".pdf" class="block w-full text-sm text-gray-500
+                file:mr-4 file:py-2 file:px-4
+                file:rounded-md file:border-0
+                file:text-sm file:font-semibold
+                file:bg-blue-50 file:text-blue-700
+                hover:file:bg-blue-100 transition-colors duration-150
+            "/>
+        </div>
+
+        <div id="pdfPreviewContainer" class="mb-6 bg-white shadow-xl rounded-lg p-6" style="display: none;">
+            <p class="text-sm text-gray-600 mb-3 text-center">ドラッグして切り抜く領域を選択します。</p>
+            <div class="relative border-2 border-gray-300 rounded-md overflow-hidden bg-gray-50 flex justify-center items-center min-h-[200px]">
+                <canvas id="pdfCanvas"></canvas>
+                <div id="selectionDiv" class="selection-rect" style="display:none;"></div>
+            </div>
+            <div id="pageControls" class="flex justify-center items-center mt-4 space-x-2">
+                <button id="prevPage" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150">-</button>
+                <span id="pageIndicator" class="text-sm text-gray-700">ページ <span id="currentPageNum">1</span> / <span id="totalPagesNum">1</span></span>
+                <button id="nextPage" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150">+</button>
+            </div>
+        </div>
+
+        <div id="cropButtonContainer" class="text-center" style="display: none;">
+            <button id="cropButton" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg text-lg shadow-md hover:shadow-lg transition-all duration-150 ease-in-out">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M4 2a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V4a2 2 0 00-2-2H4zm0 2h12v12H4V4zm4 2a1 1 0 00-1 1v2H5a1 1 0 100 2h2v2a1 1 0 102 0V9h2a1 1 0 100-2H9V7a1 1 0 00-1-1z" clip-rule="evenodd" />
+                    <path d="M10.5 12H14a1 1 0 110 2h-3.5a1 1 0 01-1-1v-3.5a1 1 0 112 0V12z" />
+                </svg>
+                切り抜いてダウンロード
+            </button>
+        </div>
+    </div>
+
+    <div id="loadingIndicator" class="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50" style="display: none;">
+        <div class="bg-white p-5 rounded-lg shadow-xl flex items-center space-x-3">
+            <svg class="animate-spin h-8 w-8 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span class="text-lg font-medium text-gray-700">処理中...</span>
+        </div>
+    </div>
+    
+    <div id="messageBox" class="fixed bottom-5 right-5 p-4 rounded-lg shadow-xl text-white transition-opacity duration-300" style="display: none; opacity: 0;">
+        <p id="messageText"></p>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.min.mjs" type="module"></script>
+    <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+
+    <script type="module">
+        // pdf.jsのESMバージョンからインポート
+        import * as pdfjsLib from 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.min.mjs';
+
+        // pdf.jsのワーカー設定
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.worker.min.mjs';
+
+        const pdfFileEl = document.getElementById('pdfFile');
+        const pdfCanvasEl = document.getElementById('pdfCanvas');
+        const canvasCtx = pdfCanvasEl.getContext('2d');
+        const pdfPreviewContainerEl = document.getElementById('pdfPreviewContainer');
+        const cropButtonContainerEl = document.getElementById('cropButtonContainer');
+        const cropButtonEl = document.getElementById('cropButton');
+        const loadingIndicatorEl = document.getElementById('loadingIndicator');
+        const messageBoxEl = document.getElementById('messageBox');
+        const messageTextEl = document.getElementById('messageText');
+        
+        const prevPageEl = document.getElementById('prevPage');
+        const nextPageEl = document.getElementById('nextPage');
+        const currentPageNumEl = document.getElementById('currentPageNum');
+        const totalPagesNumEl = document.getElementById('totalPagesNum');
+        const selectionDivEl = document.getElementById('selectionDiv');
+
+
+        let pdfDoc = null;
+        let currentPageNumber = 1;
+        let totalPages = 0;
+        let currentPdfData = null; // ArrayBuffer
+        let originalFileName = '';
+        let currentRenderTask = null;
+        let currentVisiblePageScale = 1;
+        let currentPdfJsPage = null; // PDF.jsのページオブジェクト
+
+        let selectionRect = null; // { x, y, width, height } in canvas bitmap coordinates
+        let isSelecting = false;
+        let startCoords = { x: 0, y: 0 };
+        let messageTimeout;
+
+        function showMessage(text, isError = true, duration = 4000) {
+            messageTextEl.textContent = text;
+            messageBoxEl.className = `fixed bottom-5 right-5 p-4 rounded-lg shadow-xl text-white transition-opacity duration-300 ${isError ? 'bg-red-600' : 'bg-green-600'}`;
+            messageBoxEl.style.display = 'block';
+            setTimeout(() => messageBoxEl.style.opacity = '1', 10); // Fade in
+
+            clearTimeout(messageTimeout);
+            messageTimeout = setTimeout(() => {
+                messageBoxEl.style.opacity = '0';
+                setTimeout(() => messageBoxEl.style.display = 'none', 300); // Wait for fade out
+            }, duration);
+        }
+
+        function showLoading(show) {
+            loadingIndicatorEl.style.display = show ? 'flex' : 'none';
+        }
+
+        async function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file || file.type !== 'application/pdf') {
+                showMessage('PDFファイルを選択してください。', true);
+                pdfPreviewContainerEl.style.display = 'none';
+                cropButtonContainerEl.style.display = 'none';
+                return;
+            }
+            originalFileName = file.name;
+            showLoading(true);
+            try {
+                currentPdfData = await file.arrayBuffer();
+                pdfDoc = await pdfjsLib.getDocument({ data: new Uint8Array(currentPdfData) }).promise;
+                totalPages = pdfDoc.numPages;
+                currentPageNumber = 1;
+                await renderPageToCanvas(currentPageNumber);
+                pdfPreviewContainerEl.style.display = 'block';
+                cropButtonContainerEl.style.display = 'block';
+                selectionRect = null; // 新しいファイルがロードされたら選択をリセット
+                updateSelectionDiv();
+            } catch (error) {
+                console.error('Error loading PDF:', error);
+                showMessage(`PDFの読み込みに失敗しました: ${error.message}`, true);
+                pdfPreviewContainerEl.style.display = 'none';
+                cropButtonContainerEl.style.display = 'none';
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        async function renderPageToCanvas(pageNum) {
+            if (!pdfDoc) return;
+            showLoading(true);
+            selectionRect = null; // ページ変更時に選択をリセット
+            updateSelectionDiv();
+
+            try {
+                if (currentRenderTask) {
+                    currentRenderTask.cancel();
+                }
+                currentPdfJsPage = await pdfDoc.getPage(pageNum);
+                
+                const viewport = currentPdfJsPage.getViewport({ scale: 1 });
+                const containerWidth = pdfCanvasEl.parentElement.getBoundingClientRect().width * 0.98; // 親要素の幅の98%
+                
+                currentVisiblePageScale = Math.min(containerWidth / viewport.width, 2.0); // 最大スケール2.0
+                const scaledViewport = currentPdfJsPage.getViewport({ scale: currentVisiblePageScale });
+
+                pdfCanvasEl.height = scaledViewport.height;
+                pdfCanvasEl.width = scaledViewport.width;
+                
+                // CSSで表示サイズを調整 (アスペクト比を保ちつつコンテナにフィット)
+                pdfCanvasEl.style.width = '100%'; 
+                pdfCanvasEl.style.maxWidth = `${scaledViewport.width}px`;
+                pdfCanvasEl.style.height = 'auto';
+
+
+                const renderContext = {
+                    canvasContext: canvasCtx,
+                    viewport: scaledViewport
+                };
+                currentRenderTask = currentPdfJsPage.render(renderContext);
+                await currentRenderTask.promise;
+                currentRenderTask = null;
+                updatePageControls();
+            } catch (error) {
+                if (error.name === 'RenderingCancelledException') {
+                    console.log('Rendering cancelled');
+                } else {
+                    console.error('Error rendering page:', error);
+                    showMessage(`ページの描画に失敗しました: ${error.message}`, true);
+                }
+            } finally {
+                showLoading(false);
+            }
+        }
+        
+        function updatePageControls() {
+            currentPageNumEl.textContent = currentPageNumber;
+            totalPagesNumEl.textContent = totalPages;
+            prevPageEl.disabled = currentPageNumber <= 1;
+            nextPageEl.disabled = currentPageNumber >= totalPages;
+        }
+
+        prevPageEl.addEventListener('click', () => {
+            if (currentPageNumber > 1) {
+                currentPageNumber--;
+                renderPageToCanvas(currentPageNumber);
+            }
+        });
+
+        nextPageEl.addEventListener('click', () => {
+            if (currentPageNumber < totalPages) {
+                currentPageNumber++;
+                renderPageToCanvas(currentPageNumber);
+            }
+        });
+
+        // --- Selection Logic ---
+        function getCanvasCoordinates(event) {
+            const rect = pdfCanvasEl.getBoundingClientRect();
+            // マウス座標をキャンバスの実際のピクセル座標に変換
+            const scaleX = pdfCanvasEl.width / rect.width;
+            const scaleY = pdfCanvasEl.height / rect.height;
+            let x = (event.clientX - rect.left) * scaleX;
+            let y = (event.clientY - rect.top) * scaleY;
+
+            // 座標がキャンバスの範囲内に収まるようにする
+            x = Math.max(0, Math.min(x, pdfCanvasEl.width));
+            y = Math.max(0, Math.min(y, pdfCanvasEl.height));
+            return { x, y };
+        }
+        
+        function updateSelectionDiv() {
+            if (selectionRect && selectionRect.width > 0 && selectionRect.height > 0) {
+                // selectionRectの座標はキャンバスのピクセル座標
+                // selectionDivの座標はキャンバスの表示サイズに対する相対位置
+                const canvasBoundingRect = pdfCanvasEl.getBoundingClientRect();
+                const displayScaleX = canvasBoundingRect.width / pdfCanvasEl.width;
+                const displayScaleY = canvasBoundingRect.height / pdfCanvasEl.height;
+
+                selectionDivEl.style.left = `${selectionRect.x * displayScaleX}px`;
+                selectionDivEl.style.top = `${selectionRect.y * displayScaleY}px`;
+                selectionDivEl.style.width = `${selectionRect.width * displayScaleX}px`;
+                selectionDivEl.style.height = `${selectionRect.height * displayScaleY}px`;
+                selectionDivEl.style.display = 'block';
+            } else {
+                selectionDivEl.style.display = 'none';
+            }
+        }
+
+
+        pdfCanvasEl.addEventListener('mousedown', (e) => {
+            if (!currentPdfJsPage) return;
+            isSelecting = true;
+            startCoords = getCanvasCoordinates(e);
+            selectionRect = { x: startCoords.x, y: startCoords.y, width: 0, height: 0 };
+            updateSelectionDiv(); // Initially hide or reset
+        });
+
+        pdfCanvasEl.addEventListener('mousemove', (e) => {
+            if (!isSelecting || !currentPdfJsPage) return;
+            const currentCoords = getCanvasCoordinates(e);
+            selectionRect.x = Math.min(startCoords.x, currentCoords.x);
+            selectionRect.y = Math.min(startCoords.y, currentCoords.y);
+            selectionRect.width = Math.abs(startCoords.x - currentCoords.x);
+            selectionRect.height = Math.abs(startCoords.y - currentCoords.y);
+            updateSelectionDiv();
+        });
+
+        pdfCanvasEl.addEventListener('mouseup', (e) => {
+            if (!isSelecting || !currentPdfJsPage) return;
+            isSelecting = false;
+            const finalCoords = getCanvasCoordinates(e);
+            // Update final selection rect dimensions
+            selectionRect.x = Math.min(startCoords.x, finalCoords.x);
+            selectionRect.y = Math.min(startCoords.y, finalCoords.y);
+            selectionRect.width = Math.abs(startCoords.x - finalCoords.x);
+            selectionRect.height = Math.abs(startCoords.y - finalCoords.y);
+
+            if (selectionRect.width < 5 || selectionRect.height < 5) { // 小さすぎる選択は無視
+                selectionRect = null;
+            }
+            updateSelectionDiv();
+        });
+        
+        pdfCanvasEl.addEventListener('mouseleave', (e) => {
+            if (isSelecting) { // もしキャンバス外に出たら選択を終了
+                 isSelecting = false;
+                 // mouseup と同様のロジックで selectionRect を確定させるか、
+                 // または現在の状態で確定させる。ここでは現在の状態で確定。
+                 if (selectionRect && (selectionRect.width < 5 || selectionRect.height < 5)) {
+                     selectionRect = null;
+                 }
+                 updateSelectionDiv();
+            }
+        });
+
+
+        async function cropAndDownload() {
+            if (!currentPdfData) {
+                showMessage('まずPDFファイルを選択してください。', true);
+                return;
+            }
+            if (!selectionRect || selectionRect.width === 0 || selectionRect.height === 0) {
+                showMessage('切り抜き範囲を選択してください。', true);
+                return;
+            }
+
+            showLoading(true);
+            try {
+                const { PDFDocument } = PDFLib; // pdf-libからPDFDocumentを取得
+                const pdfToModify = await PDFDocument.load(currentPdfData);
+                const pageToCrop = pdfToModify.getPages()[currentPageNumber - 1];
+
+                // PDF.jsのページから元のサイズ（scale=1）を取得
+                const pdfjsPageForSize = await pdfDoc.getPage(currentPageNumber);
+                const originalViewport = pdfjsPageForSize.getViewport({ scale: 1 });
+                const { width: originalPdfWidth, height: originalPdfHeight } = originalViewport;
+
+                // selectionRectの座標はcanvasのピクセル座標
+                // これらをPDFのポイント座標 (pt) に変換
+                // currentVisiblePageScale は PDFポイントからCanvasピクセルへのスケール
+                const cropBoxPdfX = selectionRect.x / currentVisiblePageScale;
+                const cropBoxPdfY_fromTop = selectionRect.y / currentVisiblePageScale;
+                const cropBoxPdfWidth = selectionRect.width / currentVisiblePageScale;
+                const cropBoxPdfHeight = selectionRect.height / currentVisiblePageScale;
+
+                // pdf-libのsetCropBoxは左下隅からのY座標を要求する
+                const cropBoxPdfY = originalPdfHeight - (cropBoxPdfY_fromTop + cropBoxPdfHeight);
+
+                pageToCrop.setCropBox(cropBoxPdfX, cropBoxPdfY, cropBoxPdfWidth, cropBoxPdfHeight);
+                
+                // MediaBoxもCropBoxに合わせる場合 (オプション)
+                // pageToCrop.setMediaBox(cropBoxPdfX, cropBoxPdfY, cropBoxPdfWidth, cropBoxPdfHeight);
+
+
+                const croppedPdfBytes = await pdfToModify.save();
+
+                const blob = new Blob([croppedPdfBytes], { type: 'application/pdf' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                const safeOriginalFileName = originalFileName.replace(/[^a-zA-Z0-9._-]/g, '_');
+                link.download = `cropped_p${currentPageNumber}_${safeOriginalFileName}`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(link.href);
+
+                showMessage('PDFが正常に切り抜かれ、ダウンロードされました。', false);
+
+            } catch (error) {
+                console.error('Error cropping PDF:', error);
+                showMessage(`PDFの切り抜きに失敗しました: ${error.message}`, true);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        pdfFileEl.addEventListener('change', handleFileSelect);
+        cropButtonEl.addEventListener('click', cropAndDownload);
+
+        // 初期状態
+        updatePageControls();
+    </script>
+</body>
+</html>
