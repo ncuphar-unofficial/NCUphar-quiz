@@ -6,11 +6,12 @@
     <title>薬理学クイズ</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Klee+One&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU07biFXLcNCEmLASuAAkyZJwvrqt18UdTDRQ2Y21GYxHPlvChZCTXp" crossorigin="anonymous">
     <style>
         body {
-            font-family: 'Noto Sans JP', 'Inter', sans-serif;
+            /* Corrected font-family: removed '%' */
+            font-family: 'Klee One', 'Inter', sans-serif;
             -webkit-tap-highlight-color: transparent;
             background-color: #f3f4f6; /* Tailwind gray-100 */
         }
@@ -780,7 +781,7 @@
             }
             optionsElement.innerHTML = ''; 
             typedAnswerInput.value = ''; 
-            typedAnswerInput.classList.remove('border-green-500', 'ring-2', 'ring-green-200', 'border-red-500', 'ring-red-200');
+            typedAnswerInput.classList.remove('border-green-500', 'ring-2', 'ring-green-200', 'border-red-500', 'ring-2', 'ring-red-200');
 
 
             if (answerMode === 'multiple-choice' || isReviewMode) { 
