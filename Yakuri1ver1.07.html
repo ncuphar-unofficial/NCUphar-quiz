@@ -457,8 +457,8 @@
     <script>
         // KaTeX auto-render configuration
         document.addEventListener("DOMContentLoaded", function() {
-            // Options for KaTeX rendering, stored globally for reuse for manual calls
-            window.katexRenderOptions = {
+            // Options for KaTeX rendering, stored globally for reuse.
+            const sharedKatexOptions = {
                 delimiters: [
                     {left: '$$', right: '$$', display: true},
                     {left: '$', right: '$', display: false},
@@ -467,12 +467,19 @@
                 ],
                 throwOnError: false // Prevents rendering errors from stopping script execution
             };
-            // NOTE: The explicit call to renderMathInElement(document.body, ...) has been removed.
-            // The auto-render.min.js script (loaded with defer) will automatically
-            // handle the initial rendering of the entire document body when the DOM is ready.
-            // It will use default delimiters or options set via window.katex.renderMathInElementOptions
-            // if that variable is set *before* auto-render.js executes.
-            // For this application, manual calls with window.katexRenderOptions for dynamic content is sufficient.
+
+            // Configure the auto-render script.
+            // It looks for `window.renderMathInElementOptions`.
+            window.renderMathInElementOptions = sharedKatexOptions;
+
+            // Ensure existing manual calls in the codebase that use `window.katexRenderOptions`
+            // also use these same options.
+            window.katexRenderOptions = sharedKatexOptions;
+
+            // The auto-render.min.js script (loaded with `defer`) will now use `sharedKatexOptions`
+            // for its initial scan of the document.
+            // Manual calls in `loadQuestion`, `showSummary` etc. will also use `sharedKatexOptions`
+            // via `window.katexRenderOptions`.
         });
 
         // Drug data array with memo points (LaTeX updated)
@@ -767,8 +774,9 @@
             const questionData = quizQuestions[index];
 
             questionElement.innerHTML = questionData.questionText;
-            if (window.renderMathInElement && window.katexRenderOptions) {
-                renderMathInElement(questionElement, window.katexRenderOptions);
+            // Use `window.renderMathInElementOptions` which is configured for auto-render and manual calls.
+            if (typeof renderMathInElement === 'function' && window.renderMathInElementOptions) {
+                renderMathInElement(questionElement, window.renderMathInElementOptions);
             }
             optionsElement.innerHTML = ''; 
             typedAnswerInput.value = ''; 
@@ -826,8 +834,9 @@
                 feedbackElement.classList.add(answered.isCorrect ? 'correct' : 'incorrect');
                 feedbackElement.style.display = 'block';
                 explanationElement.innerHTML = questionData.explanationText;
-                if (window.renderMathInElement && window.katexRenderOptions) {
-                    renderMathInElement(explanationElement, window.katexRenderOptions);
+                 // Use `window.renderMathInElementOptions`
+                if (typeof renderMathInElement === 'function' && window.renderMathInElementOptions) {
+                    renderMathInElement(explanationElement, window.renderMathInElementOptions);
                 }
                 explanationElement.style.display = 'block';
                 nextButton.disabled = false;
@@ -893,8 +902,9 @@
 
             feedbackElement.style.display = 'block';
             explanationElement.innerHTML = questionData.explanationText;
-            if (window.renderMathInElement && window.katexRenderOptions) {
-                renderMathInElement(explanationElement, window.katexRenderOptions);
+            // Use `window.renderMathInElementOptions`
+            if (typeof renderMathInElement === 'function' && window.renderMathInElementOptions) {
+                renderMathInElement(explanationElement, window.renderMathInElementOptions);
             }
             explanationElement.style.display = 'block';
 
@@ -943,8 +953,9 @@
 
             feedbackElement.style.display = 'block';
             explanationElement.innerHTML = questionData.explanationText;
-            if (window.renderMathInElement && window.katexRenderOptions) {
-                renderMathInElement(explanationElement, window.katexRenderOptions);
+            // Use `window.renderMathInElementOptions`
+            if (typeof renderMathInElement === 'function' && window.renderMathInElementOptions) {
+                renderMathInElement(explanationElement, window.renderMathInElementOptions);
             }
             explanationElement.style.display = 'block';
 
@@ -1007,8 +1018,9 @@
                     }
                 });
                 reviewIncorrectContainer.appendChild(reviewList);
-                if (window.renderMathInElement && window.katexRenderOptions) {
-                    renderMathInElement(reviewList, window.katexRenderOptions);
+                // Use `window.renderMathInElementOptions`
+                if (typeof renderMathInElement === 'function' && window.renderMathInElementOptions) {
+                    renderMathInElement(reviewList, window.renderMathInElementOptions);
                 }
                 reviewIncorrectBtn.style.display = 'inline-block'; 
                 reviewIncorrectBtn.disabled = false;
@@ -1041,7 +1053,7 @@
             nextButton.disabled = true;
             prevButton.disabled = true;
             isReviewMode = false; 
-            typedAnswerInput.classList.remove('border-green-500', 'ring-2', 'ring-green-200', 'border-red-500', 'ring-red-200');
+            typedAnswerInput.classList.remove('border-green-500', 'ring-2', 'ring-green-200', 'border-red-500', 'ring-2', 'ring-red-200');
         }
 
         function startReviewQuiz() {
