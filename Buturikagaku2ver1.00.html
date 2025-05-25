@@ -105,11 +105,15 @@
             padding-left: 0.5em;
         }
         ul { list-style-position: inside; }
-        mjx-container[jax="CHTML"][display="false"] {
-            display: inline-block;
-            line-height: 0;
-            text-align: left;
-            padding: 0 0.1em;
+        mjx-container[jax="CHTML"][display="false"] { /* MathJax inline math */
+            display: inline-block !important; /* Ensure it behaves as inline */
+            line-height: normal !important; /* Reset line height if needed */
+            vertical-align: baseline !important; /* Align with surrounding text */
+        }
+        mjx-container[jax="CHTML"][display="true"] { /* MathJax display math */
+            display: block !important; /* Ensure it behaves as block */
+            margin-top: 1em !important;
+            margin-bottom: 1em !important;
         }
         .loading-spinner {
             border: 4px solid rgba(0, 0, 0, 0.1);
@@ -167,7 +171,7 @@
                     <p>\(\lambda\)が最長の場合、リュードベリの式：\(\frac{1}{\lambda}=R_H\left(\frac{1}{2^2}-\frac{1}{n^2}\right)\)の左辺は最小となる。<br>
                     右辺の括弧の中は定数から整数の逆数の二乗を引いているので、右辺が最小となるのは\(n\)が最小の時である。<br>
                     \(n\)は3以上の整数であるから\(n=3\)を代入して
-                    $$ \frac{1}{\lambda}=1.097\times 10^5 \left(\frac{1}{4}-\frac{1}{9}\right) = 0.15236 \; \mathrm{cm}^{-1} $$
+                    $$\frac{1}{\lambda}=1.097\times 10^5 \left(\frac{1}{4}-\frac{1}{9}\right) = 0.15236 \; \mathrm{cm}^{-1}$$
                     $$ \begin{aligned}
                         \lambda_{\mathrm{max}} &= 6.563 \times 10^{-5} \; \mathrm{cm} \\
                         &= 6.563 \times 10^{-7} \; \mathrm{m} \\
@@ -186,13 +190,13 @@
                        \end{aligned} $$
                     </p>
                     <p>以上より、バルマー解列のスペクトルのうち、波長が最も長いものは656.3nmであり、短い方のスペクトルは364.6nmに収束する。</p>
-                    <button class="gemini-button" onclick="fetchAiExplanation('problem-1')">
+                    <button class="gemini-button" onclick="fetchAiExplanation('problem-1', this)">
                         <span class="button-text">✨ AIによる追加解説を見る</span>
                         <span class="loading-spinner" style="display: none;"></span>
                     </button>
                     <div class="ai-explanation-box" id="ai-explanation-problem-1" style="display: none;">
                         <h4 class="ai-explanation-title">AIによる追加解説</h4>
-                        <p class="ai-explanation-content"></p>
+                        <div class="ai-explanation-content"></div>
                     </div>
                 </div>
             </section>
@@ -207,9 +211,9 @@
                 <h3 class="solution-title">解答1</h3>
                 <div class="solution-content">
                     <p>イオン化エネルギーの定義は「ある原子から、電子1個を無限遠に取り去るのに要するエネルギー」であるから、リュードベリの式において\(n_1=1, n_2=\infty\)として考えると
-                    $$ \frac{1}{\lambda}=R_H\left(\frac{1}{n_1^2}-\frac{1}{n_2^2}\right)=R_H\left(\frac{1}{1^2}-\frac{1}{\infty^2}\right)=R_H $$
+                    $$\frac{1}{\lambda}=R_H\left(\frac{1}{n_1^2}-\frac{1}{n_2^2}\right)=R_H\left(\frac{1}{1^2}-\frac{1}{\infty^2}\right)=R_H$$
                     この時のエネルギーは\(E=h\nu=h\frac{c}{\lambda}\)より
-                    $$ E=hc\frac{1}{\lambda}=hcR_H $$
+                    $$E=hc\frac{1}{\lambda}=hcR_H$$
                     よって、求めるイオン化エネルギー\(I\)は
                     $$ \begin{aligned}
                         I &= E \\
@@ -227,9 +231,9 @@
                 <div class="solution-content">
                     <p>水素原子のイオン化エネルギーは、電子が原子核から無限遠に離れたときのエネルギーを基準にして考える。<br>
                     エネルギー準位\(E_n\)は
-                    $$ E_n=-\frac{hcR_H}{n^2} \quad <span class='important-note'> &lt;--- 【重要】暗記</span> $$
+                    $$E_n=-\frac{hcR_H}{n^2} \quad <span class='important-note'> &lt;--- 【重要】暗記</span>$$
                     水素原子の基底状態のエネルギーは、\(n=1\)の時のエネルギーであるから
-                    $$ E_1=-\frac{R_Hch}{1^2}=-\frac{1.10\times 10^5 \times 3.00\times 10^8 \times 6.63\times 10^{-34}}{1^2}=-2.19\times 10^{-18} \; \mathrm{J} $$
+                    $$E_1=-\frac{R_Hch}{1^2}=-\frac{1.10\times 10^5 \times 3.00\times 10^8 \times 6.63\times 10^{-34}}{1^2}=-2.19\times 10^{-18} \; \mathrm{J}$$
                     ここで\(E_1=-I\;(\because I>0)\)なので
                     $$ \begin{aligned}
                         I &= -E_1 \\
@@ -239,13 +243,13 @@
                         &= \boxed{13.7 \; \mathrm{eV}}
                        \end{aligned} $$
                     </p>
-                    <button class="gemini-button" onclick="fetchAiExplanation('problem-2')">
+                    <button class="gemini-button" onclick="fetchAiExplanation('problem-2', this)">
                         <span class="button-text">✨ AIによる追加解説を見る</span>
                         <span class="loading-spinner" style="display: none;"></span>
                     </button>
                     <div class="ai-explanation-box" id="ai-explanation-problem-2" style="display: none;">
                         <h4 class="ai-explanation-title">AIによる追加解説</h4>
-                        <p class="ai-explanation-content"></p>
+                        <div class="ai-explanation-content"></div>
                     </div>
                 </div>
             </section>
@@ -261,13 +265,13 @@
                 <div class="solution-content">
                     <p>古典力学：マクロな世界を対象とし、エネルギーは連続的に変化する。<br>
                     量子力学：ミクロな原子や分子を対象とし、エネルギーは不連続的に変化する。</p>
-                    <button class="gemini-button" onclick="fetchAiExplanation('problem-3')">
+                    <button class="gemini-button" onclick="fetchAiExplanation('problem-3', this)">
                         <span class="button-text">✨ AIによる追加解説を見る</span>
                         <span class="loading-spinner" style="display: none;"></span>
                     </button>
                     <div class="ai-explanation-box" id="ai-explanation-problem-3" style="display: none;">
                         <h4 class="ai-explanation-title">AIによる追加解説</h4>
-                        <p class="ai-explanation-content"></p>
+                        <div class="ai-explanation-content"></div>
                     </div>
                 </div>
             </section>
@@ -282,21 +286,21 @@
                 <h3 class="solution-title">解答</h3>
                 <div class="solution-content">
                     <p>ボーアの量子条件より、電子が原子核の周りを回るとき、電子の角運動は\(\frac{h}{2\pi}\)の整数倍に限られるので
-                    $$ I\omega=n\frac{h}{2\pi} $$
+                    $$I\omega=n\frac{h}{2\pi}$$
                     ここで\(I\)は慣性モーメント、\(\omega\)は角速度、\(n\)は整数、\(h\)はプランク定数である。<br>
                     角運動量は、$I\omega=mr^2\cdot \frac{v}{r}$より
-                    $$ I\omega=mr^2\cdot \frac{v}{r}=mvr=n\frac{h}{2\pi} $$
+                    $$I\omega=mr^2\cdot \frac{v}{r}=mvr=n\frac{h}{2\pi}$$
                     よって
-                    $$ \boxed{mvr=n\frac{h}{2\pi}} \quad <span class='important-note'> &lt;--- この式は必ず暗記</span> $$
+                    $$\boxed{mvr=n\frac{h}{2\pi}} \quad <span class='important-note'> &lt;--- この式は必ず暗記</span>$$
                     ここで\(n\)は量子数で離散的な値しかとらないので、電子は量子条件を満たすときだけ原子核の周りを回ることができる。<br>
                     この状態を「定常状態」と呼ぶ。</p>
-                    <button class="gemini-button" onclick="fetchAiExplanation('problem-4')">
+                    <button class="gemini-button" onclick="fetchAiExplanation('problem-4', this)">
                         <span class="button-text">✨ AIによる追加解説を見る</span>
                         <span class="loading-spinner" style="display: none;"></span>
                     </button>
                     <div class="ai-explanation-box" id="ai-explanation-problem-4" style="display: none;">
                         <h4 class="ai-explanation-title">AIによる追加解説</h4>
-                        <p class="ai-explanation-content"></p>
+                        <div class="ai-explanation-content"></div>
                     </div>
                 </div>
             </section>
@@ -318,11 +322,11 @@
                         <li>
                             <p>電子は円運動をしているので、向心力はクーロン力に等しい。<br>
                             よって、運動方程式は
-                            $$ m\frac{v^2}{r}=\frac{1}{4\pi\varepsilon_0}\frac{e^2}{r^2} $$
+                            $$m\frac{v^2}{r}=\frac{1}{4\pi\varepsilon_0}\frac{e^2}{r^2}$$
                             両辺に\(r\)をかけて整理すると
-                            $$ mv^2=\frac{1}{4\pi\varepsilon_0}\frac{e^2}{r} $$
+                            $$mv^2=\frac{1}{4\pi\varepsilon_0}\frac{e^2}{r}$$
                             ボーアの量子条件より、$mvr=n\frac{h}{2\pi}$なので、$v=\frac{n\frac{h}{2\pi}}{mr}$を代入して (元は $v=\frac{n\frac{h}{2\pi}}{m}$ だったが、式展開に合わせ $v=\frac{nh}{2\pi mr}$ を使うべき。しかし元のLaTeXは $v=\frac{n\frac{h}{2\pi}}{m}$ を使っているのでそれに従う)
-                            $$ m\left(\frac{n\frac{h}{2\pi}}{m}\right)^2 r = \frac{1}{4\pi\varepsilon_0}\frac{e^2}{r} $$
+                            $$m\left(\frac{n\frac{h}{2\pi}}{m}\right)^2 r = \frac{1}{4\pi\varepsilon_0}\frac{e^2}{r}$$
                             上記は元のLaTeXの $v=\frac{n\frac{h}{2\pi}}{m}$ を $mv^2$ に代入する形に修正。元のLaTeXでは $mv^2$ の式に $v$ を代入するのではなく、$mvr$ から $v$ を消去しているように見える。
                             元のLaTeXの展開: $mvr = n\frac{h}{2\pi} \implies v = \frac{nh}{2\pi mr}$. これを $mv^2=\frac{1}{4\pi\varepsilon_0}\frac{e^2}{r}$ に代入すると:
                             $m \left(\frac{nh}{2\pi mr}\right)^2 = \frac{1}{4\pi\varepsilon_0}\frac{e^2}{r}$
@@ -346,18 +350,18 @@
                             $r = \frac{n^2h^2}{4\pi^2 mke^2} = \frac{n^2h^2}{4\pi^2 m \frac{1}{4\pi\varepsilon_0} e^2} = \frac{n^2h^2 \varepsilon_0}{\pi m e^2}$.
                             元のLaTeXでは $\pi^2$ となっているので、どこか係数が異なる可能性があります。ここでは元のLaTeXの最終結果を尊重します。
                             整理すると
-                            $$ r=\boxed{\frac{\varepsilon_0h^2}{\pi m e^2}n^2} $$
+                            $$r=\boxed{\frac{\varepsilon_0h^2}{\pi m e^2}n^2}$$
                             (注: 一般的なボーア半径の導出では $r = \frac{n^2h^2\varepsilon_0}{\pi m e^2}$ です。元のLaTeXの分母に $\pi^2$ がありますが、ここでは $\pi$ としています。もし $\hbar = h/2\pi$ を使うと $r = \frac{4\pi\varepsilon_0 \hbar^2 n^2}{me^2}$ となり、$\hbar^2 = h^2/4\pi^2$ なので $r = \frac{\varepsilon_0 h^2 n^2}{\pi m e^2}$ となります。元のLaTeXの $\pi^2$ はタイポの可能性があります。)
                             </p>
                         </li>
                         <li>
                             <p>電子の力学的エネルギー\(E\)は、運動エネルギーと位置エネルギーの和である。<br>
                             運動エネルギーは
-                            $$ K=\frac{1}{2}mv^2 $$
+                            $$K=\frac{1}{2}mv^2$$
                             位置エネルギーはクーロン力による位置エネルギーであるから
-                            $$ U=-\frac{1}{4\pi\varepsilon_0}\frac{e^2}{r} $$
+                            $$U=-\frac{1}{4\pi\varepsilon_0}\frac{e^2}{r}$$
                             よって、電子の力学的エネルギー\(E\)は
-                            $$ E=\frac{1}{2}mv^2+\left(-\frac{1}{4\pi\varepsilon_0}\frac{e^2}{r}\right) $$
+                            $$E=\frac{1}{2}mv^2+\left(-\frac{1}{4\pi\varepsilon_0}\frac{e^2}{r}\right)$$
                             ここで、(1)の結果より $mv^2=\frac{1}{4\pi\varepsilon_0}\frac{e^2}{r}$ を用いて $v$ を消去すると (これは運動方程式 $m\frac{v^2}{r}=\frac{1}{4\pi\varepsilon_0}\frac{e^2}{r^2}$ から $mv^2=\frac{1}{4\pi\varepsilon_0}\frac{e^2}{r}$ を使う)
                             $$ \begin{aligned}
                                 E&=\frac{1}{2}\left(\frac{1}{4\pi\varepsilon_0}\frac{e^2}{r}\right)-\frac{1}{4\pi\varepsilon_0}\frac{e^2}{r}\\
@@ -369,13 +373,13 @@
                             </p>
                         </li>
                     </ol>
-                     <button class="gemini-button" onclick="fetchAiExplanation('problem-5')">
+                     <button class="gemini-button" onclick="fetchAiExplanation('problem-5', this)">
                         <span class="button-text">✨ AIによる追加解説を見る</span>
                         <span class="loading-spinner" style="display: none;"></span>
                     </button>
                     <div class="ai-explanation-box" id="ai-explanation-problem-5" style="display: none;">
                         <h4 class="ai-explanation-title">AIによる追加解説</h4>
-                        <p class="ai-explanation-content"></p>
+                        <div class="ai-explanation-content"></div>
                     </div>
                 </div>
             </section>
@@ -392,11 +396,11 @@
                 <div class="solution-content">
                     <p>電子に電位差をかけると、電子は電場から仕事を受けて加速される。<br>
                     その時の運動エネルギー\(E\)は、電位差\(V\)と電子素量\(e\)を用いて
-                    $$ E=eV $$
+                    $$E=eV$$
                     よって、今回の問題では
-                    $$ E=1.60 \times 10^{-19} \; \mathrm{C} \times 10 \; \mathrm{V} = \boxed{1.60 \times 10^{-18} \; \mathrm{J}} $$
+                    $$E=1.60 \times 10^{-19} \; \mathrm{C} \times 10 \; \mathrm{V} = \boxed{1.60 \times 10^{-18} \; \mathrm{J}}$$
                     \(E=\frac{1}{2}mv^2\)より\(v=\sqrt{\frac{2E}{m}}\), さらに運動量\(p=mv\)より
-                    $$ p=m\sqrt{\frac{2E}{m}}=\sqrt{2mE} $$
+                    $$p=m\sqrt{\frac{2E}{m}}=\sqrt{2mE}$$
                     よって、今回の問題では (元のLaTeXの計算結果が2つあり、2番目が正しいようです)
                     $$ \begin{aligned}
                         p &= \sqrt{2\times 9.11 \times 10^{-31} \; \mathrm{kg} \times 1.60 \times 10^{-18} \; \mathrm{J}} \\
@@ -405,7 +409,7 @@
                         &\approx \boxed{1.71\times 10^{-24} \; \mathrm{kg \cdot m/s}}  \text{ (有効数字3桁)}
                        \end{aligned} $$
                     ド・ブロイ波の波長\(\lambda\)は、プランク定数\(h\)と運動量\(p\)を用いて
-                    $$ \lambda=\frac{h}{p} $$
+                    $$\lambda=\frac{h}{p}$$
                     よって、今回の問題では
                     $$ \begin{aligned}
                         \lambda &= \frac{6.63\times 10^{-34} \; \mathrm{J \cdot s}}{1.707\times 10^{-24} \; \mathrm{kg \cdot m/s}} \\
@@ -413,13 +417,13 @@
                         &\approx \boxed{3.88 \times 10^{-10} \; \mathrm{m}} \text{ (有効数字3桁)}
                        \end{aligned} $$
                     </p>
-                    <button class="gemini-button" onclick="fetchAiExplanation('problem-6')">
+                    <button class="gemini-button" onclick="fetchAiExplanation('problem-6', this)">
                         <span class="button-text">✨ AIによる追加解説を見る</span>
                         <span class="loading-spinner" style="display: none;"></span>
                     </button>
                     <div class="ai-explanation-box" id="ai-explanation-problem-6" style="display: none;">
                         <h4 class="ai-explanation-title">AIによる追加解説</h4>
-                        <p class="ai-explanation-content"></p>
+                        <div class="ai-explanation-content"></div>
                     </div>
                 </div>
             </section>
@@ -434,13 +438,13 @@
                 <h3 class="solution-title">解答</h3>
                 <div class="solution-content">
                     <p>①粒子と波動の二重性<br>②物理量の離散化<br>③不確定性原理</p>
-                    <button class="gemini-button" onclick="fetchAiExplanation('problem-7')">
+                    <button class="gemini-button" onclick="fetchAiExplanation('problem-7', this)">
                         <span class="button-text">✨ AIによる追加解説を見る</span>
                         <span class="loading-spinner" style="display: none;"></span>
                     </button>
                     <div class="ai-explanation-box" id="ai-explanation-problem-7" style="display: none;">
                         <h4 class="ai-explanation-title">AIによる追加解説</h4>
-                        <p class="ai-explanation-content"></p>
+                        <div class="ai-explanation-content"></div>
                     </div>
                 </div>
             </section>
@@ -457,21 +461,21 @@
                 <h3 class="solution-title">解答</h3>
                 <div class="solution-content">
                     <p>電磁波は静止質量が0であるから、$m=0$を代入して
-                    $$ E=pc $$
+                    $$E=pc$$
                     ここで、電磁波のエネルギーはプランク定数\(h\)と周波数\(\nu\)を用いて
-                    $$ E=h\nu $$
+                    $$E=h\nu$$
                     よって、電磁波の運動量\(p\)は
-                    $$ p=\frac{E}{c}=\frac{h\nu}{c} $$
+                    $$p=\frac{E}{c}=\frac{h\nu}{c}$$
                     周波数\(\nu\)は波長\(\lambda\)と光速\(c\)を用いて\(\nu=\frac{c}{\lambda}\)と表せるので、さらに整理すると
-                    $$ p=\frac{h\nu}{c}=\frac{h}{\lambda}\quad\blacksquare $$
+                    $$p=\frac{h\nu}{c}=\frac{h}{\lambda}\quad\blacksquare$$
                     </p>
-                    <button class="gemini-button" onclick="fetchAiExplanation('problem-8')">
+                    <button class="gemini-button" onclick="fetchAiExplanation('problem-8', this)">
                         <span class="button-text">✨ AIによる追加解説を見る</span>
                         <span class="loading-spinner" style="display: none;"></span>
                     </button>
                     <div class="ai-explanation-box" id="ai-explanation-problem-8" style="display: none;">
                         <h4 class="ai-explanation-title">AIによる追加解説</h4>
-                        <p class="ai-explanation-content"></p>
+                        <div class="ai-explanation-content"></div>
                     </div>
                 </div>
             </section>
@@ -486,15 +490,15 @@
                 <h3 class="solution-title">解答</h3>
                 <div class="solution-content">
                     <p>電磁波の荷電粒子の質量を\(m\),速さを\(v\),運動量を\(p\)とすると、ド・ブロイの式は
-                    $$ \boxed{\lambda=\frac{h}{mv}=\frac{h}{p}} $$
+                    $$\boxed{\lambda=\frac{h}{mv}=\frac{h}{p}}$$
                     なお、$h$はプランク定数である。</p>
-                     <button class="gemini-button" onclick="fetchAiExplanation('problem-9')">
+                     <button class="gemini-button" onclick="fetchAiExplanation('problem-9', this)">
                         <span class="button-text">✨ AIによる追加解説を見る</span>
                         <span class="loading-spinner" style="display: none;"></span>
                     </button>
                     <div class="ai-explanation-box" id="ai-explanation-problem-9" style="display: none;">
                         <h4 class="ai-explanation-title">AIによる追加解説</h4>
-                        <p class="ai-explanation-content"></p>
+                        <div class="ai-explanation-content"></div>
                     </div>
                 </div>
             </section>
@@ -514,38 +518,38 @@
                 <h3 class="solution-title">解答</h3>
                 <div class="solution-content">
                     <p>一次元の井戸型ポテンシャルにおいて、ポテンシャル\(V(x)\)は
-                    $$ V(x)=\begin{cases} 0 & (0 < x < a)\\ \infty & (x\leq 0, x\geq a) \end{cases} $$
+                    $$V(x)=\begin{cases} 0 & (0 < x < a)\\ \infty & (x\leq 0, x\geq a) \end{cases}$$
                     である。<br>
                     今、一次元の空間を考えているので、一次元のシュレディンガー方程式を用いると
-                    $$ \boxed{-\frac{\hbar^2}{2m}\frac{d^2\Psi(x)}{dx^2}+V(x)\Psi(x)=E\Psi(x)} \quad (\text{ここで } \hbar = \frac{h}{2\pi}) $$
+                    $$\boxed{-\frac{\hbar^2}{2m}\frac{d^2\Psi(x)}{dx^2}+V(x)\Psi(x)=E\Psi(x)} \quad (\text{ここで } \hbar = \frac{h}{2\pi})$$
                     <span class='eqn-label'>(1)の答え</span>
                     <br>
                     (元のLaTeXでは \(-\frac{h^2}{8\pi^2 m}\) となっていますが、これは \(-\frac{\hbar^2}{2m}\) と等価です。)
                     <br>
                     次に固有値\(E\)を求める。\(0 < x < a\)の範囲ではポテンシャル\(V(x)=0\)なので、シュレディンガー方程式は
-                    $$ -\frac{\hbar^2}{2m}\frac{d^2\Psi(x)}{dx^2}=E\Psi(x) $$
+                    $$-\frac{\hbar^2}{2m}\frac{d^2\Psi(x)}{dx^2}=E\Psi(x)$$
                     両辺に \(-\frac{2m}{\hbar^2}\) をかけて整理すると
-                    $$ \frac{d^2\Psi(x)}{dx^2}=-\frac{2mE}{\hbar^2}\Psi(x) $$
+                    $$\frac{d^2\Psi(x)}{dx^2}=-\frac{2mE}{\hbar^2}\Psi(x)$$
                     ここで、\(\frac{2mE}{\hbar^2}\)を定数\(k^2\)とおくと (\(k = \sqrt{\frac{2mE}{\hbar^2}}\))
-                    $$ \frac{d^2\Psi(x)}{dx^2}=-k^2\Psi(x) $$
+                    $$\frac{d^2\Psi(x)}{dx^2}=-k^2\Psi(x)$$
                     これは二階微分して自分自身に戻る微分方程式である。一般解は
-                    $$ \Psi(x)=A\sin(kx)+B\cos(kx) $$
+                    $$\Psi(x)=A\sin(kx)+B\cos(kx)$$
                     波動関数の境界条件より、$x=0,a$においてはポテンシャルが無限大であるから、波動関数は0となるので
-                    $$ \Psi(0)=0 \implies B=0 $$
-                    $$ \Psi(a)=0 \implies A\sin(ka)=0 $$
+                    $$\Psi(0)=0 \implies B=0$$
+                    $$\Psi(a)=0 \implies A\sin(ka)=0$$
                     \(A \neq 0\) (自明でない解を求めるため) とすると、\(\sin(ka)=0\)となる。よって\(k\)は
-                    $$ ka=n\pi \implies k=\frac{n\pi}{a}\quad (n=1,2,3,\cdots) $$
+                    $$ka=n\pi \implies k=\frac{n\pi}{a}\quad (n=1,2,3,\cdots)$$
                     を満たす。ここで \(k^2 = \frac{2mE}{\hbar^2}\) に \(k=\frac{n\pi}{a}\) を代入すると
-                    $$ \left(\frac{n\pi}{a}\right)^2 = \frac{2mE_n}{\hbar^2} $$
+                    $$\left(\frac{n\pi}{a}\right)^2 = \frac{2mE_n}{\hbar^2}$$
                     よって、エネルギー固有値\(E_n\)は
-                    $$ E_n=\boxed{\frac{n^2\pi^2\hbar^2}{2ma^2} = \frac{n^2h^2}{8ma^2}\quad (n=1,2,3,\cdots)} $$
+                    $$E_n=\boxed{\frac{n^2\pi^2\hbar^2}{2ma^2} = \frac{n^2h^2}{8ma^2}\quad (n=1,2,3,\cdots)}$$
                      <span class='eqn-label'>(2)の答え</span>
                     <br>
                     となり、波動関数\(\Psi_n(x)\)は (定数 \(A\) を含めて)
-                    $$ \Psi_n(x)=A\sin\left(\frac{n\pi}{a}x\right) $$
+                    $$\Psi_n(x)=A\sin\left(\frac{n\pi}{a}x\right)$$
                     となる。<br>
                     波動関数の規格化条件より
-                    $$ \int_{0}^{a}|\Psi_n(x)|^2dx=1 $$
+                    $$\int_{0}^{a}|\Psi_n(x)|^2dx=1$$
                     さらに
                     $$ \begin{aligned}
                         \int_{0}^{a}|A\sin\left(\frac{n\pi}{a}x\right)|^2dx &= |A|^2\int_{0}^{a}\sin^2\left(\frac{n\pi}{a}x\right)dx \\
@@ -555,16 +559,16 @@
                        \end{aligned} $$
                     よって \(|A|^2 \frac{a}{2}=1\) より \(|A|=\sqrt{\frac{2}{a}}\) (位相因子を無視して \(A\) を実数とすると \(A=\sqrt{\frac{2}{a}}\))。
                     したがって、波動関数\(\Psi_n(x)\)は
-                    $$ \Psi_n(x)=\boxed{\sqrt{\frac{2}{a}}\sin\left(\frac{n\pi}{a}x\right)\quad (n=1,2,3,\cdots)} $$
+                    $$\Psi_n(x)=\boxed{\sqrt{\frac{2}{a}}\sin\left(\frac{n\pi}{a}x\right)\quad (n=1,2,3,\cdots)}$$
                     <span class='eqn-label'>(3)の答え</span>
                     </p>
-                    <button class="gemini-button" onclick="fetchAiExplanation('problem-10')">
+                    <button class="gemini-button" onclick="fetchAiExplanation('problem-10', this)">
                         <span class="button-text">✨ AIによる追加解説を見る</span>
                         <span class="loading-spinner" style="display: none;"></span>
                     </button>
                     <div class="ai-explanation-box" id="ai-explanation-problem-10" style="display: none;">
                         <h4 class="ai-explanation-title">AIによる追加解説</h4>
-                        <p class="ai-explanation-content"></p>
+                        <div class="ai-explanation-content"></div>
                     </div>
                 </div>
             </section>
@@ -580,7 +584,7 @@
                 <h3 class="solution-title">解答</h3>
                 <div class="solution-content">
                     <p>一次元の井戸型ポテンシャルにおいて、エネルギー固有値\(E_n\)は
-                    $$ E_n=\frac{h^2 n^2}{8m a^2}\quad (n=1,2,3,\cdots) $$
+                    $$E_n=\frac{h^2 n^2}{8m a^2}\quad (n=1,2,3,\cdots)$$
                     である。<br>
                     ここで、箱の長さ \(a=5.5 \; \mathrm{\AA} = 5.5\times 10^{-10} \; \mathrm{m}\) を代入して計算すると
                     (元のLaTeXの数値 \(h=6.6\), \(m=9.0\) を使用)
@@ -593,18 +597,18 @@
                     (より正確な値 \(h=6.626\), \(m=9.109\) を使うと少し変わりますが、問題文の指示に従います。)
                     <br>
                     よって、$n=1,2,3,4$のエネルギー準位は
-                    $$ E_1=2.0 \times 10^{-19} \times 1^2=\boxed{2.0 \times 10^{-19} \; \mathrm{J}} $$
-                    $$ E_2=2.0 \times 10^{-19} \times 2^2=\boxed{8.0 \times 10^{-19} \; \mathrm{J}} $$
-                    $$ E_3=2.0 \times 10^{-19} \times 3^2=\boxed{1.8 \times 10^{-18} \; \mathrm{J}} $$
-                    $$ E_4=2.0 \times 10^{-19} \times 4^2=\boxed{3.2 \times 10^{-18} \; \mathrm{J}} $$
+                    $$E_1=2.0 \times 10^{-19} \times 1^2=\boxed{2.0 \times 10^{-19} \; \mathrm{J}}$$
+                    $$E_2=2.0 \times 10^{-19} \times 2^2=\boxed{8.0 \times 10^{-19} \; \mathrm{J}}$$
+                    $$E_3=2.0 \times 10^{-19} \times 3^2=\boxed{1.8 \times 10^{-18} \; \mathrm{J}}$$
+                    $$E_4=2.0 \times 10^{-19} \times 4^2=\boxed{3.2 \times 10^{-18} \; \mathrm{J}}$$
                     </p>
-                    <button class="gemini-button" onclick="fetchAiExplanation('problem-11')">
+                    <button class="gemini-button" onclick="fetchAiExplanation('problem-11', this)">
                         <span class="button-text">✨ AIによる追加解説を見る</span>
                         <span class="loading-spinner" style="display: none;"></span>
                     </button>
                     <div class="ai-explanation-box" id="ai-explanation-problem-11" style="display: none;">
                         <h4 class="ai-explanation-title">AIによる追加解説</h4>
-                        <p class="ai-explanation-content"></p>
+                        <div class="ai-explanation-content"></div>
                     </div>
                 </div>
             </section>
@@ -622,13 +626,13 @@
                     ②方位量子数\(l\) (または軌道角運動量量子数)：軌道の形状を決定する。<br>
                     ③磁気量子数\(m_l\)：軌道角運動の磁場方向の成分を決定する。<br>
                     ④スピン量子数\(m_s\)：電子のスピンの向きを表す。</p>
-                    <button class="gemini-button" onclick="fetchAiExplanation('problem-12')">
+                    <button class="gemini-button" onclick="fetchAiExplanation('problem-12', this)">
                         <span class="button-text">✨ AIによる追加解説を見る</span>
                         <span class="loading-spinner" style="display: none;"></span>
                     </button>
                     <div class="ai-explanation-box" id="ai-explanation-problem-12" style="display: none;">
                         <h4 class="ai-explanation-title">AIによる追加解説</h4>
-                        <p class="ai-explanation-content"></p>
+                        <div class="ai-explanation-content"></div>
                     </div>
                 </div>
             </section>
@@ -656,7 +660,7 @@
                         </li>
                         <li>
                             <p>２原子分子の分子軌道\(\Psi\)は、２つの原子の原子軌道関数\(\Psi_1,\Psi_2\)の線形結合(LCAO)として次のように表される。
-                            $$ \Psi = c_1\Psi_1 + c_2\Psi_2 $$
+                            $$\Psi = c_1\Psi_1 + c_2\Psi_2$$
                             ここで\(c_1,c_2\)は展開係数であり、各原子軌道の分子軌道への寄与の大きさを表す。</p>
                         </li>
                         <li>
@@ -679,13 +683,13 @@
                                 -3 & -5 - E
                                \end{vmatrix} =0 $$
                             この行列式を計算すると
-                            $$ (-13-E)(-5-E) - (-3)(-3) = 0 $$
-                            $$ (E+13)(E+5) - 9 = 0 $$
-                            $$ E^2 + 5E + 13E + 65 - 9 = 0 $$
-                            $$ E^2 + 18E + 56 = 0 $$
+                            $$(-13-E)(-5-E) - (-3)(-3) = 0$$
+                            $$(E+13)(E+5) - 9 = 0$$
+                            $$E^2 + 5E + 13E + 65 - 9 = 0$$
+                            $$E^2 + 18E + 56 = 0$$
                             この二次方程式を解くと、エネルギーの近似値は
-                            $$ (E+14)(E+4) = 0 $$
-                            $$ E_1 = -14 \; \mathrm{eV}, \quad E_2 = -4 \; \mathrm{eV} $$
+                            $$(E+14)(E+4) = 0$$
+                            $$E_1 = -14 \; \mathrm{eV}, \quad E_2 = -4 \; \mathrm{eV}$$
                             よって<br>
                             基底状態のエネルギーの近似値は \(\boxed{-14 \; \mathrm{eV}}\)、第一励起状態のエネルギーの近似値は \(\boxed{-4 \; \mathrm{eV}}\) である。<br>
                             次に対応する波動関数を求める。
@@ -694,39 +698,39 @@
                                 <li class="mt-1">
                                     <strong>\(E_1 = -14 \; \mathrm{eV}\) (基底状態) のとき:</strong><br>
                                     永年方程式の1行目に代入して
-                                    $$ c_1(H_{11} - E_1 S_{11}) + c_2(H_{12} - E_1 S_{12}) = 0 $$
-                                    $$ c_1(-13 - (-14)) + c_2(-3 - 0) = 0 $$
-                                    $$ c_1(1) + c_2(-3) = 0 \quad \Longrightarrow \quad c_1 = 3c_2 $$
+                                    $$c_1(H_{11} - E_1 S_{11}) + c_2(H_{12} - E_1 S_{12}) = 0$$
+                                    $$c_1(-13 - (-14)) + c_2(-3 - 0) = 0$$
+                                    $$c_1(1) + c_2(-3) = 0 \quad \Longrightarrow \quad c_1 = 3c_2$$
                                     波動関数の規格化条件 \(\int|\Psi|^2d\tau = c_1^2 S_{11} + c_2^2 S_{22} + 2c_1c_2 S_{12} = 1\) より (ここでは \(S_{12}=0, S_{11}=S_{22}=1\))
-                                    $$ c_1^2 + c_2^2 = 1 $$
-                                    $$ (3c_2)^2 + c_2^2 = 1 $$
-                                    $$ 9c_2^2 + c_2^2 = 1 \implies 10c_2^2 = 1 \implies c_2 = \pm\frac{1}{\sqrt{10}} $$
+                                    $$c_1^2 + c_2^2 = 1$$
+                                    $$(3c_2)^2 + c_2^2 = 1$$
+                                    $$9c_2^2 + c_2^2 = 1 \implies 10c_2^2 = 1 \implies c_2 = \pm\frac{1}{\sqrt{10}}$$
                                     \(c_2 = \frac{1}{\sqrt{10}}\) を選ぶと \(c_1 = \frac{3}{\sqrt{10}}\)。
                                     したがって、基底状態の波動関数\(\Psi_1\)は
-                                    $$ \boxed{\Psi_1 = \frac{3}{\sqrt{10}}\Psi_1 + \frac{1}{\sqrt{10}}\Psi_2} $$
+                                    $$\boxed{\Psi_1 = \frac{3}{\sqrt{10}}\Psi_1 + \frac{1}{\sqrt{10}}\Psi_2}$$
                                 </li>
                                 <li class="mt-1">
                                     <strong>\(E_2 = -4 \; \mathrm{eV}\) (第一励起状態) のとき:</strong><br>
                                     永年方程式の1行目に代入して
-                                    $$ c_1(-13 - (-4)) + c_2(-3 - 0) = 0 $$
-                                    $$ c_1(-9) + c_2(-3) = 0 \quad \Longrightarrow \quad -9c_1 = 3c_2 \quad \Longrightarrow \quad c_2 = -3c_1 $$
+                                    $$c_1(-13 - (-4)) + c_2(-3 - 0) = 0$$
+                                    $$c_1(-9) + c_2(-3) = 0 \quad \Longrightarrow \quad -9c_1 = 3c_2 \quad \Longrightarrow \quad c_2 = -3c_1$$
                                     規格化条件 \(c_1^2 + c_2^2 = 1\) より
-                                    $$ c_1^2 + (-3c_1)^2 = 1 $$
-                                    $$ c_1^2 + 9c_1^2 = 1 \implies 10c_1^2 = 1 \implies c_1 = \pm\frac{1}{\sqrt{10}} $$
+                                    $$c_1^2 + (-3c_1)^2 = 1$$
+                                    $$c_1^2 + 9c_1^2 = 1 \implies 10c_1^2 = 1 \implies c_1 = \pm\frac{1}{\sqrt{10}}$$
                                     \(c_1 = \frac{1}{\sqrt{10}}\) を選ぶと \(c_2 = \frac{-3}{\sqrt{10}}\)。
                                     したがって、第一励起状態の波動関数\(\Psi_2\)は
-                                    $$ \boxed{\Psi_2 = \frac{1}{\sqrt{10}}\Psi_1 - \frac{3}{\sqrt{10}}\Psi_2} $$
+                                    $$\boxed{\Psi_2 = \frac{1}{\sqrt{10}}\Psi_1 - \frac{3}{\sqrt{10}}\Psi_2}$$
                                 </li>
                             </ul>
                         </li>
                     </ol>
-                    <button class="gemini-button" onclick="fetchAiExplanation('problem-13')">
+                    <button class="gemini-button" onclick="fetchAiExplanation('problem-13', this)">
                         <span class="button-text">✨ AIによる追加解説を見る</span>
                         <span class="loading-spinner" style="display: none;"></span>
                     </button>
                     <div class="ai-explanation-box" id="ai-explanation-problem-13" style="display: none;">
                         <h4 class="ai-explanation-title">AIによる追加解説</h4>
-                        <p class="ai-explanation-content"></p>
+                        <div class="ai-explanation-content"></div>
                     </div>
                 </div>
             </section>
@@ -739,91 +743,60 @@
 
     <script>
         // --- Gemini API Call Function ---
-        async function fetchAiExplanation(problemId) {
+        async function fetchAiExplanation(problemId, buttonElement) { // buttonElement を引数に追加
             const problemElement = document.getElementById(problemId);
             if (!problemElement) {
                 console.error('Problem element not found:', problemId);
                 return;
             }
 
-            const button = problemElement.nextElementSibling.querySelector('.gemini-button'); // Assumes button is within the next solution-box or directly after problem-box
-             if (!button) {
-                // Fallback if the structure is slightly different, e.g. button inside the last solution-box of a multi-part solution
-                const solutionBoxes = problemElement.parentElement.querySelectorAll('.solution-box');
-                const lastSolutionBox = solutionBoxes[solutionBoxes.length -1];
-                if (lastSolutionBox) {
-                    const btnInLastBox = lastSolutionBox.querySelector('.gemini-button[onclick*="' + problemId + '"]');
-                    if(btnInLastBox) button = btnInLastBox;
-                }
-                if (!button) {
-                    console.error('Button not found for problemId:', problemId);
-                    return;
-                }
-            }
-
-
+            // buttonElement を直接使用
+            const button = buttonElement; 
             const buttonText = button.querySelector('.button-text');
             const spinner = button.querySelector('.loading-spinner');
-            const explanationBox = document.getElementById('ai-explanation-' + problemId);
+            
+            const explanationBoxId = 'ai-explanation-' + problemId;
+            const explanationBox = document.getElementById(explanationBoxId);
             const explanationContent = explanationBox.querySelector('.ai-explanation-content');
 
+            if (!explanationBox || !explanationContent) {
+                console.error('AI explanation box or content area not found for:', explanationBoxId);
+                return;
+            }
+            
             // Show loading state
             buttonText.textContent = '解説を生成中...';
             spinner.style.display = 'inline-block';
             button.classList.add('loading');
             button.disabled = true;
-            explanationBox.style.display = 'none'; // Hide previous content if any
-            explanationContent.textContent = '';
-
+            explanationBox.style.display = 'none'; 
+            explanationContent.innerHTML = ''; // Use innerHTML to clear previous content
 
             const problemTitleElement = problemElement.querySelector('.problem-title');
             const problemContentElement = problemElement.querySelector('.problem-content');
             
-            let problemTitle = problemTitleElement ? problemTitleElement.innerText : "不明な問題";
-            let problemDescription = problemContentElement ? problemContentElement.innerText : "説明なし";
+            let problemTitle = problemTitleElement ? problemTitleElement.innerText.trim() : "不明な問題";
+            let problemDescription = problemContentElement ? problemContentElement.innerText.trim() : "説明なし";
             
-            // Consolidate solutions if multiple solution boxes exist for this problem ID
             let solutionText = "";
-            const solutionElements = Array.from(document.querySelectorAll('.solution-box')).filter(sb => {
-                // This logic assumes problem-X is an ancestor or the button's onclick points to it.
-                // A more robust way would be to link solutions to problems more directly if HTML structure allows.
-                // For now, we'll try to find solution text near the problem.
-                let prevSibling = sb.previousElementSibling;
-                while(prevSibling && !prevSibling.classList.contains('problem-box')) {
-                    prevSibling = prevSibling.previousElementSibling;
-                }
-                return prevSibling && prevSibling.id === problemId;
-            });
-
-            if (solutionElements.length > 0) {
-                 solutionElements.forEach(solBox => {
-                    const solContent = solBox.querySelector('.solution-content');
+            let currentRelevantElement = problemElement.nextElementSibling;
+            while(currentRelevantElement && !currentRelevantElement.classList.contains('problem-box')) {
+                if (currentRelevantElement.classList.contains('solution-box')) {
+                    const solContent = currentRelevantElement.querySelector('.solution-content');
                     if (solContent) {
-                         // Exclude the button and AI explanation box text from the solution
                         const tempDiv = solContent.cloneNode(true);
                         tempDiv.querySelectorAll('.gemini-button, .ai-explanation-box').forEach(el => el.remove());
                         solutionText += tempDiv.innerText.trim() + "\n\n";
                     }
-                });
-            } else {
-                // Fallback if no specific solution box is linked, try to get the one immediately after the button's parent
-                let currentElement = button.parentElement;
-                 while(currentElement && !currentElement.classList.contains('solution-box')){
-                    currentElement = currentElement.parentElement;
-                 }
-                 if(currentElement && currentElement.classList.contains('solution-box')){
-                    const solContent = currentElement.querySelector('.solution-content');
-                     if (solContent) {
-                        const tempDiv = solContent.cloneNode(true);
-                        tempDiv.querySelectorAll('.gemini-button, .ai-explanation-box').forEach(el => el.remove());
-                        solutionText = tempDiv.innerText.trim();
-                    }
-                 }
+                }
+                currentRelevantElement = currentRelevantElement.nextElementSibling;
             }
             solutionText = solutionText.trim() || "解答なし";
 
-
-            const prompt = `以下の物理の問題と解答について、追加の解説や、より平易な言葉での説明、または関連する興味深い事実を日本語で生成してください。特に重要なポイントや、初心者がつまずきやすい点などを補足すると役立ちます。数式はLaTeX形式 (\`$...$\` または \`$$...$$\`) で記述してください。
+            const prompt = `以下の物理の問題と解答について、追加の解説や、より平易な言葉での説明、または関連する興味深い事実を日本語で生成してください。
+返答はHTML形式とし、段落は <p> タグで適切に囲み、必要に応じて <br> タグも使用してください。
+数式はLaTeX形式 (インライン数式は \\(...\\) または $...$ 、ディスプレイ数式は $$...$$ または \\[...\\]) で記述してください。
+特に重要なポイントや、初心者がつまずきやすい点などを補足すると役立ちます。
 
 問題タイトル: ${problemTitle}
 
@@ -833,7 +806,7 @@ ${problemDescription}
 現在の解答:
 ${solutionText}
 
-AIによる追加解説:`;
+AIによる追加解説 (HTML形式):`;
 
             try {
                 let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
@@ -857,30 +830,37 @@ AIによる追加解説:`;
                 if (result.candidates && result.candidates.length > 0 &&
                     result.candidates[0].content && result.candidates[0].content.parts &&
                     result.candidates[0].content.parts.length > 0) {
-                    let generatedText = result.candidates[0].content.parts[0].text;
+                    let generatedHtml = result.candidates[0].content.parts[0].text;
                     
-                    // Replace markdown-style code blocks with paragraphs for better rendering,
-                    // as MathJax will handle LaTeX within the text.
-                    generatedText = generatedText.replace(/```latex\n([\s\S]*?)\n```/g, '<p>$$$1$$</p>');
-                    generatedText = generatedText.replace(/```\n([\s\S]*?)\n```/g, '<p class="bg-gray-100 p-2 rounded my-2 whitespace-pre-wrap">$1</p>');
-                    generatedText = generatedText.replace(/\n/g, '<br>'); // Convert newlines to <br> for HTML
-
-                    explanationContent.innerHTML = generatedText; // Use innerHTML to render <br> and other potential HTML
+                    explanationContent.innerHTML = generatedHtml; 
                     explanationBox.style.display = 'block';
                     
-                    // Re-render MathJax for the new content
                     if (window.MathJax) {
-                        window.MathJax.typesetPromise([explanationBox])
-                            .catch((err) => console.error('MathJax typesetting error:', err));
+                        // MathJaxの処理をキューに入れて、DOMの更新が完了してから実行されるようにする
+                        setTimeout(() => {
+                            window.MathJax.typesetPromise([explanationBox])
+                                .then(() => {
+                                    console.log('MathJax typesetting complete for AI content:', problemId);
+                                })
+                                .catch((err) => console.error('MathJax typesetting error for AI content:', problemId, err));
+                        }, 0);
                     }
                 } else {
-                    explanationContent.textContent = 'AIからの解説を取得できませんでした。';
+                    explanationContent.innerHTML = 'AIからの解説を取得できませんでした。応答が空か、形式が正しくありません。';
                     explanationBox.style.display = 'block';
                 }
 
             } catch (error) {
-                console.error('Error fetching AI explanation:', error);
-                explanationContent.textContent = '解説の取得中にエラーが発生しました: ' + error.message;
+                console.error('Error fetching AI explanation for ' + problemId + ':', error);
+                let errorMessage = '解説の取得中にエラーが発生しました。';
+                if (error.message.includes("PERMISSION_DENIED") || error.message.includes("403")) {
+                    errorMessage += '<br>API呼び出しの権限がありません。APIキーが正しく設定されているか、ご確認ください。または、管理者に問い合わせてください。';
+                } else if (error.message.includes("API request failed")) {
+                    errorMessage += '<br>APIサーバー (' + apiUrl.split('?')[0] + ') との通信に失敗しました。ネットワーク接続を確認してください。';
+                } else {
+                    errorMessage += '<br>詳細: ' + error.message;
+                }
+                explanationContent.innerHTML = errorMessage;
                 explanationBox.style.display = 'block';
             } finally {
                 // Reset button state
@@ -890,6 +870,18 @@ AIによる追加解説:`;
                 button.disabled = false;
             }
         }
+
+        // MathJaxの初期設定 (オプション)
+        // window.MathJax = {
+        //   tex: {
+        //     inlineMath: [['$', '$'], ['\\(', '\\)']],
+        //     displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        //     processEscapes: true
+        //   },
+        //   svg: {
+        //     fontCache: 'global'
+        //   }
+        // };
     </script>
 
 </body>
