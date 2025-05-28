@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>機能形態学II テスト対策アプリ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Light blue-gray background */
+        }
+        .quiz-container {
+            background-color: #ffffff; /* White container background */
+            border-radius: 12px; /* More rounded corners */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* Softer shadow */
+            padding: 2rem; /* Increased padding */
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease-in-out;
+        }
+        .btn {
+            padding: 0.75rem 1.5rem; /* Larger padding */
+            border-radius: 8px; /* Rounded corners */
+            font-weight: 600; /* Semi-bold */
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background-color: #3b82f6; /* Blue */
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #2563eb; /* Darker blue */
+        }
+        .btn-secondary {
+            background-color: #6b7280; /* Gray */
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #4b5563; /* Darker gray */
+        }
+        .btn-category {
+            background-color: #10b981; /* Emerald */
+            color: white;
+            margin: 0.5rem;
+        }
+        .btn-category:hover {
+            background-color: #059669; /* Darker emerald */
+        }
+        .feedback {
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            font-weight: 500;
+        }
+        .feedback-correct {
+            background-color: #d1fae5; /* Light green */
+            color: #065f46; /* Dark green */
+            border: 1px solid #6ee7b7; /* Green border */
+        }
+        .feedback-incorrect {
+            background-color: #fee2e2; /* Light red */
+            color: #991b1b; /* Dark red */
+            border: 1px solid #fca5a5; /* Red border */
+        }
+        .explanation {
+            background-color: #e0e7ff; /* Light indigo */
+            color: #3730a3; /* Dark indigo */
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            border-left: 4px solid #4f46e5; /* Indigo border */
+        }
+        .progress-bar-container {
+            width: 100%;
+            background-color: #e5e7eb; /* Light gray */
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            overflow: hidden; /* Ensures inner bar respects border radius */
+        }
+        .progress-bar {
+            height: 1.25rem; /* 20px */
+            background-color: #3b82f6; /* Blue */
+            text-align: center;
+            line-height: 1.25rem; /* Same as height */
+            color: white;
+            border-radius: 8px 0 0 8px; /* Rounded only on the left if not full */
+            transition: width 0.3s ease-in-out;
+        }
+        .image-placeholder { /* This class will style the container for both SVG and img */
+            width: 150px; /* Increased width */
+            height: 150px; /* Increased height */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 1rem auto;
+            border-radius: 8px; /* Rounded corners for image area */
+            background-color: #f9fafb; /* Light gray background for placeholder */
+            border: 1px dashed #d1d5db; /* Dashed border */
+            overflow: hidden; /* To ensure image respects border radius */
+        }
+        .image-placeholder img { /* Style for the actual image */
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain; /* Ensures the whole image is visible */
+            border-radius: 8px;
+        }
+        .image-placeholder svg { /* Style for SVG icons if used as fallback */
+            width: 80%; /* Adjust SVG size within the placeholder */
+            height: 80%;
+        }
+        .category-title {
+            font-size: 1.5rem; /* Larger category title */
+            font-weight: 700; /* Bold */
+            color: #1e3a8a; /* Darker blue */
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        .question-text {
+            font-size: 1.125rem; /* Slightly larger question text */
+            color: #1f2937; /* Dark gray text */
+            margin-bottom: 1rem;
+            line-height: 1.6; /* Improved readability */
+        }
+        input[type="text"] {
+            border: 2px solid #d1d5db; /* Gray border */
+            padding: 0.75rem;
+            border-radius: 8px; /* Rounded corners */
+            width: 100%;
+            margin-bottom: 1rem;
+            transition: border-color 0.2s ease-in-out;
+        }
+        input[type="text"]:focus {
+            border-color: #3b82f6; /* Blue border on focus */
+            outline: none; /* Remove default outline */
+        }
+        .score-display {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+         /* Modal Styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5); /* Dim background */
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background-color: #fff;
+            margin: auto;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .modal-close-btn {
+            background-color: #ef4444; /* Red */
+            color: white;
+        }
+        .modal-close-btn:hover {
+            background-color: #dc2626; /* Darker red */
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen p-4">
+
+    <div id="categorySelectionScreen" class="quiz-container w-full max-w-lg text-center">
+        <h1 class="text-3xl font-bold mb-6 text-blue-700">機能形態学II テスト対策</h1>
+        <p class="mb-6 text-gray-600">学習したい分野を選んでください。</p>
+        <div id="categoryButtons" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            </div>
+    </div>
+
+    <div id="quizScreen" class="quiz-container w-full max-w-lg hidden">
+        <div id="categoryTitle" class="category-title"></div>
+        <div class="progress-bar-container">
+            <div id="progressBar" class="progress-bar"></div>
+        </div>
+        <div id="score" class="score-display"></div>
+        <div id="questionArea">
+            <div id="imagePlaceholder" class="image-placeholder">
+                </div>
+            <p id="questionText" class="question-text"></p>
+            <input type="text" id="answerInput" placeholder="解答を入力してください" class="mt-2">
+        </div>
+        <div id="feedbackArea" class="feedback hidden"></div>
+        <div id="explanationArea" class="explanation hidden mt-4"></div>
+        <div class="mt-6 flex flex-col sm:flex-row justify-between space-y-2 sm:space-y-0 sm:space-x-2">
+            <button id="submitAnswer" class="btn btn-primary w-full sm:w-auto">解答する</button>
+            <button id="nextQuestion" class="btn btn-secondary w-full sm:w-auto hidden">次の問題へ</button>
+        </div>
+        <button id="backToCategories" class="btn btn-secondary w-full mt-4">分野選択に戻る</button>
+    </div>
+
+    <div id="resultsScreen" class="quiz-container w-full max-w-lg hidden text-center">
+        <h2 class="text-2xl font-bold mb-4 text-blue-700">学習結果</h2>
+        <div id="finalScore" class="text-xl mb-4"></div>
+        <div id="summary" class="mb-6 text-left"></div>
+        <div class="flex flex-col sm:flex-row justify-around space-y-2 sm:space-y-0">
+            <button id="restartCategory" class="btn btn-primary w-full sm:w-auto">この分野を再挑戦</button>
+            <button id="backToCategoriesFromResults" class="btn btn-secondary w-full sm:w-auto">分野選択に戻る</button>
+        </div>
+    </div>
+
+    <div id="customAlertModal" class="modal">
+        <div class="modal-content">
+            <p id="customAlertMessage" class="text-lg mb-6"></p>
+            <button id="customAlertCloseBtn" class="btn modal-close-btn">閉じる</button>
+        </div>
+    </div>
+
+
+    <script>
+        // --- Data ---
+        const quizData = [
+            // 第1回 心臓
+            {
+                id: "cardiology_001",
+                category: "心臓",
+                questionText: "心臓、血管、リンパ管を合わせて何と呼びますか？",
+                answer: "循環器系",
+                explanation: "循環器系は、全身を還流する血液やリンパ液により、酸素や栄養素の供給と、二酸化炭素や老廃物の回収・排出を担います。",
+                // Example of using a placeholder image URL
+                imageUrl: "https://placehold.co/150x150/f87171/ffffff?text=心臓の図", // Reddish placeholder for heart
+                svgIcon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-full h-full text-red-500"><path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.218l-.022.012-.007.004-.004.001a.752.752 0 01-.704 0l-.004-.001z" /></svg>`
+            },
+            {
+                id: "cardiology_002",
+                category: "心臓",
+                questionText: "心臓の拍動の起点となる部分は？",
+                answer: "洞房結節",
+                explanation: "洞房結節はペースメーカーとも呼ばれ、心臓が規則正しく拍動するための電気刺激を最初に発生させる部位です。",
+                imageUrl: "https://placehold.co/150x150/fb923c/ffffff?text=洞房結節", // Orange placeholder
+                svgIcon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-full h-full text-red-500"><path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z" clip-rule="evenodd" /></svg>`
+            },
+            {
+                id: "cardiology_003",
+                category: "心臓",
+                questionText: "心室の興奮が心電図の何波として記録されますか？",
+                answer: "QRS波",
+                explanation: "QRS波は心室全体の脱分極（興奮）を反映しており、心電図の主要な波形の一つです。",
+                // No imageUrl, will use svgIcon
+                svgIcon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-full h-full text-red-500"><path d="M16.5 3A2.5 2.5 0 0014 5.5V6h-4V5.5A2.5 2.5 0 007.5 3h-1A2.5 2.5 0 004 5.5v13A2.5 2.5 0 006.5 21h11a2.5 2.5 0 002.5-2.5v-13A2.5 2.5 0 0017.5 3h-1zM9 6h6v1.5l-3 4.5-3-4.5V6zm6 7.5H9V18h1.5v-3H12v3h1.5v-3H15v-1.5z" /></svg>`
+            },
+            {
+                id: "cardiology_004",
+                category: "心臓",
+                questionText: "心臓が伸展されるほど大きな収縮を生じる法則を何といいますか？",
+                answer: "スターリングの法則",
+                explanation: "フランク・スターリングの法則は、心室の拡張末期容積が大きいほど、心筋の収縮力が強くなるという関係を示します。",
+                svgIcon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-full h-full text-red-500"><path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-2.625 6c-.54 0-.828.419-.938.634l-1.5 3.182a.75.75 0 101.328.634L9 11.564V15a.75.75 0 001.5 0v-3.436l.781-1.172a.75.75 0 00-.656-1.142zM14.25 9a.75.75 0 00-.75.75V15a.75.75 0 001.5 0v-4.5a.75.75 0 00-.75-.75z" clip-rule="evenodd" /></svg>`
+            },
+            // 第2回 血管
+            {
+                id: "vascular_001",
+                category: "血管",
+                questionText: "動脈の壁が厚く弾力性に富むことから何血管と呼ばれますか？",
+                answer: "弾性血管",
+                explanation: "大動脈などの太い動脈は弾性線維が豊富で、心臓の拍動による血圧変動を緩和する役割があるため弾性血管と呼ばれます。",
+                imageUrl: "https://placehold.co/150x150/60a5fa/ffffff?text=血管の図", // Blueish placeholder for vessels
+                svgIcon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-full h-full text-blue-500"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>`
+            },
+            {
+                id: "vascular_002",
+                category: "血管",
+                questionText: "脳底で主要な動脈が輪状につながる構造を何といいますか？",
+                answer: "ウィリス動脈輪",
+                explanation: "ウィリス動脈輪は、脳への血流供給のバックアップシステムとして機能し、一部の血管が閉塞しても他の経路から血流が確保されるようにしています。",
+                svgIcon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-full h-full text-blue-500"><path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM8.29 17.47a4.5 4.5 0 010-6.364L9.35 10.05a.75.75 0 00-1.06-1.061l-1.061 1.06a6 6 0 000 8.485l1.06 1.06a.75.75 0 101.061-1.06l-1.06-1.061zm7.42 0a4.5 4.5 0 000-6.364L14.65 10.05a.75.75 0 11-1.06-1.061l-1.061 1.06a6 6 0 010 8.485l1.06 1.06a.75.75 0 111.061-1.06l-1.06-1.061z" clip-rule="evenodd" /></svg>`
+            },
+            // 第3回 血液
+            {
+                id: "hematology_001",
+                category: "血液",
+                questionText: "血液の液体成分を何といいますか？",
+                answer: "血漿",
+                explanation: "血漿は血液の約55%を占め、水分、タンパク質（アルブミン、グロブリン、フィブリノゲンなど）、電解質、栄養素、ホルモン、老廃物などを含んでいます。",
+                imageUrl: "https://placehold.co/150x150/facc15/ffffff?text=血液の図", // Yellowish placeholder for blood
+                svgIcon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-full h-full text-yellow-500"><path fill-rule="evenodd" d="M3.75 3A.75.75 0 003 3.75v16.5a.75.75 0 00.75.75h16.5a.75.75 0 00.75-.75V3.75a.75.75 0 00-.75-.75H3.75zm6.75 12.75a.75.75 0 000-1.5h-3a.75.75 0 000 1.5h3zm4.5-3.75a.75.75 0 01.75-.75h3a.75.75 0 010 1.5h-3a.75.75 0 01-.75-.75zm0-3.75a.75.75 0 01.75-.75h3a.75.75 0 010 1.5h-3a.75.75 0 01-.75-.75zM9 7.5a.75.75 0 000 1.5h6a.75.75 0 000-1.5H9z" clip-rule="evenodd" /></svg>`
+            },
+            {
+                id: "hematology_002",
+                category: "血液",
+                questionText: "赤血球の産生を促進するホルモンは何ですか？",
+                answer: "エリスロポエチン",
+                explanation: "エリスロポエチンは主に腎臓で産生され、骨髄に作用して赤血球の分化と増殖を促進します。低酸素状態になると分泌が増加します。",
+                svgIcon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-full h-full text-red-600"><path d="M12 2.25A9.75 9.75 0 002.25 12c0 4.544 3.104 8.363 7.22 9.49.14.033.286.05.438.05A.751.751 0 0010.5 20.75V15a.75.75 0 00-1.5 0v5.114A8.228 8.228 0 013.75 12a8.25 8.25 0 018.25-8.25A8.25 8.25 0 0120.25 12c0 .83-.124 1.633-.358 2.383a.75.75 0 00-1.312.562c.29.87-.008 1.86-.736 2.552a.75.75 0 00.257 1.265A9.713 9.713 0 0021.75 12A9.75 9.75 0 0012 2.25z" /><path d="M12.75 6a.75.75 0 00-1.5 0v6.19l-1.72-1.72a.75.75 0 00-1.06 1.06l3 3a.75.75 0 001.06 0l3-3a.75.75 0 10-1.06-1.06l-1.72 1.72V6z" /></svg>`
+            },
+            // 第4回 リンパ系
+            {
+                id: "lymphatic_001",
+                category: "リンパ系",
+                questionText: "リンパ球が成熟する一次リンパ器官は赤色骨髄と何ですか？",
+                answer: "胸腺",
+                explanation: "一次リンパ器官はリンパ球の産生と成熟の場で、B細胞は骨髄で、T細胞は胸腺で成熟します。",
+                imageUrl: "https://placehold.co/150x150/34d399/ffffff?text=リンパ系の図", // Greenish placeholder for lymphatic system
+                svgIcon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-full h-full text-green-500"><path d="M11.25 4.533A9.708 9.708 0 0012 4.5c4.81 0 8.799 3.482 9.637 7.967.054.292.112.578.163.863a.75.75 0 01-.732.87H2.932a.75.75 0 01-.732-.87c.05-.285.11-.57.163-.863C3.201 7.982 7.19 4.5 12 4.5c-.25 0-.496.011-.737.033zM2.25 15h19.5a.75.75 0 01.75.75v3a.75.75 0 01-.75.75H2.25a.75.75 0 01-.75-.75v-3a.75.75 0 01.75-.75z" /></svg>`
+            },
+            {
+                id: "lymphatic_002",
+                category: "リンパ系",
+                questionText: "B細胞が分化して抗体を産生する細胞は何ですか？",
+                answer: "形質細胞",
+                explanation: "抗原刺激を受けたB細胞は増殖・分化し、抗体を大量に産生・分泌する形質細胞（プラズマ細胞）になります。",
+                svgIcon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-full h-full text-green-500"><path d="M12.75 2.25a.75.75 0 00-1.5 0v1.5h-1.5a.75.75 0 000 1.5H12v1.5a.75.75 0 001.5 0V6h1.5a.75.75 0 000-1.5H13.5V3a.75.75 0 00-.75-.75zm0 9a.75.75 0 00-1.5 0v1.5h-1.5a.75.75 0 000 1.5H12v1.5a.75.75 0 001.5 0V15h1.5a.75.75 0 000-1.5H13.5v-1.5zm-6.75-6a.75.75 0 00-1.5 0v1.5H3a.75.75 0 000 1.5h1.5V12a.75.75 0 001.5 0V9h1.5a.75.75 0 000-1.5H6V4.5a.75.75 0 00-.75-.75zm0 9a.75.75 0 00-1.5 0v1.5H3a.75.75 0 000 1.5h1.5V21a.75.75 0 001.5 0v-1.5h1.5a.75.75 0 000-1.5H6v-1.5zm9-6a.75.75 0 00-1.5 0v1.5h-1.5a.75.75 0 000 1.5H15V12a.75.75 0 001.5 0V9h1.5a.75.75 0 000-1.5H16.5V4.5a.75.75 0 00-.75-.75z" /></svg>`
+            }
+        ];
+
+        // --- DOM Elements ---
+        const categorySelectionScreen = document.getElementById('categorySelectionScreen');
+        const quizScreen = document.getElementById('quizScreen');
+        const resultsScreen = document.getElementById('resultsScreen');
+        const categoryButtonsContainer = document.getElementById('categoryButtons');
+        const categoryTitleEl = document.getElementById('categoryTitle');
+        const progressBar = document.getElementById('progressBar');
+        const scoreEl = document.getElementById('score');
+        const imagePlaceholder = document.getElementById('imagePlaceholder');
+        const questionTextEl = document.getElementById('questionText');
+        const answerInput = document.getElementById('answerInput');
+        const feedbackArea = document.getElementById('feedbackArea');
+        const explanationArea = document.getElementById('explanationArea');
+        const submitAnswerBtn = document.getElementById('submitAnswer');
+        const nextQuestionBtn = document.getElementById('nextQuestion');
+        const backToCategoriesBtn = document.getElementById('backToCategories');
+        const finalScoreEl = document.getElementById('finalScore');
+        const summaryEl = document.getElementById('summary');
+        const restartCategoryBtn = document.getElementById('restartCategory');
+        const backToCategoriesFromResultsBtn = document.getElementById('backToCategoriesFromResults');
+
+        // Custom Alert Modal Elements
+        const customAlertModal = document.getElementById('customAlertModal');
+        const customAlertMessage = document.getElementById('customAlertMessage');
+        const customAlertCloseBtn = document.getElementById('customAlertCloseBtn');
+
+        // --- State ---
+        let currentCategory = '';
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let userAnswers = []; // To store { question, userAnswer, correctAnswer, isCorrect }
+
+        // --- Functions ---
+
+        // Custom alert function
+        function showAlert(message) {
+            customAlertMessage.textContent = message;
+            customAlertModal.style.display = "flex";
+        }
+
+        customAlertCloseBtn.onclick = function() {
+            customAlertModal.style.display = "none";
+        }
+        // Close modal if user clicks outside of it
+        window.onclick = function(event) {
+            if (event.target == customAlertModal) {
+                customAlertModal.style.display = "none";
+            }
+        }
+
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function loadCategories() {
+            const categories = [...new Set(quizData.map(q => q.category))];
+            categoryButtonsContainer.innerHTML = ''; // Clear existing buttons
+            categories.forEach(category => {
+                const button = document.createElement('button');
+                button.textContent = category;
+                button.classList.add('btn', 'btn-category', 'w-full');
+                button.onclick = () => startQuiz(category);
+                categoryButtonsContainer.appendChild(button);
+            });
+            // Add "All Categories" button
+            const allButton = document.createElement('button');
+            allButton.textContent = "全範囲ランダム";
+            allButton.classList.add('btn', 'btn-category', 'w-full', 'sm:col-span-2'); // Span across two columns on small screens if categories are odd
+            allButton.onclick = () => startQuiz('All');
+            categoryButtonsContainer.appendChild(allButton);
+        }
+
+        function startQuiz(category) {
+            currentCategory = category;
+            if (category === 'All') {
+                currentQuestions = shuffleArray([...quizData]);
+                categoryTitleEl.textContent = "全範囲ランダム";
+            } else {
+                currentQuestions = shuffleArray(quizData.filter(q => q.category === category));
+                categoryTitleEl.textContent = category;
+            }
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers = [];
+            updateScoreDisplay();
+            updateProgressBar();
+            loadQuestion();
+            categorySelectionScreen.classList.add('hidden');
+            resultsScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+        }
+
+        function loadQuestion() {
+            if (currentQuestionIndex < currentQuestions.length) {
+                const question = currentQuestions[currentQuestionIndex];
+                questionTextEl.textContent = question.questionText;
+                
+                // Image display logic:
+                imagePlaceholder.innerHTML = ''; // Clear previous image/svg
+                if (question.imageUrl) {
+                    const img = document.createElement('img');
+                    img.src = question.imageUrl;
+                    img.alt = `イラスト: ${question.questionText.substring(0, 20)}...`; // Alt text for accessibility
+                    img.onerror = function() { // Fallback if image URL fails
+                        if (question.svgIcon) {
+                            imagePlaceholder.innerHTML = question.svgIcon;
+                        } else {
+                            imagePlaceholder.innerHTML = `<div class="text-gray-500 text-sm">画像なし</div>`;
+                        }
+                    };
+                    imagePlaceholder.appendChild(img);
+                } else if (question.svgIcon) {
+                    imagePlaceholder.innerHTML = question.svgIcon;
+                } else {
+                    imagePlaceholder.innerHTML = `<div class="text-gray-500 text-sm">画像なし</div>`; // Default if no image or SVG
+                }
+
+                answerInput.value = '';
+                answerInput.disabled = false;
+                feedbackArea.classList.add('hidden');
+                explanationArea.classList.add('hidden');
+                submitAnswerBtn.classList.remove('hidden');
+                nextQuestionBtn.classList.add('hidden');
+                answerInput.focus();
+            } else {
+                showResults();
+            }
+            updateProgressBar();
+            updateScoreDisplay();
+        }
+
+        function handleSubmitAnswer() {
+            const userAnswer = answerInput.value.trim();
+            if (userAnswer === '') {
+                showAlert('解答を入力してください。');
+                return;
+            }
+
+            const question = currentQuestions[currentQuestionIndex];
+            const correctAnswer = question.answer;
+            const isCorrect = userAnswer.toLowerCase() === correctAnswer.toLowerCase();
+
+            feedbackArea.classList.remove('hidden');
+            explanationArea.classList.remove('hidden');
+            explanationArea.innerHTML = `<strong>解説:</strong> ${question.explanation}`;
+            answerInput.disabled = true;
+
+            if (isCorrect) {
+                score++;
+                feedbackArea.textContent = '正解！ 🎉';
+                feedbackArea.className = 'feedback feedback-correct';
+            } else {
+                feedbackArea.textContent = `不正解... 正解は「${correctAnswer}」です。`;
+                feedbackArea.className = 'feedback feedback-incorrect';
+            }
+            
+            userAnswers.push({
+                questionText: question.questionText,
+                userAnswer: userAnswer,
+                correctAnswer: correctAnswer,
+                isCorrect: isCorrect,
+                explanation: question.explanation
+            });
+
+            updateScoreDisplay();
+            submitAnswerBtn.classList.add('hidden');
+            nextQuestionBtn.classList.remove('hidden');
+        }
+
+        function handleNextQuestion() {
+            currentQuestionIndex++;
+            loadQuestion();
+        }
+
+        function updateScoreDisplay() {
+            scoreEl.textContent = `スコア: ${score} / ${currentQuestions.length}`;
+        }
+
+        function updateProgressBar() {
+            const progress = currentQuestions.length > 0 ? ((currentQuestionIndex) / currentQuestions.length) * 100 : 0;
+            progressBar.style.width = `${progress}%`;
+            // progressBar.textContent = `${Math.round(progress)}%`; // Optional: show percentage text
+        }
+        
+        function showResults() {
+            quizScreen.classList.add('hidden');
+            resultsScreen.classList.remove('hidden');
+            finalScoreEl.textContent = `最終スコア: ${score} / ${currentQuestions.length} (${Math.round((score / currentQuestions.length) * 100)}%)`;
+            
+            summaryEl.innerHTML = '<h3 class="text-lg font-semibold mb-2 text-gray-700">間違えた問題の復習:</h3>';
+            const incorrectAnswers = userAnswers.filter(ua => !ua.isCorrect);
+            if (incorrectAnswers.length === 0) {
+                summaryEl.innerHTML += '<p class="text-green-600">全問正解です！素晴らしい！</p>';
+            } else {
+                const ul = document.createElement('ul');
+                ul.classList.add('list-disc', 'list-inside', 'space-y-3');
+                incorrectAnswers.forEach(ua => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <p class="font-medium text-gray-800">Q: ${ua.questionText}</p>
+                        <p class="text-sm text-red-600">あなたの解答: ${ua.userAnswer}</p>
+                        <p class="text-sm text-green-600">正しい解答: ${ua.correctAnswer}</p>
+                        <p class="text-xs text-gray-500 mt-1">解説: ${ua.explanation}</p>
+                    `;
+                    ul.appendChild(li);
+                });
+                summaryEl.appendChild(ul);
+            }
+        }
+
+        function goBackToCategories() {
+            quizScreen.classList.add('hidden');
+            resultsScreen.classList.add('hidden');
+            categorySelectionScreen.classList.remove('hidden');
+        }
+
+        // --- Event Listeners ---
+        submitAnswerBtn.addEventListener('click', handleSubmitAnswer);
+        answerInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                if (!submitAnswerBtn.classList.contains('hidden')) {
+                    handleSubmitAnswer();
+                } else if (!nextQuestionBtn.classList.contains('hidden')) {
+                    handleNextQuestion();
+                }
+            }
+        });
+        nextQuestionBtn.addEventListener('click', handleNextQuestion);
+        backToCategoriesBtn.addEventListener('click', goBackToCategories);
+        restartCategoryBtn.addEventListener('click', () => startQuiz(currentCategory));
+        backToCategoriesFromResultsBtn.addEventListener('click', goBackToCategories);
+
+        // --- Initialization ---
+        loadCategories();
+
+    </script>
+</body>
+</html>
