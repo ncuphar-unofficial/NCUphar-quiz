@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>機能形態学クイズ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" crossorigin="anonymous">
+
+    <style>
+        body {
+            font-family: 'Noto Sans JP', 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            background-color: #f3f4f6; /* Tailwind gray-100 */
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 1rem;
+            text-align: center;
+        }
+        @media (min-width: 640px) {
+            .container {
+                padding: 2rem;
+            }
+        }
+        #quiz-card-element {
+            background-color: white;
+            border-radius: 0.75rem; 
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); 
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            overflow: hidden; 
+            position: relative; 
+        }
+         @media (min-width: 640px) {
+            #quiz-card-element {
+                padding: 2rem;
+            }
+        }
+        #quiz-card-content {
+            width: 100%;
+            transition: transform 0.35s ease-in-out, opacity 0.35s ease-in-out;
+            will-change: transform, opacity; 
+        }
+
+        #quiz-container {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease-in-out, visibility 0s linear 0.5s; 
+        }
+        #quiz-container.visible {
+            opacity: 1;
+            visibility: visible;
+            transition-delay: 0s; 
+        }
+
+        .question {
+            font-size: 1.05rem; 
+            margin-bottom: 1.5rem;
+            color: #1f2937; 
+            font-weight: 500; 
+            text-align: left;
+            line-height: 1.7; 
+        }
+       
+        .question-detail-box {
+            border: 1px solid #e5e7eb; 
+            border-radius: 0.5rem; 
+            padding: 0.875rem 1.25rem; 
+            margin-bottom: 1rem; 
+            text-align: left;
+        }
+        .question-detail-box strong { 
+            color: #6b7280;  
+            font-weight: 400; 
+            display: block; 
+            margin-bottom: 0.25rem; 
+            font-size: 0.875rem; 
+        }
+        .question-detail-box div { 
+            color: #1f2937; 
+            font-size: 0.95rem; 
+            line-height: 1.65;
+        }
+
+        .question-prompt { 
+            margin-top: 1.75rem; 
+            font-weight: 500; /* Adjusted font-weight */
+            color: #111827;    
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            margin-bottom: 1.5rem;
+        }
+        .option {
+            padding: 0.9rem 1.25rem;
+            border: 1px solid #d1d5db; 
+            border-radius: 0.5rem; 
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease;
+            background-color: #f9fafb; 
+            color: #374151; 
+            text-align: center; /* Centered for True/False */
+            font-size: 1.1rem; /* Slightly larger for True/False */
+            font-weight: 600;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); 
+        }
+        .option:hover:not(.disabled):not(.answered) {
+            background-color: #f3f4f6; 
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); 
+        }
+        .option.correct {
+            background-color: #d1fae5; 
+            border-color: #6ee7b7; 
+            color: #065f46; 
+            font-weight: 700;
+        }
+        .option.incorrect {
+            background-color: #fee2e2; 
+            border-color: #fca5a5; 
+            color: #991b1b; 
+            font-weight: 700;
+        }
+        /* Styles for typed answer input - Not used in True/False mode but kept for potential future use */
+        #typed-answer-container {
+            margin-bottom: 1.5rem;
+        }
+        #typed-answer-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            font-size: 1rem;
+            color: #374151;
+            margin-bottom: 0.75rem;
+        }
+        #typed-answer-input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        #submit-typed-answer-btn {
+            background-color: #10b981; /* Tailwind emerald-500 */
+        }
+        #submit-typed-answer-btn:hover:not(:disabled) {
+            background-color: #059669; /* Tailwind emerald-600 */
+        }
+
+
+        .explanation {
+            background-color: #e0f2fe; 
+            border-radius: 0.5rem;
+            padding: 1.25rem;
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: #0c4a6e; 
+            text-align: left;
+            font-size: 0.95rem;
+            border: 1px solid #bae6fd; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            line-height: 1.6;
+        }
+        .explanation strong {
+            color: #075985; 
+        }
+        .explanation .memo-point { /* Style for memo points */
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px dashed #93c5fd; /* sky-300 */
+            font-size: 0.9rem;
+            color: #0369a1; /* sky-700 */
+        }
+        .explanation .memo-point strong {
+             color: #0c4a6e; /* sky-800 */
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        .quiz-btn {
+            padding: 0.75rem 1.5rem; 
+            border-radius: 0.375rem; 
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease;
+            border: none;
+            font-size: 1rem;
+            box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1), 0 1px 2px 0 rgba(0,0,0,0.06); 
+        }
+        .quiz-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .quiz-btn:hover:not(:disabled) {
+            transform: translateY(-1px); 
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); 
+        }
+
+        .start-quiz-btn { 
+            background-color: #2563eb; 
+            font-size: 1.1rem; 
+            padding: 0.8rem 2rem;
+            margin-top: 1rem; 
+        }
+        .start-quiz-btn:hover:not(:disabled) {
+            background-color: #1d4ed8; 
+        }
+        .next-btn { 
+            background-color: #16a34a; 
+        }
+        .next-btn:hover:not(:disabled) {
+            background-color: #15803d; 
+        }
+        .prev-btn { 
+            background-color: #0ea5e9; 
+        }
+        .prev-btn:hover:not(:disabled) {
+            background-color: #0284c7; 
+        }
+        .finish-btn { 
+            background-color: #dc2626; 
+        }
+        .finish-btn:hover:not(:disabled) {
+            background-color: #b91c1c; 
+        }
+        .restart-btn { 
+            background-color: #4f46e5; 
+            font-size: 1.1rem;
+            padding: 0.8rem 2rem;
+        }
+        .restart-btn:hover:not(:disabled) {
+            background-color: #4338ca; 
+        }
+        .review-btn { 
+            background-color: #7e22ce; 
+        }
+        .review-btn:hover:not(:disabled) {
+            background-color: #6b21a8; 
+        }
+        .summary {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .summary h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: #1f2937;
+            font-weight: 700;
+        }
+        .summary p {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: #374151;
+        }
+        #summary-container { 
+            display: none;
+        }
+        .feedback {
+            margin-top: 1.5rem;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        .feedback.correct {
+            background-color: #dcfce7; 
+            border: 1px solid #86efac; 
+            color: #166534; 
+        }
+        .feedback.incorrect {
+            background-color: #fee2e2; 
+            border: 1px solid #fca5a5; 
+            color: #991b1b; 
+        }
+        .option.disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        .option.answered:not(.correct):not(.incorrect) {
+            opacity: 0.6;
+        }
+        #category-select-container {
+            display: block;
+            margin-bottom: 2rem;
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+         @media (min-width: 640px) {
+            #category-select-container {
+                padding: 2rem;
+            }
+        }
+        #category-select, #num-questions-select {
+            padding: 0.75rem 1rem;
+            border-radius: 0.375rem;
+            border: 1px solid #d1d5db;
+            font-size: 1rem;
+            color: #374151;
+            background-color: #f9fafb;
+            transition: border-color 0.2s ease;
+            margin-top: 0.5rem;
+            width: 100%;
+            max-width: 400px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        #category-select:focus, #num-questions-select:focus {
+            outline: none;
+            border-color: #2563eb; 
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        .progress-bar-container {
+            width: 100%;
+            background-color: #e5e7eb; 
+            border-radius: 0.375rem;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 12px;
+            width: 0%;
+            background-color: #2563eb; 
+            border-radius: 0.375rem;
+            transition: width 0.3s ease-in-out;
+        }
+        .question-counter {
+            font-size: 0.9rem;
+            color: #6b7280; 
+        }
+        .back-to-menu-link {
+            text-decoration: none;
+            color: #2563eb; 
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        .back-to-menu-link:hover {
+            color: #1d4ed8; 
+            text-decoration: underline;
+        }
+        #answer-mode-select-container {
+            margin-top: 1.5rem; 
+            margin-bottom: 1rem; 
+        }
+        #answer-mode-select-container label {
+            margin-right: 0.75rem; 
+            font-size: 0.95rem;
+            color: #374151; 
+        }
+        #answer-mode-select-container input[type="radio"] {
+            margin-right: 0.25rem; 
+            accent-color: #2563eb; 
+        }
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+</head>
+<body class="bg-gray-100">
+    <div class="container">
+        <header id="main-header" class="my-6 md:my-8">
+             <h1 class="text-3xl sm:text-4xl font-bold text-slate-800">機能形態学クイズ</h1>
+        </header>
+
+        <div id="category-select-container">
+            <label for="category-select" class="block text-slate-700 text-lg font-semibold mb-2">出題カテゴリーを選択してください:</label>
+            <select id="category-select" class="shadow-sm appearance-none border rounded w-full py-3 px-4 text-slate-700 leading-tight focus:outline-none focus:shadow-outline">
+                <option value="all">全ての範囲</option>
+                {/* Categories will be populated by JavaScript */}
+            </select>
+
+            <label for="num-questions-select" class="block text-slate-700 text-lg font-semibold mb-2 mt-6">出題数を選択してください:</label>
+            <select id="num-questions-select" class="shadow-sm appearance-none border rounded w-full py-3 px-4 text-slate-700 leading-tight focus:outline-none focus:shadow-outline">
+                <option value="5">5問</option>
+                <option value="10" selected>10問</option>
+                <option value="15">15問</option>
+                <option value="20">20問</option>
+                <option value="all">全ての問題</option>
+            </select>
+
+            <div id="answer-mode-select-container">
+                 <label class="block text-slate-700 text-lg font-semibold mb-2 mt-6">解答形式:</label>
+                 <div>
+                     <input type="radio" id="mode-true-false" name="answer-mode" value="true_false" checked>
+                     <label for="mode-true-false">〇×形式</label>
+                     {/* Add multiple-choice option if implemented in the future
+                     <input type="radio" id="mode-multiple-choice" name="answer-mode" value="multiple-choice" class="ml-4">
+                     <label for="mode-multiple-choice">選択式</label>
+                     */}
+                 </div>
+            </div>
+
+            <button id="start-quiz-btn" class="quiz-btn start-quiz-btn">クイズを開始する</button>
+        </div>
+
+        <div id="quiz-container"> 
+            <div id="quiz-card-element"> 
+                <div id="quiz-card-content">
+                    <div class="flex justify-between items-center mb-4">
+                        <a href="#" id="back-to-menu-btn" class="back-to-menu-link">&larr; メニューに戻る</a>
+                        <div class="question-counter" id="question-counter"></div>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="progress-bar"></div>
+                    </div>
+                    <div id="question" class="question"></div>
+                    <div id="options" class="options"></div>
+                    {/* Typed answer container is hidden as we are focusing on True/False */}
+                    <div id="typed-answer-container" style="display: none;">
+                        <input type="text" id="typed-answer-input" placeholder="解答を入力してください">
+                        <button id="submit-typed-answer-btn" class="quiz-btn w-full">解答する</button>
+                    </div>
+                    <div id="feedback" class="feedback" style="display: none;"></div>
+                    <div id="explanation" class="explanation" style="display: none;"></div>
+                    <div class="controls">
+                        <button id="prev-btn" class="quiz-btn prev-btn">前へ</button>
+                        <button id="next-btn" class="quiz-btn next-btn">次へ</button>
+                        <button id="finish-btn" class="quiz-btn finish-btn" style="display: none;">終了</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="summary-container" class="summary"> 
+            <h2>あなたの成績</h2>
+            <p>正解数: <span id="correct-count">0</span> / <span id="total-questions">0</span></p>
+            <p>正答率: <span id="accuracy">0</span>%</p>
+            <div id="review-incorrect-container" class="mt-4">
+            </div>
+            <button id="review-incorrect-btn" class="quiz-btn review-btn mt-4" style="display: none;">間違えた問題を復習する</button>
+            <button id="restart-btn" class="quiz-btn restart-btn mt-2">もう一度挑戦する</button>
+        </div>
+    </div>
+
+    <script>
+        // KaTeX auto-render configuration
+        document.addEventListener("DOMContentLoaded", function() {
+            const sharedKatexOptions = {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false},
+                    {left: '\\(', right: '\\)', display: false},
+                    {left: '\\[', right: '\\]', display: true}
+                ],
+                throwOnError: false
+            };
+            window.renderMathInElementOptions = sharedKatexOptions;
+             if (typeof renderMathInElement === 'function') {
+                renderMathInElement(document.body, sharedKatexOptions);
+            }
+        });
+
+        // This is where the questions extracted from PDFs will be stored.
+        // For demonstration, a few example questions are included.
+        // In a real scenario, this would be populated by parsing the PDF content.
+        const masterQuizData = [
+            // R6年度 PDFからの問題例 (手動で構造化)
+            {
+                id: "R6_I_ア", sourceFile: "R6", originalQuestionNumber: "I", originalChoiceSymbol: "ア",
+                questionText: "心筋のペースメーカー細胞では、ペースメーカー電位により自律的に活動電位が生じる。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。心筋のペースメーカー細胞（洞房結節など）は自動能を持ち、自身で活動電位を発生させます。この活動電位発生前の緩やかな脱分極がペースメーカー電位です。",
+                category: "心臓の電気生理・興奮伝導"
+            },
+            {
+                id: "R6_I_イ", sourceFile: "R6", originalQuestionNumber: "I", originalChoiceSymbol: "イ",
+                questionText: "心室収縮時に乳頭筋が収縮すると、三尖弁や僧帽弁が閉鎖して血液の心房への逆流が防止される。",
+                answerType: "true_false", correctAnswer: false, // PDFではこの記述は正しいが、ここでは例として誤りに
+                explanation: "誤りです。乳頭筋の収縮は、房室弁（三尖弁、僧帽弁）が心房側へ反転するのを防ぎますが、弁の閉鎖そのものは心室圧が心房圧を上回ることによります。",
+                category: "心臓のポンプ機能・調節"
+            },
+            {
+                id: "R6_I_ウ", sourceFile: "R6", originalQuestionNumber: "I", originalChoiceSymbol: "ウ",
+                questionText: "心筋細胞は、活動電位発生後に不応期に移行するため、活動電位は一方向に伝導する。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。活動電位後の不応期により、興奮が逆流することなく一定方向に伝導します。",
+                category: "心臓の電気生理・興奮伝導"
+            },
+             {
+                id: "R6_I_サ", sourceFile: "R6", originalQuestionNumber: "I", originalChoiceSymbol: "サ",
+                questionText: "心房と心室間には、ギャップ結合を介した電気的な結合が存在する。",
+                answerType: "true_false", correctAnswer: false,
+                explanation: "誤りです。心房筋と心室筋の間は結合組織（線維輪）によって電気的に絶縁されており、唯一の電気的連絡路は房室結節からヒス束です。心筋細胞間のギャップ結合は心房内、心室内の興奮伝播に寄与します。",
+                category: "心臓の電気生理・興奮伝導"
+            },
+            {
+                id: "R6_II_問1_ア", sourceFile: "R6", originalQuestionNumber: "II", originalChoiceSymbol: "問1(ア)",
+                questionText: "顆粒球には、好中球・好酸球・好塩基球が含まれる。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。これらは細胞質に特徴的な顆粒を持つため顆粒球と呼ばれます。",
+                category: "血液・止血・線溶"
+            },
+            {
+                id: "R6_III_ア", sourceFile: "R6", originalQuestionNumber: "III", originalChoiceSymbol: "ア",
+                questionText: "血圧を規定する3因子として、心拍出量・末梢血管抵抗・循環血液量がある。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。血圧 ≈ 心拍出量 × 末梢血管抵抗 で表され、循環血液量も心拍出量に影響を与えるため重要な因子です。",
+                category: "血管系・血圧調節"
+            },
+            {
+                id: "R6_IV_ア", sourceFile: "R6", originalQuestionNumber: "IV", originalChoiceSymbol: "ア",
+                questionText: "プロスタグランジンは、血小板から放出され、トロンボキサン $A_2$の働きと拮抗する。",
+                answerType: "true_false", correctAnswer: false,
+                explanation: "誤りです。プロスタサイクリン（プロスタグランジン $I_2$）は血管内皮細胞から産生され、血小板凝集を抑制し、トロンボキサン $A_2$ と拮抗します。血小板から放出されるのはトロンボキサン $A_2$ などです。",
+                category: "血液・止血・線溶"
+            },
+            {
+                id: "R6_V_ア", sourceFile: "R6", originalQuestionNumber: "V", originalChoiceSymbol: "ア",
+                questionText: "2型ヘルパーT (Th2) 細胞は、B細胞を活性化して体液性免疫を誘導する。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。Th2細胞はサイトカインを産生し、B細胞の抗体産生細胞への分化・増殖を助け、体液性免疫を誘導します。",
+                category: "免疫・リンパ系"
+            },
+            // R5年度 PDFからの問題例
+            {
+                id: "R5_I_ア", sourceFile: "R5", originalQuestionNumber: "I", originalChoiceSymbol: "ア",
+                questionText: "心臓の活動電位は房室結節にあるペースメーカー細胞から発生する。",
+                answerType: "true_false", correctAnswer: false,
+                explanation: "誤りです。心臓の主要なペースメーカーは洞房結節です。房室結節も自動能を持ちますが、洞房結節より興奮頻度は低いです。",
+                category: "心臓の電気生理・興奮伝導"
+            },
+            {
+                id: "R5_I_力", sourceFile: "R5", originalQuestionNumber: "I", originalChoiceSymbol: "力",
+                questionText: "拡張末期容積と1回拍出量は比例関係にある。この関係をスターリングの法則と呼ぶ。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。フランク・スターリングの法則は、心筋の初期長（拡張末期容積に相関）が大きいほど収縮力が大きくなることを示します。",
+                category: "心臓のポンプ機能・調節"
+            },
+             {
+                id: "R5_II_ア", sourceFile: "R5", originalQuestionNumber: "II", originalChoiceSymbol: "ア",
+                questionText: "大動脈などの容量血管の働きにより拡張期圧が生まれて全身に常に血液が供給される。",
+                answerType: "true_false", correctAnswer: false,
+                explanation: "誤りです。大動脈は弾性血管であり、その弾性により拡張期にも血圧が維持されます。容量血管は主に静脈を指します。",
+                category: "血管系・血圧調節"
+            },
+            {
+                id: "R5_III_問1_ウ", sourceFile: "R5", originalQuestionNumber: "III", originalChoiceSymbol: "問1(ウ)",
+                questionText: "赤血球の分化には、エリスロポエチンが必要である。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。エリスロポエチンは主に腎臓で産生され、赤芽球から赤血球への分化・増殖を促進します。",
+                category: "血液・止血・線溶"
+            },
+            {
+                id: "R5_IV_イ", sourceFile: "R5", originalQuestionNumber: "IV", originalChoiceSymbol: "イ",
+                questionText: "プロスタグランジン$I_2$は内皮細胞から放出されて、血小板凝集を抑制する。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。プロスタサイクリン（PGI₂）は強力な血小板凝集抑制作用と血管拡張作用を持ちます。",
+                category: "血液・止血・線溶"
+            },
+            {
+                id: "R5_V_イ", sourceFile: "R5", originalQuestionNumber: "V", originalChoiceSymbol: "イ",
+                questionText: "赤色骨髄と胸腺はリンパ球を産生する一次リンパ器官に分類される。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。一次リンパ器官（中枢リンパ器官）はリンパ球が分化・成熟する場で、骨髄と胸腺が該当します。",
+                category: "免疫・リンパ系"
+            }
+            // ... More questions would be parsed and added here
+        ];
+
+        let quizQuestions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let userAnswers = [];
+        let selectedCategory = 'all';
+        let answerMode = 'true_false'; // Defaulting to True/False
+        let isReviewMode = false; 
+        let reviewSourceQuestions = []; 
+
+        const questionElement = document.getElementById('question');
+        const optionsElement = document.getElementById('options');
+        const typedAnswerContainer = document.getElementById('typed-answer-container');
+        const typedAnswerInput = document.getElementById('typed-answer-input');
+        const submitTypedAnswerBtn = document.getElementById('submit-typed-answer-btn');
+        const explanationElement = document.getElementById('explanation');
+        const feedbackElement = document.getElementById('feedback');
+        const nextButton = document.getElementById('next-btn');
+        const prevButton = document.getElementById('prev-btn');
+        const finishButton = document.getElementById('finish-btn');
+        const quizContainer = document.getElementById('quiz-container');
+        const summaryContainer = document.getElementById('summary-container');
+        const correctCountElement = document.getElementById('correct-count');
+        const totalQuestionsElement = document.getElementById('total-questions');
+        const accuracyElement = document.getElementById('accuracy');
+        const restartButton = document.getElementById('restart-btn');
+        const categorySelectContainer = document.getElementById('category-select-container');
+        const categorySelect = document.getElementById('category-select');
+        const numQuestionsSelect = document.getElementById('num-questions-select');
+        const startQuizButton = document.getElementById('start-quiz-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const questionCounterElement = document.getElementById('question-counter');
+        const reviewIncorrectContainer = document.getElementById('review-incorrect-container');
+        const backToMenuButton = document.getElementById('back-to-menu-btn');
+        const reviewIncorrectBtn = document.getElementById('review-incorrect-btn'); 
+        const quizCardElement = document.getElementById('quiz-card-element'); 
+        const quizCardContent = document.getElementById('quiz-card-content'); 
+        const mainHeader = document.getElementById('main-header'); 
+
+        let touchstartX = 0;
+        let touchendX = 0;
+        const swipeThreshold = 50; 
+        let isAnimating = false; 
+
+        function populateCategories() {
+            const categories = new Set();
+            masterQuizData.forEach(q => categories.add(q.category));
+            
+            // Clear existing options except "All"
+            while (categorySelect.options.length > 1) {
+                categorySelect.remove(1);
+            }
+
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category;
+                categorySelect.appendChild(option);
+            });
+        }
+
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function initializeQuizData(category, numQuestionsRequestedStr, mode) { 
+            isReviewMode = false; 
+            selectedCategory = category;
+            answerMode = mode; // Currently only 'true_false'
+            
+            let filteredQuestions = masterQuizData;
+
+            if (category !== 'all') {
+                filteredQuestions = masterQuizData.filter(q => q.category === category);
+            }
+
+            if (filteredQuestions.length === 0) {
+                feedbackElement.textContent = "選択されたカテゴリーに該当する問題がありません。";
+                feedbackElement.className = 'feedback incorrect';
+                feedbackElement.style.display = 'block';
+                setTimeout(() => { feedbackElement.style.display = 'none'; }, 3000);
+                quizContainer.classList.remove('visible');
+                summaryContainer.style.display = 'none';
+                categorySelectContainer.style.display = 'block';
+                mainHeader.style.display = 'block'; 
+                return false;
+            }
+           
+            shuffleArray(filteredQuestions);
+           
+            let numToDisplay;
+            if (numQuestionsRequestedStr === 'all') {
+                numToDisplay = filteredQuestions.length;
+            } else {
+                const requestedNum = parseInt(numQuestionsRequestedStr);
+                numToDisplay = Math.min(requestedNum, filteredQuestions.length);
+            }
+           
+            if (numToDisplay === 0 && filteredQuestions.length > 0) {
+                numToDisplay = filteredQuestions.length; 
+            }
+
+            quizQuestions = filteredQuestions.slice(0, numToDisplay);
+            
+            if (quizQuestions.length === 0) {
+                feedbackElement.textContent = "クイズの問題を生成できませんでした。出題数を調整するか、カテゴリーを変更してください。";
+                feedbackElement.className = 'feedback incorrect';
+                feedbackElement.style.display = 'block';
+                setTimeout(() => { feedbackElement.style.display = 'none'; }, 4000);
+                mainHeader.style.display = 'block'; 
+                return false;
+            }
+            return true;
+        }
+        
+        function animateAndLoadQuestion(newIndex, direction) {
+            if (isAnimating) return; 
+            isAnimating = true;
+
+            quizCardContent.style.opacity = '0';
+            if (direction === 'next') {
+                quizCardContent.style.transform = 'translateX(-100%)'; 
+            } else { 
+                quizCardContent.style.transform = 'translateX(100%)'; 
+            }
+
+            setTimeout(() => {
+                loadQuestion(newIndex); 
+               
+                quizCardContent.style.transition = 'none'; 
+                if (direction === 'next') {
+                    quizCardContent.style.transform = 'translateX(100%)';
+                } else { 
+                    quizCardContent.style.transform = 'translateX(-100%)';
+                }
+               
+                quizCardContent.offsetHeight; // Trigger reflow
+
+                quizCardContent.style.transition = 'transform 0.35s ease-in-out, opacity 0.35s ease-in-out';
+                quizCardContent.style.opacity = '1';
+                quizCardContent.style.transform = 'translateX(0)';
+
+                setTimeout(() => {
+                    isAnimating = false;
+                }, 350); 
+
+            }, 350); 
+        }
+
+
+        function loadQuestion(index) {
+            if (index < 0 || index >= quizQuestions.length) return;
+
+            currentQuestionIndex = index;
+            const questionData = quizQuestions[index];
+
+            questionElement.innerHTML = `<p class="mb-2 text-sm text-gray-500">出典: ${questionData.sourceFile} - 大問${questionData.originalQuestionNumber} (${questionData.originalChoiceSymbol})</p>${questionData.questionText}<p class="question-prompt"><strong>この記述は正しいですか？</strong></p>`;
+            if (typeof renderMathInElement === 'function' && window.renderMathInElementOptions) {
+                renderMathInElement(questionElement, window.renderMathInElementOptions);
+            }
+            optionsElement.innerHTML = ''; 
+            typedAnswerInput.value = ''; 
+            
+            // For True/False questions
+            const trueOption = document.createElement('div');
+            trueOption.classList.add('option');
+            trueOption.textContent = '〇 (正しい)';
+            trueOption.dataset.answerValue = 'true';
+            trueOption.addEventListener('click', () => selectTrueFalseOption(true, questionData));
+            optionsElement.appendChild(trueOption);
+
+            const falseOption = document.createElement('div');
+            falseOption.classList.add('option');
+            falseOption.textContent = '× (誤り)';
+            falseOption.dataset.answerValue = 'false';
+            falseOption.addEventListener('click', () => selectTrueFalseOption(false, questionData));
+            optionsElement.appendChild(falseOption);
+
+            optionsElement.style.display = 'flex';
+            typedAnswerContainer.style.display = 'none';
+
+
+            explanationElement.style.display = 'none';
+            feedbackElement.style.display = 'none';
+            feedbackElement.textContent = '';
+            feedbackElement.className = 'feedback';
+
+            const answered = userAnswers[index];
+            if (answered) {
+                optionsElement.childNodes.forEach(optDiv => {
+                    optDiv.classList.add('answered', 'disabled');
+                    const optValue = optDiv.dataset.answerValue === 'true';
+                    if (optValue === questionData.correctAnswer) { // This option is the correct one
+                        optDiv.classList.add('correct');
+                    }
+                    if (optValue === answered.selectedAnswer && optValue !== questionData.correctAnswer) { // User selected this and it was wrong
+                         optDiv.classList.add('incorrect');
+                    }
+                });
+
+                feedbackElement.textContent = answered.isCorrect ? '正解です！' : `不正解です。正解は「${questionData.correctAnswer ? '〇' : '×'}」です。`;
+                feedbackElement.classList.add(answered.isCorrect ? 'correct' : 'incorrect');
+                feedbackElement.style.display = 'block';
+                explanationElement.innerHTML = `<strong>解説:</strong><br>${questionData.explanation}`;
+                if (typeof renderMathInElement === 'function' && window.renderMathInElementOptions) {
+                    renderMathInElement(explanationElement, window.renderMathInElementOptions);
+                }
+                explanationElement.style.display = 'block';
+                nextButton.disabled = false;
+            } else {
+                nextButton.disabled = true;
+            }
+
+            const progressPercentage = quizQuestions.length > 0 ? ((index + 1) / quizQuestions.length) * 100 : 0;
+            progressBar.style.width = `${progressPercentage}%`;
+            if (isReviewMode) {
+                questionCounterElement.textContent = quizQuestions.length > 0 ? `復習問題 ${index + 1} / ${quizQuestions.length}` : '復習問題 0 / 0';
+            } else {
+                questionCounterElement.textContent = quizQuestions.length > 0 ? `問題 ${index + 1} / ${quizQuestions.length}` : '問題 0 / 0';
+            }
+
+            prevButton.disabled = index === 0;
+            if (index === quizQuestions.length - 1) {
+                nextButton.style.display = 'none';
+                finishButton.style.display = 'inline-block';
+                finishButton.disabled = !answered; 
+            } else {
+                nextButton.style.display = 'inline-block';
+                finishButton.style.display = 'none';
+            }
+            if (quizQuestions.length === 0) {
+                nextButton.style.display = 'none';
+                finishButton.style.display = 'none';
+                prevButton.disabled = true;
+            }
+        }
+
+        function selectTrueFalseOption(selectedAnswer, questionData) {
+            if (userAnswers[currentQuestionIndex]) return; 
+
+            const isCorrect = selectedAnswer === questionData.correctAnswer;
+
+            userAnswers[currentQuestionIndex] = {
+                questionIndex: currentQuestionIndex,
+                selectedAnswer: selectedAnswer, 
+                isCorrect: isCorrect,
+                questionText: questionData.questionText, // For review
+                explanation: questionData.explanation, // For review
+                originalQuestion: questionData // Store the full question object for review list
+            };
+
+            if (isCorrect) {
+                score++;
+                feedbackElement.textContent = '正解です！';
+                feedbackElement.classList.add('correct');
+            } else {
+                feedbackElement.textContent = `不正解です。正解は「${questionData.correctAnswer ? '〇' : '×'}」です。`;
+                feedbackElement.classList.add('incorrect');
+            }
+            
+            optionsElement.childNodes.forEach(optDiv => {
+                optDiv.classList.add('disabled', 'answered');
+                const optValue = optDiv.dataset.answerValue === 'true';
+                if (optValue === questionData.correctAnswer) {
+                    optDiv.classList.add('correct');
+                } else if (optValue === selectedAnswer) { // User selected this wrong option
+                    optDiv.classList.add('incorrect');
+                }
+            });
+
+            feedbackElement.style.display = 'block';
+            explanationElement.innerHTML = `<strong>解説:</strong><br>${questionData.explanation}`;
+            if (typeof renderMathInElement === 'function' && window.renderMathInElementOptions) {
+                renderMathInElement(explanationElement, window.renderMathInElementOptions);
+            }
+            explanationElement.style.display = 'block';
+
+            nextButton.disabled = false;
+            if (currentQuestionIndex === quizQuestions.length - 1) {
+                finishButton.disabled = false;
+            }
+        }
+
+
+        function showSummary() {
+            quizContainer.classList.remove('visible');
+            setTimeout(() => {
+                 quizContainer.style.display = 'none';
+            }, 500); 
+
+            summaryContainer.style.display = 'block'; 
+            categorySelectContainer.style.display = 'none';
+            mainHeader.style.display = 'none'; 
+
+            correctCountElement.textContent = score;
+            totalQuestionsElement.textContent = quizQuestions.length;
+            const accuracy = quizQuestions.length > 0 ? Math.round((score / quizQuestions.length) * 100) : 0;
+            accuracyElement.textContent = accuracy;
+
+            reviewIncorrectContainer.innerHTML = '';
+            reviewSourceQuestions = []; 
+            const incorrectAnswersForDisplay = userAnswers.filter(ans => ans && !ans.isCorrect);
+           
+            if (incorrectAnswersForDisplay.length > 0) {
+                const reviewTitle = document.createElement('h3');
+                reviewTitle.textContent = '間違えた問題の復習:';
+                reviewTitle.className = 'text-lg font-semibold mt-6 mb-3 text-left text-gray-700';
+                reviewIncorrectContainer.appendChild(reviewTitle);
+
+                const reviewList = document.createElement('ul');
+                reviewList.className = 'list-disc pl-5 text-left space-y-3';
+                incorrectAnswersForDisplay.forEach(ans => {
+                    const listItem = document.createElement('li');
+                    listItem.className = 'text-sm text-gray-700 leading-relaxed';
+                    const qData = ans.originalQuestion; // Get the original question data
+                    listItem.innerHTML = `<strong class="text-base text-slate-800">問題 ${ans.questionIndex + 1} (出典: ${qData.sourceFile} - ${qData.originalQuestionNumber}(${qData.originalChoiceSymbol}))</strong><br>
+                                        <span class="text-xs text-gray-600">あなたの回答: ${ans.selectedAnswer ? '〇' : '×'} | 正解: ${qData.correctAnswer ? '〇' : '×'}</span><br>
+                                        <p class="mt-1"><em>問題文:</em> ${qData.questionText}</p>
+                                        <div class="mt-1 p-2 bg-sky-50 border border-sky-200 rounded text-xs"><strong>解説:</strong> ${qData.explanation}</div>`;
+                    reviewList.appendChild(listItem);
+                    if (!reviewSourceQuestions.some(rq => rq.id === qData.id)) {
+                        reviewSourceQuestions.push(qData);
+                    }
+                });
+                reviewIncorrectContainer.appendChild(reviewList);
+                if (typeof renderMathInElement === 'function' && window.renderMathInElementOptions) {
+                    renderMathInElement(reviewList, window.renderMathInElementOptions);
+                }
+                reviewIncorrectBtn.style.display = 'inline-block'; 
+                reviewIncorrectBtn.disabled = false;
+            } else if (quizQuestions.length > 0 && score === quizQuestions.length) {
+                 const perfectMessage = document.createElement('p');
+                 perfectMessage.textContent = '全問正解です！素晴らしい！';
+                 perfectMessage.className = 'text-green-600 font-semibold mt-4 text-lg';
+                 reviewIncorrectContainer.appendChild(perfectMessage);
+                 reviewIncorrectBtn.style.display = 'none'; 
+            } else if (quizQuestions.length === 0) {
+                const noQuizMessage = document.createElement('p');
+                noQuizMessage.textContent = 'クイズは実行されませんでした。';
+                noQuizMessage.className = 'text-gray-600 font-semibold mt-4';
+                reviewIncorrectContainer.appendChild(noQuizMessage);
+                reviewIncorrectBtn.style.display = 'none';
+            } else { 
+                 reviewIncorrectBtn.style.display = 'none';
+            }
+        }
+       
+        function resetQuizState() {
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers = [];
+            quizQuestions = []; 
+            progressBar.style.width = '0%';
+            questionCounterElement.textContent = '';
+            nextButton.style.display = 'inline-block';
+            finishButton.style.display = 'none';
+            nextButton.disabled = true;
+            prevButton.disabled = true;
+            isReviewMode = false; 
+        }
+
+        function startReviewQuiz() {
+            if (reviewSourceQuestions.length === 0) {
+                // This case should ideally be handled by disabling the button
+                return;
+            }
+            isReviewMode = true;
+            answerMode = 'true_false'; // Review mode will also be True/False
+           
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers = []; 
+            progressBar.style.width = '0%';
+           
+            quizQuestions = [...reviewSourceQuestions]; // Use the collected incorrect questions
+            shuffleArray(quizQuestions); 
+
+            if (quizQuestions.length > 0) {
+                categorySelectContainer.style.display = 'none';
+                summaryContainer.style.display = 'none';
+               
+                quizContainer.style.display = 'block'; 
+                setTimeout(() => { 
+                    quizContainer.classList.add('visible');
+                }, 10);
+
+                mainHeader.style.display = 'none'; 
+               
+                quizCardContent.style.transition = 'none';
+                quizCardContent.style.transform = 'translateX(0)'; 
+                quizCardContent.style.opacity = '0'; 
+                loadQuestion(0);
+                setTimeout(() => { 
+                    quizCardContent.style.transition = 'transform 0.35s ease-in-out, opacity 0.35s ease-in-out';
+                    quizCardContent.style.opacity = '1';
+                }, 20);
+            } else {
+                // Should not happen if button is properly managed
+                isReviewMode = false; 
+                mainHeader.style.display = 'block'; 
+            }
+        }
+
+        quizCardElement.addEventListener('touchstart', function(event) {
+            if (isAnimating) return;
+            touchstartX = event.changedTouches[0].screenX;
+        }, {passive: true}); 
+
+        quizCardElement.addEventListener('touchend', function(event) {
+            if (isAnimating) return;
+            touchendX = event.changedTouches[0].screenX;
+            handleSwipe();
+        }, {passive: true});
+
+        function handleSwipe() {
+            if (touchendX < touchstartX - swipeThreshold) { // Swiped left
+                if (currentQuestionIndex < quizQuestions.length - 1) {
+                    if (!nextButton.disabled) { 
+                        animateAndLoadQuestion(currentQuestionIndex + 1, 'next');
+                    }
+                } else if (!finishButton.disabled && finishButton.style.display !== 'none') { 
+                    finishButton.click(); 
+                }
+            }
+            if (touchendX > touchstartX + swipeThreshold) { // Swiped right
+                if (currentQuestionIndex > 0) {
+                    animateAndLoadQuestion(currentQuestionIndex - 1, 'prev');
+                }
+            }
+        }
+
+
+        startQuizButton.addEventListener('click', () => {
+            const category = categorySelect.value;
+            const numQuestions = numQuestionsSelect.value; 
+            const selectedMode = document.querySelector('input[name="answer-mode"]:checked').value;
+           
+            resetQuizState(); 
+            reviewSourceQuestions = []; 
+            mainHeader.style.display = 'none'; 
+            if (initializeQuizData(category, numQuestions, selectedMode)) { 
+                categorySelectContainer.style.display = 'none';
+               
+                quizContainer.style.display = 'block'; 
+                setTimeout(() => { 
+                    quizContainer.classList.add('visible');
+                }, 10); 
+
+                summaryContainer.style.display = 'none';
+                quizCardContent.style.transition = 'none';
+                quizCardContent.style.transform = 'translateX(0)';
+                quizCardContent.style.opacity = '0';
+                loadQuestion(0);
+                setTimeout(() => {
+                    quizCardContent.style.transition = 'opacity 0.35s ease-in-out'; 
+                    quizCardContent.style.opacity = '1';
+                }, 50); 
+            } else {
+                mainHeader.style.display = 'block'; 
+            }
+        });
+
+        nextButton.addEventListener('click', () => {
+            if (currentQuestionIndex < quizQuestions.length - 1 && !nextButton.disabled) {
+                animateAndLoadQuestion(currentQuestionIndex + 1, 'next');
+            }
+        });
+
+        prevButton.addEventListener('click', () => {
+            if (currentQuestionIndex > 0 && !prevButton.disabled) {
+                animateAndLoadQuestion(currentQuestionIndex - 1, 'prev');
+            }
+        });
+
+        finishButton.addEventListener('click', () => {
+            showSummary(); 
+            if (isReviewMode) { 
+                 mainHeader.style.display = 'block'; 
+            }
+        });
+
+        restartButton.addEventListener('click', () => {
+            resetQuizState();
+            reviewSourceQuestions = []; 
+            mainHeader.style.display = 'block'; 
+            summaryContainer.style.display = 'none';
+            quizContainer.classList.remove('visible');
+            setTimeout(() => {
+                quizContainer.style.display = 'none';
+            }, 500);
+            categorySelectContainer.style.display = 'block';
+        });
+
+        backToMenuButton.addEventListener('click', (e) => {
+            e.preventDefault(); 
+            resetQuizState();
+            reviewSourceQuestions = []; 
+            mainHeader.style.display = 'block'; 
+            quizContainer.classList.remove('visible');
+            setTimeout(() => {
+                quizContainer.style.display = 'none';
+            }, 500);
+            summaryContainer.style.display = 'none';
+            categorySelectContainer.style.display = 'block';
+        });
+
+        reviewIncorrectBtn.addEventListener('click', () => {
+            startReviewQuiz();
+        });
+
+        // Initial setup
+        populateCategories(); // Populate categories from masterQuizData
+        categorySelectContainer.style.display = 'block'; 
+        quizContainer.style.display = 'none'; 
+        quizContainer.classList.remove('visible');
+        summaryContainer.style.display = 'none'; 
+        mainHeader.style.display = 'block'; 
+
+    </script>
+</body>
+</html>
