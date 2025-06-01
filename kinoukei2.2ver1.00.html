@@ -465,6 +465,7 @@
 
         
         const masterQuizData = [
+            // R6年度 PDFからの問題
             {
                 id: "R6_I_ア", sourceFile: "R6", originalQuestionNumber: "I", originalChoiceSymbol: "ア",
                 questionText: "心筋のペースメーカー細胞では、ペースメーカー電位により自律的に活動電位が生じる。",
@@ -475,8 +476,8 @@
             {
                 id: "R6_I_イ", sourceFile: "R6", originalQuestionNumber: "I", originalChoiceSymbol: "イ",
                 questionText: "心室収縮時に乳頭筋が収縮すると、三尖弁や僧帽弁が閉鎖して血液の心房への逆流が防止される。",
-                answerType: "true_false", correctAnswer: false, 
-                explanation: "誤りです。乳頭筋の収縮は、房室弁（三尖弁、僧帽弁）が心房側へ反転するのを防ぎますが、弁の閉鎖そのものは心室圧が心房圧を上回ることによります。",
+                answerType: "true_false", correctAnswer: true, 
+                explanation: "正しい記述です。乳頭筋は腱索を介して房室弁（三尖弁、僧帽弁）の先端に付着しており、心室収縮時に弁が心房側へ反転するのを防ぎ、血液の逆流を防止します。弁の閉鎖自体は心室圧の上昇によりますが、乳頭筋の収縮はその適切な閉鎖を助けます。",
                 category: "心臓のポンプ機能・調節"
             },
             {
@@ -486,11 +487,74 @@
                 explanation: "正しい記述です。活動電位後の不応期により、興奮が逆流することなく一定方向に伝導します。",
                 category: "心臓の電気生理・興奮伝導"
             },
-             {
+            {
+                id: "R6_I_エ", sourceFile: "R6", originalQuestionNumber: "I", originalChoiceSymbol: "エ",
+                questionText: "心臓の活動電位は、洞房結節にあるペースメーカー細胞から発生する。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。洞房結節は心臓の主要なペースメーカーであり、ここで発生した活動電位が心臓全体に伝わります。",
+                category: "心臓の電気生理・興奮伝導"
+            },
+            {
+                id: "R6_I_オ", sourceFile: "R6", originalQuestionNumber: "I", originalChoiceSymbol: "オ",
+                questionText: "体循環する血液のうち、動脈に分布する血液の方が静脈に分布する血液よりも少ない。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。血液の大部分（約60-70%）は静脈系に存在し、動脈系には比較的少ない量（約10-15%）が分布しています。静脈は容量血管とも呼ばれます。",
+                category: "血管系・血圧調節"
+            },
+            {
+                id: "R6_I_カ", sourceFile: "R6", originalQuestionNumber: "I", originalChoiceSymbol: "カ",
+                questionText: "副交感神経は主に結節と心房部を支配し、陰性変時作用により、心拍数が減少する。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。副交感神経（迷走神経）は洞房結節や房室結節、心房筋に分布し、アセチルコリンを介して心拍数を減少させます（陰性変時作用）。",
+                category: "心臓のポンプ機能・調節"
+            },
+            {
+                id: "R6_I_キ", sourceFile: "R6", originalQuestionNumber: "I", originalChoiceSymbol: "キ",
+                questionText: "心臓や骨格筋への血流量は、安静時に比べると運動時に多くなる。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。運動時には活動している骨格筋や心臓への酸素供給需要が高まるため、これらの組織への血流量は著しく増加します。",
+                category: "血管系・血圧調節"
+            },
+            {
+                id: "R6_I_ク", sourceFile: "R6", originalQuestionNumber: "I", originalChoiceSymbol: "ク",
+                questionText: "拡張末期容積と1回拍出量は比例関係にある。この関係をスターリングの法則と呼ぶ。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。フランク・スターリングの法則は、心筋の初期長（拡張末期容積に相関）が大きいほど、心筋の収縮力が強くなり、1回拍出量が増加することを示します。",
+                category: "心臓のポンプ機能・調節"
+            },
+            {
+                id: "R6_I_ケ", sourceFile: "R6", originalQuestionNumber: "I", originalChoiceSymbol: "ケ",
+                questionText: "前負荷は、静脈還流量あるいは拡張末期容積により規定される。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。前負荷とは心室が収縮を開始する直前の負荷のことで、主に拡張末期容積や静脈還流量によって決まります。",
+                category: "心臓のポンプ機能・調節"
+            },
+            {
+                id: "R6_I_コ", sourceFile: "R6", originalQuestionNumber: "I", originalChoiceSymbol: "コ",
+                questionText: "心室筋は、ギャップ結合を介した直接な活動電位伝導を起こす。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。心筋細胞同士はギャップ結合（介在板に存在）を介して電気的に結合しており、活動電位が細胞から細胞へ直接伝播します。",
+                category: "心臓の電気生理・興奮伝導"
+            },
+            {
                 id: "R6_I_サ", sourceFile: "R6", originalQuestionNumber: "I", originalChoiceSymbol: "サ",
                 questionText: "心房と心室間には、ギャップ結合を介した電気的な結合が存在する。",
                 answerType: "true_false", correctAnswer: false,
-                explanation: "誤りです。心房筋と心室筋の間は結合組織（線維輪）によって電気的に絶縁されており、唯一の電気的連絡路は房室結節からヒス束です。心筋細胞間のギャップ結合は心房内、心室内の興奮伝播に寄与します。",
+                explanation: "誤りです。心房筋と心室筋の間は結合組織である線維輪によって電気的に絶縁されています。唯一の電気的連絡路は房室結節からヒス束、プルキンエ線維へと続く刺激伝導系です。",
+                category: "心臓の電気生理・興奮伝導"
+            },
+            {
+                id: "R6_I_シ", sourceFile: "R6", originalQuestionNumber: "I", originalChoiceSymbol: "シ",
+                questionText: "房室結節とプルキンエ線維では、房室結節の方が活動電位の伝導速度が速い。",
+                answerType: "true_false", correctAnswer: false,
+                explanation: "誤りです。プルキンエ線維の伝導速度（約2-4m/s）は心臓内で最も速く、房室結節の伝導速度（約0.05m/s）は最も遅いです。房室結節での伝導遅延は心房の収縮後に心室が収縮するための重要な時間的猶予を生み出します。",
+                category: "心臓の電気生理・興奮伝導"
+            },
+            {
+                id: "R6_I_ス", sourceFile: "R6", originalQuestionNumber: "I", originalChoiceSymbol: "ス",
+                questionText: "細胞内に陽イオンが入ると、膜電位が過分極する。",
+                answerType: "true_false", correctAnswer: false,
+                explanation: "誤りです。細胞内に陽イオンが入ると、細胞内がより陽性になるため、膜電位は静止膜電位から0mV方向に近づき、脱分極します。過分極は、細胞内がより陰性になる（または細胞外がより陽性になる）変化です。",
                 category: "心臓の電気生理・興奮伝導"
             },
             {
@@ -501,26 +565,286 @@
                 category: "血液・止血・線溶"
             },
             {
+                id: "R6_II_問1_イ", sourceFile: "R6", originalQuestionNumber: "II", originalChoiceSymbol: "問1(イ)",
+                questionText: "リンパ球の前駆体細胞は、骨髄芽球である。",
+                answerType: "true_false", correctAnswer: false,
+                explanation: "誤りです。リンパ球の前駆体細胞はリンパ系幹細胞（共通リンパ系前駆細胞）であり、骨髄芽球は主に顆粒球や単球の前駆体となります。",
+                category: "血液・止血・線溶"
+            },
+            {
+                id: "R6_II_問1_ウ", sourceFile: "R6", originalQuestionNumber: "II", originalChoiceSymbol: "問1(ウ)",
+                questionText: "血小板は、正常ヒト血液中で最も多い血球である。",
+                answerType: "true_false", correctAnswer: false,
+                explanation: "誤りです。正常ヒト血液中で最も多い血球は赤血球です。血小板は赤血球、白血球に次いで多いです。",
+                category: "血液・止血・線溶"
+            },
+            {
+                id: "R6_II_問1_エ", sourceFile: "R6", originalQuestionNumber: "II", originalChoiceSymbol: "問1(エ)",
+                questionText: "赤血球の分化には、トロンボポエチンが必要である。",
+                answerType: "true_false", correctAnswer: false,
+                explanation: "誤りです。赤血球の分化・成熟には主にエリスロポエチンが必要です。トロンボポエチンは血小板の産生を促進します。",
+                category: "血液・止血・線溶"
+            },
+            {
+                id: "R6_II_問2_ア", sourceFile: "R6", originalQuestionNumber: "II", originalChoiceSymbol: "問2(ア)",
+                questionText: "単球は好中球に分化し、異物の貪食により生体防御機構として働く。",
+                answerType: "true_false", correctAnswer: false,
+                explanation: "誤りです。単球は組織に移行するとマクロファージや樹状細胞に分化し、異物の貪食などにより生体防御機構として働きます。好中球とは別の系統の細胞です。",
+                category: "免疫・リンパ系"
+            },
+            {
+                id: "R6_II_問2_イ", sourceFile: "R6", originalQuestionNumber: "II", originalChoiceSymbol: "問2(イ)",
+                questionText: "ビタミンB12は、赤血球のヘモグロビンの産生を促進する。",
+                answerType: "true_false", correctAnswer: false,
+                explanation: "誤りです。ビタミンB12はDNA合成に必要であり、赤血球の正常な成熟に関与します。ヘモグロビンの構成要素であるヘムの合成には鉄が必要であり、グロビンはタンパク質です。",
+                category: "血液・止血・線溶"
+            },
+            {
+                id: "R6_II_問2_ウ", sourceFile: "R6", originalQuestionNumber: "II", originalChoiceSymbol: "問2(ウ)",
+                questionText: "血小板の前駆体細胞は、巨核球である。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。血小板は骨髄中の巨核球の細胞質がちぎれて形成されます。",
+                category: "血液・止血・線溶"
+            },
+            {
+                id: "R6_II_問2_エ", sourceFile: "R6", originalQuestionNumber: "II", originalChoiceSymbol: "問2(エ)",
+                questionText: "赤血球は核を持たないが、約120日間血中を循環することができる。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。哺乳類の成熟した赤血球は核を持たず、寿命は約120日です。",
+                category: "血液・止血・線溶"
+            },
+            {
                 id: "R6_III_ア", sourceFile: "R6", originalQuestionNumber: "III", originalChoiceSymbol: "ア",
                 questionText: "血圧を規定する3因子として、心拍出量・末梢血管抵抗・循環血液量がある。",
                 answerType: "true_false", correctAnswer: true,
-                explanation: "正しい記述です。血圧 ≈ 心拍出量 × 末梢血管抵抗 で表され、循環血液量も心拍出量に影響を与えるため重要な因子です。",
+                explanation: "正しい記述です。血圧は主に心拍出量と末梢血管抵抗によって決まり、循環血液量は心拍出量に影響を与える重要な因子です。",
+                category: "血管系・血圧調節"
+            },
+            {
+                id: "R6_III_イ", sourceFile: "R6", originalQuestionNumber: "III", originalChoiceSymbol: "イ",
+                questionText: "毛細血管は、交換血管として酸素や栄養分の末梢細胞への輸送を担う。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。毛細血管は壁が非常に薄く、物質交換に適した構造をしています。",
+                category: "血管系・血圧調節"
+            },
+            {
+                id: "R6_III_ウ", sourceFile: "R6", originalQuestionNumber: "III", originalChoiceSymbol: "ウ",
+                questionText: "頸動脈洞と大動脈弓は、動脈圧の変動を感知して血圧を一定に保つ。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。これらの部位には圧受容器が存在し、血圧の変動を感知して自律神経系を介した血圧調節反射（圧受容器反射）を引き起こします。",
+                category: "血管系・血圧調節"
+            },
+            {
+                id: "R6_III_エ", sourceFile: "R6", originalQuestionNumber: "III", originalChoiceSymbol: "エ",
+                questionText: "前交通動脈は、前大脳動脈を連結させてウィリス動脈輪を形成する。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。前交通動脈は左右の前大脳動脈を連絡し、ウィリス動脈輪の構成要素の一つです。",
+                category: "血管系・血圧調節"
+            },
+            {
+                id: "R6_III_オ", sourceFile: "R6", originalQuestionNumber: "III", originalChoiceSymbol: "オ",
+                questionText: "動脈血は、筋ポンプや呼吸ポンプの働きで体内を循環する。",
+                answerType: "true_false", correctAnswer: false,
+                explanation: "誤りです。筋ポンプや呼吸ポンプは主に静脈還流を助ける機構です。動脈血の循環は主に心臓のポンプ作用と動脈の弾性によって維持されます。",
+                category: "血管系・血圧調節"
+            },
+            {
+                id: "R6_III_カ", sourceFile: "R6", originalQuestionNumber: "III", originalChoiceSymbol: "カ",
+                questionText: "レニンは、副腎皮質の受容体に結合するとアルドステロンを分泌させて血圧を上昇させる。",
+                answerType: "true_false", correctAnswer: false,
+                explanation: "誤りです。レニンはアンジオテンシノーゲンをアンジオテンシンIに変換する酵素です。アンジオテンシンIIが副腎皮質に作用してアルドステロンの分泌を促進します。",
+                category: "血管系・血圧調節"
+            },
+            {
+                id: "R6_III_キ", sourceFile: "R6", originalQuestionNumber: "III", originalChoiceSymbol: "キ",
+                questionText: "アルブミンにより生じる膠質浸透圧は、水分を血管外へ輸送する力として働く。",
+                answerType: "true_false", correctAnswer: false,
+                explanation: "誤りです。アルブミンなどの血漿タンパク質によって生じる膠質浸透圧は、水分を血管内へ引き込む力として働きます。",
+                category: "血管系・血圧調節"
+            },
+            {
+                id: "R6_III_ク", sourceFile: "R6", originalQuestionNumber: "III", originalChoiceSymbol: "ク",
+                questionText: "心筋は、冠動脈を流れる血液から酸素や栄養を供給される。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。冠動脈は心筋自体に血液を供給する重要な血管です。",
+                category: "心臓のポンプ機能・調節"
+            },
+            {
+                id: "R6_III_ケ", sourceFile: "R6", originalQuestionNumber: "III", originalChoiceSymbol: "ケ",
+                questionText: "大動脈などの弾性血管の働きにより、拡張期圧が生まれて全身に常に血液が供給される。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。大動脈などの弾性血管は、心臓の収縮期に拡張して血液を貯留し、拡張期にはその弾性によって収縮し、血液を末梢へ送り出すことで拡張期血圧を維持します（ウィンドケッセル効果）。",
+                category: "血管系・血圧調節"
+            },
+            {
+                id: "R6_III_コ", sourceFile: "R6", originalQuestionNumber: "III", originalChoiceSymbol: "コ",
+                questionText: "門脈は、消化管から栄養分に富む静脈血を肝臓へ輸送する。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。消化管で吸収された栄養分を含む静脈血は門脈を通って肝臓に運ばれ、代謝されます。",
+                category: "血管系・血圧調節"
+            },
+            {
+                id: "R6_III_サ", sourceFile: "R6", originalQuestionNumber: "III", originalChoiceSymbol: "サ",
+                questionText: "細動脈は、血管径を大きく変化させるため抵抗血管と呼ばれ、末梢血管抵抗を規定する。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。細動脈は平滑筋が発達しており、その収縮・弛緩によって血管径を大きく変化させることができ、末梢血管抵抗の主要な決定部位となります。",
                 category: "血管系・血圧調節"
             },
             {
                 id: "R6_IV_ア", sourceFile: "R6", originalQuestionNumber: "IV", originalChoiceSymbol: "ア",
                 questionText: "プロスタグランジンは、血小板から放出され、トロンボキサン $A_2$の働きと拮抗する。",
                 answerType: "true_false", correctAnswer: false,
-                explanation: "誤りです。プロスタサイクリン（プロスタグランジン $I_2$）は血管内皮細胞から産生され、血小板凝集を抑制し、トロンボキサン $A_2$ と拮抗します。血小板から放出されるのはトロンボキサン $A_2$ などです。",
+                explanation: "誤りです。血小板凝集を抑制するプロスタサイクリン（プロスタグランジン $I_2$）は血管内皮細胞から産生されます。血小板から放出されるのはトロンボキサン $A_2$ であり、これは血小板凝集を促進します。",
+                category: "血液・止血・線溶"
+            },
+            {
+                id: "R6_IV_イ", sourceFile: "R6", originalQuestionNumber: "IV", originalChoiceSymbol: "イ",
+                questionText: "t-PAは、u-PAと比べて血栓との親和性が高いため、効率的にプラスミノーゲンをプラスミンに変換し血栓を溶解する。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。組織型プラスミノーゲンアクチベーター（t-PA）はフィブリンに対する親和性が高く、血栓上で効率的にプラスミノーゲンを活性化し、線溶（血栓溶解）を促進します。",
+                category: "血液・止血・線溶"
+            },
+            {
+                id: "R6_IV_ウ", sourceFile: "R6", originalQuestionNumber: "IV", originalChoiceSymbol: "ウ",
+                questionText: "ビタミンKは、肝臓で血液凝固因子および血液凝固阻止因子の合成に関与する。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。ビタミンKは、肝臓における一部の血液凝固因子（II、VII、IX、X）および血液凝固阻止因子（プロテインC、プロテインS）のγ-カルボキシ化に必要であり、これらの正常な機能に不可欠です。",
+                category: "血液・止血・線溶"
+            },
+            {
+                id: "R6_IV_エ", sourceFile: "R6", originalQuestionNumber: "IV", originalChoiceSymbol: "エ",
+                questionText: "アンチトロンビンIIIは、トロンビンのプロテアーゼ活性を阻害することで血液凝固を阻害する。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。アンチトロンビンIIIはトロンビンや第Xa因子などの活性型凝固因子を阻害する主要な生理的抗凝固因子です。",
+                category: "血液・止血・線溶"
+            },
+            {
+                id: "R6_IV_オ", sourceFile: "R6", originalQuestionNumber: "IV", originalChoiceSymbol: "オ",
+                questionText: "プロテインキナーゼCは、プロテインSと協調してフィブリン生成を抑制する。",
+                answerType: "true_false", correctAnswer: false,
+                explanation: "誤りです。プロテインCは、トロンボモジュリンと結合したトロンビンによって活性化され、補因子であるプロテインSとともに第Va因子と第VIIIa因子を不活性化し、フィブリン生成を抑制します。プロテインキナーゼCは細胞内シグナル伝達に関与する酵素であり、この文脈では直接関係しません。",
+                category: "血液・止血・線溶"
+            },
+            {
+                id: "R6_IV_カ", sourceFile: "R6", originalQuestionNumber: "IV", originalChoiceSymbol: "カ",
+                questionText: "フィブリノーゲンは、血小板血栓の形成を促進する。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。活性化された血小板の表面にあるGPIIb/IIIa受容体を介して、フィブリノーゲンが血小板同士を架橋し、血小板凝集塊（一次血栓）の形成を促進します。",
+                category: "血液・止血・線溶"
+            },
+            {
+                id: "R6_IV_キ", sourceFile: "R6", originalQuestionNumber: "IV", originalChoiceSymbol: "キ",
+                questionText: "トロンボキサンA2は、血小板内のCa²+濃度を上昇させ、ADPやセロトニンの合成を促進する。",
+                answerType: "true_false", correctAnswer: false,
+                explanation: "誤りです。トロンボキサンA2は血小板内のCa²+濃度を上昇させ、血小板凝集と血管収縮を強力に促進しますが、ADPやセロトニンの「合成」ではなく「遊離（放出）」を促進します。",
+                category: "血液・止血・線溶"
+            },
+            {
+                id: "R6_IV_ク", sourceFile: "R6", originalQuestionNumber: "IV", originalChoiceSymbol: "ク",
+                questionText: "二次止血では、フィブリノーゲンからフィブリン血栓ができ、組織の修復が進められる。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。二次止血は凝固カスケードの活性化によりフィブリンが生成され、血小板血栓を補強して安定なフィブリン血栓を形成する過程です。その後、組織修復が進行します。",
+                category: "血液・止血・線溶"
+            },
+            {
+                id: "R6_IV_ケ", sourceFile: "R6", originalQuestionNumber: "IV", originalChoiceSymbol: "ケ",
+                questionText: "Xa因子は、プロトロンビンをトロンビンに変換するプロテアーゼである。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。活性化された第X因子（Xa因子）は、第Va因子、リン脂質、Ca²+とともにプロトロンビナーゼ複合体を形成し、プロトロンビン（第II因子）をトロンビン（第IIa因子）に変換します。",
+                category: "血液・止血・線溶"
+            },
+            {
+                id: "R6_IV_コ", sourceFile: "R6", originalQuestionNumber: "IV", originalChoiceSymbol: "コ",
+                questionText: "血小板は、フォンヴィルブラント因子 (vWF)を介して血管壁に凝集する。",
+                answerType: "true_false", correctAnswer: false,
+                explanation: "誤りです。血小板は、フォンヴィルブラント因子（vWF）を介して損傷した血管壁のコラーゲンに「粘着」します。「凝集」は血小板同士が結合することです。",
                 category: "血液・止血・線溶"
             },
             {
                 id: "R6_V_ア", sourceFile: "R6", originalQuestionNumber: "V", originalChoiceSymbol: "ア",
                 questionText: "2型ヘルパーT (Th2) 細胞は、B細胞を活性化して体液性免疫を誘導する。",
                 answerType: "true_false", correctAnswer: true,
-                explanation: "正しい記述です。Th2細胞はサイトカインを産生し、B細胞の抗体産生細胞への分化・増殖を助け、体液性免疫を誘導します。",
+                explanation: "正しい記述です。Th2細胞はIL-4、IL-5、IL-13などのサイトカインを産生し、B細胞の増殖、分化、抗体産生を助け、体液性免疫を主導します。",
                 category: "免疫・リンパ系"
             },
+            {
+                id: "R6_V_イ", sourceFile: "R6", originalQuestionNumber: "V", originalChoiceSymbol: "イ",
+                questionText: "輸入リンパ管の数は、輸出リンパ管の数よりも多い。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。リンパ節には複数の輸入リンパ管からリンパ液が流入し、通常1本または数本の輸出リンパ管から流出します。これによりリンパ液の流れが遅くなり、リンパ節内での免疫応答の効率が高まります。",
+                category: "免疫・リンパ系"
+            },
+            {
+                id: "R6_V_ウ", sourceFile: "R6", originalQuestionNumber: "V", originalChoiceSymbol: "ウ",
+                questionText: "リンパ節や粘膜関連リンパ組織は、二次リンパ器官に分類される。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。二次リンパ器官（末梢リンパ器官）は、リンパ球が抗原と出会い免疫応答が起こる場であり、リンパ節、脾臓、粘膜関連リンパ組織（MALT）などが含まれます。",
+                category: "免疫・リンパ系"
+            },
+            {
+                id: "R6_V_エ", sourceFile: "R6", originalQuestionNumber: "V", originalChoiceSymbol: "エ",
+                questionText: "下半身および左上半身のリンパ液は、胸管に集まった後、左鎖骨下静脈に合流する。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。胸管は体内で最大のリンパ本幹であり、下半身全体と左上半身からのリンパ液を集め、左静脈角（左内頸静脈と左鎖骨下静脈の合流部）で静脈系に注ぎます。",
+                category: "免疫・リンパ系"
+            },
+            {
+                id: "R6_V_オ", sourceFile: "R6", originalQuestionNumber: "V", originalChoiceSymbol: "オ",
+                questionText: "NK細胞は、貪食活性により自然免疫を担うが、獲得免疫には関与しない。",
+                answerType: "true_false", correctAnswer: false,
+                explanation: "誤りです。NK細胞は自然免疫に関与するリンパ球の一種で、ウイルス感染細胞や腫瘍細胞を認識して破壊しますが、貪食活性は持ちません（主要な貪食細胞は好中球やマクロファージ）。また、獲得免疫との連携も一部見られます。",
+                category: "免疫・リンパ系"
+            },
+            {
+                id: "R6_V_カ", sourceFile: "R6", originalQuestionNumber: "V", originalChoiceSymbol: "カ",
+                questionText: "ヘルパーT細胞は、インターロイキン2を産生してキラーT細胞を活性化することで、細胞性免疫を誘導する。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。活性化されたヘルパーT細胞（主にTh1細胞）はIL-2を産生し、キラーT細胞（細胞傷害性T細胞）の増殖と活性化を促進し、細胞性免疫を増強します。",
+                category: "免疫・リンパ系"
+            },
+            {
+                id: "R6_V_キ", sourceFile: "R6", originalQuestionNumber: "V", originalChoiceSymbol: "キ",
+                questionText: "マクロファージは、Fc領域に対する受容体を介して、補体によりオプソニン化された抗原を効率的に貪食する。",
+                answerType: "true_false", correctAnswer: false,
+                explanation: "誤りです。マクロファージは、抗体のFc領域に対するFc受容体や、補体成分（C3bなど）に対する補体受容体を介して、それぞれ抗体や補体でオプソニン化された抗原を効率的に貪食します。記述はFc受容体と補体オプソニン化を混同しています。",
+                category: "免疫・リンパ系"
+            },
+            {
+                id: "R6_V_ク", sourceFile: "R6", originalQuestionNumber: "V", originalChoiceSymbol: "ク",
+                questionText: "免疫記憶により、自然免疫の応答強度は増加する。",
+                answerType: "true_false", correctAnswer: false,
+                explanation: "誤りです。免疫記憶は獲得免疫（適応免疫）の特徴であり、同じ抗原に再度曝露された際に、より迅速かつ強力な応答を引き起こします。自然免疫には免疫記憶の機構はありません。",
+                category: "免疫・リンパ系"
+            },
+            {
+                id: "R6_V_ケ", sourceFile: "R6", originalQuestionNumber: "V", originalChoiceSymbol: "ケ",
+                questionText: "IgGは、2度目の感染以降は速やかに産生される。また、胎児の受動免疫に関与する。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。IgGは二次応答の主要な抗体であり、記憶B細胞から速やかに大量に産生されます。また、胎盤を通過できる唯一の抗体クラスであり、母体から胎児へ移行して受動免疫を付与します。",
+                category: "免疫・リンパ系"
+            },
+            {
+                id: "R6_V_コ", sourceFile: "R6", originalQuestionNumber: "V", originalChoiceSymbol: "コ",
+                questionText: "キラーT細胞は、ウイルス感染細胞などのMHCクラスⅠ上に提示された抗原を認識し、パーフォリンにより感染細胞を除去する。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。キラーT細胞（細胞傷害性T細胞）は、MHCクラスI分子に提示された抗原ペプチドをT細胞受容体を介して認識し、パーフォリンやグランザイムなどを放出して標的細胞のアポトーシスを誘導します。",
+                category: "免疫・リンパ系"
+            },
+            {
+                id: "R6_V_サ", sourceFile: "R6", originalQuestionNumber: "V", originalChoiceSymbol: "サ",
+                questionText: "IgMは、一次応答で産生される他、B細胞受容体としても機能する。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。IgMは感染初期の一次応答で最初に産生される抗体であり、五量体を形成して効率よく抗原を凝集させたり補体を活性化したりします。また、単量体のIgMはB細胞の表面に発現し、B細胞受容体（BCR）の構成成分として機能します。",
+                category: "免疫・リンパ系"
+            },
+            {
+                id: "R6_V_シ", sourceFile: "R6", originalQuestionNumber: "V", originalChoiceSymbol: "シ",
+                questionText: "T細胞は、胸腺で免疫能を獲得すると同時に、自己抗原を認識する細胞は除去される。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。T細胞は胸腺で成熟する過程で、正の選択（自己MHC分子を認識できる細胞の選択）と負の選択（自己抗原に強く反応する細胞の除去、アポトーシスによる）を受け、自己寛容と免疫能を獲得します。",
+                category: "免疫・リンパ系"
+            },
+            // R5年度 PDFからの問題
             {
                 id: "R5_I_ア", sourceFile: "R5", originalQuestionNumber: "I", originalChoiceSymbol: "ア",
                 questionText: "心臓の活動電位は房室結節にあるペースメーカー細胞から発生する。",
@@ -529,18 +853,144 @@
                 category: "心臓の電気生理・興奮伝導"
             },
             {
-                id: "R5_I_力", sourceFile: "R5", originalQuestionNumber: "I", originalChoiceSymbol: "力",
-                questionText: "拡張末期容積と1回拍出量は比例関係にある。この関係をスターリングの法則と呼ぶ。",
-                answerType: "true_false", correctAnswer: true,
-                explanation: "正しい記述です。フランク・スターリングの法則は、心筋の初期長（拡張末期容積に相関）が大きいほど収縮力が大きくなることを示します。",
+                id: "R5_I_イ", sourceFile: "R5", originalQuestionNumber: "I", originalChoiceSymbol: "イ",
+                questionText: "左心室が収縮する際、肺動脈弁が閉鎖することで血液の左心房への逆流は起こらなくなる。",
+                answerType: "true_false", correctAnswer: false,
+                explanation: "誤りです。左心室が収縮する際には僧帽弁（左房室弁）が閉鎖して血液の左心房への逆流を防ぎます。肺動脈弁は右心室と肺動脈の間にあり、右心室収縮時に開いて血液を肺へ送り出し、右心室拡張期に閉鎖して肺動脈からの逆流を防ぎます。",
                 category: "心臓のポンプ機能・調節"
             },
-             {
+            {
+                id: "R5_I_ウ", sourceFile: "R5", originalQuestionNumber: "I", originalChoiceSymbol: "ウ",
+                questionText: "消化管や腎臓への血流量は安静時に比べると運動時に多くなる。",
+                answerType: "true_false", correctAnswer: false,
+                explanation: "誤りです。運動時には活動筋への血流が増加する一方で、内臓（消化管や腎臓など）への血流量は交感神経の働きにより相対的に減少します。",
+                category: "血管系・血圧調節"
+            },
+            {
+                id: "R5_I_エ", sourceFile: "R5", originalQuestionNumber: "I", originalChoiceSymbol: "エ",
+                questionText: "後負荷は、末梢血管抵抗に依存し、抵抗血管である細動脈の収縮性と血液の粘性により規定される。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。後負荷は心室が血液を駆出する際に преодолеなければならない抵抗であり、主に大動脈圧や末梢血管抵抗によって決まります。末梢血管抵抗は細動脈の収縮度合いや血液の粘稠度などに影響されます。",
+                category: "心臓のポンプ機能・調節"
+            },
+            {
+                id: "R5_I_オ", sourceFile: "R5", originalQuestionNumber: "I", originalChoiceSymbol: "オ",
+                questionText: "交感神経の活性化により固有心筋で陽性変力作用が生じると、1回拍出量が増す。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。交感神経は心筋の収縮力を増強させる陽性変力作用を持ち、これにより1回拍出量が増加します。",
+                category: "心臓のポンプ機能・調節"
+            },
+            {
+                id: "R5_I_カ", sourceFile: "R5", originalQuestionNumber: "I", originalChoiceSymbol: "カ",
+                questionText: "拡張末期容積と1回拍出量は比例関係にある。この関係をスターリングの法則と呼ぶ。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。フランク・スターリングの法則は、心筋の初期長（拡張末期容積に相関）が大きいほど、心筋の収縮力が強くなり、1回拍出量が増加することを示します。",
+                category: "心臓のポンプ機能・調節"
+            },
+            {
+                id: "R5_I_キ", sourceFile: "R5", originalQuestionNumber: "I", originalChoiceSymbol: "キ",
+                questionText: "心室筋は、ギャップ結合を介した直接な活動電位伝導を起こす。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。心筋細胞同士はギャップ結合を介して電気的に結合しており、活動電位が細胞から細胞へ直接伝播します。",
+                category: "心臓の電気生理・興奮伝導"
+            },
+            {
+                id: "R5_I_ク", sourceFile: "R5", originalQuestionNumber: "I", originalChoiceSymbol: "ク",
+                questionText: "心筋のペースメーカー細胞では、ペースメーカー電位により自律的に活動電位が生じる。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。心筋のペースメーカー細胞（洞房結節など）は自動能を持ち、自身で活動電位を発生させます。この活動電位発生前の緩やかな脱分極がペースメーカー電位です。",
+                category: "心臓の電気生理・興奮伝導"
+            },
+            {
+                id: "R5_I_ケ", sourceFile: "R5", originalQuestionNumber: "I", originalChoiceSymbol: "ケ",
+                questionText: "心筋細胞は、活動電位発生後に不応期に移行するため、活動電位は一方向に伝導する。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。活動電位後の不応期により、興奮が逆流することなく一定方向に伝導します。",
+                category: "心臓の電気生理・興奮伝導"
+            },
+            {
                 id: "R5_II_ア", sourceFile: "R5", originalQuestionNumber: "II", originalChoiceSymbol: "ア",
                 questionText: "大動脈などの容量血管の働きにより拡張期圧が生まれて全身に常に血液が供給される。",
                 answerType: "true_false", correctAnswer: false,
-                explanation: "誤りです。大動脈は弾性血管であり、その弾性により拡張期にも血圧が維持されます。容量血管は主に静脈を指します。",
+                explanation: "誤りです。大動脈は弾性血管であり、その弾性（ウィンドケッセル効果）により拡張期にも血圧が維持され、血液が持続的に供給されます。容量血管は主に静脈を指し、血液を貯留する役割が大きいです。",
                 category: "血管系・血圧調節"
+            },
+            {
+                id: "R5_II_イ", sourceFile: "R5", originalQuestionNumber: "II", originalChoiceSymbol: "イ",
+                questionText: "後交通動脈は中大脳動脈と後大脳動脈を連結させてウィリス動脈輪を形成する。",
+                answerType: "true_false", correctAnswer: false,
+                explanation: "誤りです。後交通動脈は内頸動脈（または中大脳動脈の起始部近く）と後大脳動脈を連結し、ウィリス動脈輪の側方部を形成します。",
+                category: "血管系・血圧調節"
+            },
+            {
+                id: "R5_II_ウ", sourceFile: "R5", originalQuestionNumber: "II", originalChoiceSymbol: "ウ",
+                questionText: "交感神経の活性化は心拍出量・末梢血管抵抗・循環血液量を増加させて、血圧を上げる。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。交感神経は心拍数と心収縮力を増加させて心拍出量を増やし、多くの血管を収縮させて末梢血管抵抗を上昇させます。また、静脈収縮により循環血液量を実質的に増加させる効果もあり、これらにより血圧を上昇させます。",
+                category: "血管系・血圧調節"
+            },
+            {
+                id: "R5_II_エ", sourceFile: "R5", originalQuestionNumber: "II", originalChoiceSymbol: "エ",
+                questionText: "心筋は冠動脈を流れる血液から酸素や栄養を供給される。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。冠動脈は心筋自体に血液を供給する重要な血管です。",
+                category: "心臓のポンプ機能・調節"
+            },
+            {
+                id: "R5_II_オ", sourceFile: "R5", originalQuestionNumber: "II", originalChoiceSymbol: "オ",
+                questionText: "頸動脈洞と大動脈弓は、血中の酸素分圧の変動を感知して血圧を一定に保つ。",
+                answerType: "true_false", correctAnswer: false,
+                explanation: "誤りです。頸動脈洞と大動脈弓にあるのは圧受容器であり、血圧の変動を感知します。血中の酸素分圧の変動を感知するのは化学受容器（頸動脈小体や大動脈小体）です。",
+                category: "血管系・血圧調節"
+            },
+            {
+                id: "R5_II_カ", sourceFile: "R5", originalQuestionNumber: "II", originalChoiceSymbol: "カ",
+                questionText: "同一組織部位にある動脈と静脈を比較すると、一般的に静脈の方が内腔が大きい。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。一般的に伴行する静脈は動脈よりも内腔が広く、壁が薄い特徴があります。",
+                category: "血管系・血圧調節"
+            },
+            {
+                id: "R5_II_キ", sourceFile: "R5", originalQuestionNumber: "II", originalChoiceSymbol: "キ",
+                questionText: "門脈は消化管から栄養分に富む静脈血を全身へ輸送する。",
+                answerType: "true_false", correctAnswer: false,
+                explanation: "誤りです。門脈は消化管から栄養分に富む静脈血を肝臓へ輸送します。肝臓で代謝された後、肝静脈を経て下大静脈に入り全身循環に戻ります。",
+                category: "血管系・血圧調節"
+            },
+            {
+                id: "R5_II_ク", sourceFile: "R5", originalQuestionNumber: "II", originalChoiceSymbol: "ク",
+                questionText: "真の毛細血管の血流は前毛細血管括約筋によりコントロールされる。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。前毛細血管括約筋はメタ細動脈から真毛細血管が分岐する部分にあり、その収縮・弛緩によって毛細血管床への血流を調節します。",
+                category: "血管系・血圧調節"
+            },
+            {
+                id: "R5_II_ケ", sourceFile: "R5", originalQuestionNumber: "II", originalChoiceSymbol: "ケ",
+                questionText: "毛細血管の静脈側では膠質浸透圧が血圧より高いため、水分が血管内へ流入する。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。毛細血管の動脈側では血圧（静水圧）が膠質浸透圧より高く水分が組織へ流出しますが、静脈側では血圧が低下し膠質浸透圧が相対的に高くなるため、水分が血管内へ再吸収されます。",
+                category: "血管系・血圧調節"
+            },
+            {
+                id: "R5_II_コ", sourceFile: "R5", originalQuestionNumber: "II", originalChoiceSymbol: "コ",
+                questionText: "アンジオテンシンIIは、末梢血管抵抗および循環血液量を増やすことで血圧を上昇させる。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。アンジオテンシンIIは強力な血管収縮作用（末梢血管抵抗増大）と、アルドステロン分泌促進によるNa+と水の再吸収促進（循環血液量増加）により血圧を上昇させます。",
+                category: "血管系・血圧調節"
+            },
+            {
+                id: "R5_III_問1_ア", sourceFile: "R5", originalQuestionNumber: "III", originalChoiceSymbol: "問1(ア)",
+                questionText: "顆粒球には、リンパ球と単球が含まれる。",
+                answerType: "true_false", correctAnswer: false,
+                explanation: "誤りです。顆粒球には好中球、好酸球、好塩基球が含まれます。リンパ球と単球は無顆粒白血球に分類されます。",
+                category: "血液・止血・線溶"
+            },
+            {
+                id: "R5_III_問1_イ", sourceFile: "R5", originalQuestionNumber: "III", originalChoiceSymbol: "問1(イ)",
+                questionText: "赤血球は正常ヒト血液中で最も多い白血球である。",
+                answerType: "true_false", correctAnswer: false,
+                explanation: "誤りです。赤血球は白血球ではなく、血液中で最も多い血球細胞です。白血球の中で最も多いのは好中球です。",
+                category: "血液・止血・線溶"
             },
             {
                 id: "R5_III_問1_ウ", sourceFile: "R5", originalQuestionNumber: "III", originalChoiceSymbol: "問1(ウ)",
@@ -550,20 +1000,168 @@
                 category: "血液・止血・線溶"
             },
             {
-                id: "R5_IV_イ", sourceFile: "R5", originalQuestionNumber: "IV", originalChoiceSymbol: "イ",
-                questionText: "プロスタグランジン$I_2$は内皮細胞から放出されて、血小板凝集を抑制する。",
+                id: "R5_III_問1_エ", sourceFile: "R5", originalQuestionNumber: "III", originalChoiceSymbol: "問1(エ)",
+                questionText: "血小板の前駆体細胞は、巨核球である。",
                 answerType: "true_false", correctAnswer: true,
-                explanation: "正しい記述です。プロスタサイクリン（PGI₂）は強力な血小板凝集抑制作用と血管拡張作用を持ちます。",
+                explanation: "正しい記述です。血小板は骨髄中の巨核球の細胞質がちぎれて形成されます。",
                 category: "血液・止血・線溶"
+            },
+            {
+                id: "R5_III_問2_ア", sourceFile: "R5", originalQuestionNumber: "III", originalChoiceSymbol: "問2(ア)",
+                questionText: "好中球や単球から分化したマクロファージは異物の貪食により生体防御機構として働く。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。好中球は自身が貪食細胞であり、単球は組織に移行してマクロファージに分化し、強力な貪食能を発揮します。",
+                category: "免疫・リンパ系"
+            },
+            {
+                id: "R5_III_問2_イ", sourceFile: "R5", originalQuestionNumber: "III", originalChoiceSymbol: "問2(イ)",
+                questionText: "エリスロポエチンは低酸素誘導因子(HIF) -1αによって転写誘導される。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。低酸素状態になるとHIF-1αが安定化し、エリスロポエチン遺伝子の転写を促進します。",
+                category: "血液・止血・線溶"
+            },
+            {
+                id: "R5_III_問2_ウ", sourceFile: "R5", originalQuestionNumber: "III", originalChoiceSymbol: "問2(ウ)",
+                questionText: "リンパ球の前駆体細胞は骨髄芽球である。",
+                answerType: "true_false", correctAnswer: false,
+                explanation: "誤りです。リンパ球の前駆体細胞はリンパ系幹細胞（共通リンパ系前駆細胞）であり、骨髄芽球は主に顆粒球や単球の前駆体となります。",
+                category: "血液・止血・線溶"
+            },
+            {
+                id: "R5_III_問2_エ", sourceFile: "R5", originalQuestionNumber: "III", originalChoiceSymbol: "問2(エ)",
+                questionText: "赤血球は核を持たないが、血小板には核がある。",
+                answerType: "true_false", correctAnswer: false,
+                explanation: "誤りです。成熟した赤血球も血小板も核を持ちません。血小板は巨核球の細胞質断片です。",
+                category: "血液・止血・線溶"
+            },
+            {
+                id: "R5_IV_ア", sourceFile: "R5", originalQuestionNumber: "IV", originalChoiceSymbol: "ア",
+                questionText: "トロンボキサン A₂は血小板内のCa²⁺濃度を上昇させ、GPIIb/IIIaを細胞外へ露出させることで、血小板を凝集させる。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。トロンボキサンA₂は強力な血小板凝集惹起物質であり、血小板内のカルシウムイオン濃度を上昇させ、GPIIb/IIIaの活性化（フィブリノーゲン結合部位の露出）などを介して血小板凝集を促進します。",
+                category: "血液・止血・線溶"
+            },
+            {
+                id: "R5_IV_イ", sourceFile: "R5", originalQuestionNumber: "IV", originalChoiceSymbol: "イ",
+                questionText: "プロスタグランジンI₂は内皮細胞から放出されて、血小板凝集を抑制する。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。プロスタサイクリン（PGI₂）は血管内皮細胞で産生され、血小板内のcAMP濃度を上昇させることで血小板凝集を強力に抑制します。",
+                category: "血液・止血・線溶"
+            },
+            {
+                id: "R5_IV_ウ", sourceFile: "R5", originalQuestionNumber: "IV", originalChoiceSymbol: "ウ",
+                questionText: "ビタミンKは肝臓で血液凝固因子の合成に関与する。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。ビタミンKは肝臓における一部の血液凝固因子（プロトロンビン、第VII、IX、X因子）のγ-カルボキシ化に必須であり、これらの因子が正常に機能するために必要です。",
+                category: "血液・止血・線溶"
+            },
+            {
+                id: "R5_IV_エ", sourceFile: "R5", originalQuestionNumber: "IV", originalChoiceSymbol: "エ",
+                questionText: "血小板はフィブリノーゲンを介して凝集して血小板血栓を形成する。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。活性化された血小板表面のGPIIb/IIIa受容体にフィブリノーゲンが結合し、血小板同士を架橋することで血小板凝集が起こり、一次血栓が形成されます。",
+                category: "血液・止血・線溶"
+            },
+            {
+                id: "R5_IV_オ", sourceFile: "R5", originalQuestionNumber: "IV", originalChoiceSymbol: "オ",
+                questionText: "t-PA は血漿中のプラスミンを活性化するため、フィブリノーゲンまで分解することがある。",
+                answerType: "true_false", correctAnswer: false,
+                explanation: "誤りです。t-PA（組織型プラスミノーゲンアクチベーター）は、血栓（フィブリン）に結合したプラスミノーゲンを効率よくプラスミンに変換します。プラスミンがフィブリンやフィブリノーゲンを分解します。t-PA自体がプラスミンを活性化するのではなく、プラスミノーゲンをプラスミンに変換します。",
+                category: "血液・止血・線溶"
+            },
+            {
+                id: "R5_IV_カ", sourceFile: "R5", originalQuestionNumber: "IV", originalChoiceSymbol: "カ",
+                questionText: "トロンボモジュリンは第Va、第VIIIa因子の分解を促進して、フィブリン生成を抑制する。",
+                answerType: "true_false", correctAnswer: false,
+                explanation: "誤りです。トロンボモジュリンは血管内皮細胞表面にあり、トロンビンと結合してプロテインCを活性化します。活性化プロテインCが補因子プロテインSとともに第Va因子と第VIIIa因子を不活性化し、フィブリン生成を抑制します。トロンボモジュリン自体が直接因子を分解するわけではありません。",
+                category: "血液・止血・線溶"
+            },
+            {
+                id: "R5_IV_キ", sourceFile: "R5", originalQuestionNumber: "IV", originalChoiceSymbol: "キ",
+                questionText: "血小板から放出される ATPは、血小板凝集反応を促進する。",
+                answerType: "true_false", correctAnswer: false, 
+                explanation: "誤りです。血小板から放出されるのはADP（アデノシン二リン酸）であり、これがP2Y₁₂受容体などに作用して血小板凝集を促進します。ATPはADPに分解されて作用することもありますが、直接的な主要な凝集促進物質はADPです。",
+                category: "血液・止血・線溶"
+            },
+            {
+                id: "R5_IV_ク", sourceFile: "R5", originalQuestionNumber: "IV", originalChoiceSymbol: "ク",
+                questionText: "アンチトロンビンIIIは、トロンビンを介してプロテインCを直接活性化して、血液凝固を阻害する。",
+                answerType: "true_false", correctAnswer: false,
+                explanation: "誤りです。アンチトロンビンIIIはトロンビンや第Xa因子などを直接阻害することで抗凝固作用を示します。プロテインCを活性化するのはトロンビンとトロンボモジュリンの複合体です。",
+                category: "血液・止血・線溶"
+            },
+            {
+                id: "R5_V_ア", sourceFile: "R5", originalQuestionNumber: "V", originalChoiceSymbol: "ア",
+                questionText: "好中球やマクロファージは抗体や補体によりオプソニン化された抗原を効率的に取り込む。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。抗体（特にIgG）や補体成分（C3bなど）が抗原に結合する（オプソニン化）と、好中球やマクロファージ表面のFc受容体や補体受容体がこれらを認識し、貪食が著しく促進されます。",
+                category: "免疫・リンパ系"
             },
             {
                 id: "R5_V_イ", sourceFile: "R5", originalQuestionNumber: "V", originalChoiceSymbol: "イ",
                 questionText: "赤色骨髄と胸腺はリンパ球を産生する一次リンパ器官に分類される。",
                 answerType: "true_false", correctAnswer: true,
-                explanation: "正しい記述です。一次リンパ器官（中枢リンパ器官）はリンパ球が分化・成熟する場で、骨髄と胸腺が該当します。",
+                explanation: "正しい記述です。一次リンパ器官（中枢リンパ器官）はリンパ球が分化・成熟する場であり、骨髄（B細胞の産生・成熟、T細胞の前駆細胞産生）と胸腺（T細胞の成熟）が該当します。",
+                category: "免疫・リンパ系"
+            },
+            {
+                id: "R5_V_ウ", sourceFile: "R5", originalQuestionNumber: "V", originalChoiceSymbol: "ウ",
+                questionText: "T細胞は、抗原提示細胞を介して抗原を認識して獲得免疫を誘導する。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。T細胞は、マクロファージや樹状細胞などの抗原提示細胞がMHC分子上に提示した抗原ペプチドをT細胞受容体（TCR）で認識し、活性化されて獲得免疫応答を開始します。",
+                category: "免疫・リンパ系"
+            },
+            {
+                id: "R5_V_エ", sourceFile: "R5", originalQuestionNumber: "V", originalChoiceSymbol: "エ",
+                questionText: "下半身および左上半身のリンパ液は胸管に集まった後、左鎖骨下静脈に合流する。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。胸管は体内で最大のリンパ本幹であり、下半身全体と左上半身からのリンパ液を集め、左静脈角（左内頸静脈と左鎖骨下静脈の合流部）で静脈系に注ぎます。",
+                category: "免疫・リンパ系"
+            },
+            {
+                id: "R5_V_オ", sourceFile: "R5", originalQuestionNumber: "V", originalChoiceSymbol: "オ",
+                questionText: "好中球やマクロファージによる抗原提示作用は、獲得免疫の誘導に関与する。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。マクロファージ（および樹状細胞）は専門的な抗原提示細胞であり、取り込んだ抗原を分解してMHCクラスII分子上に提示し、ヘルパーT細胞を活性化することで獲得免疫の開始に重要な役割を果たします。好中球も限定的ながら抗原提示能を持つことが示唆されています。",
+                category: "免疫・リンパ系"
+            },
+            {
+                id: "R5_V_カ", sourceFile: "R5", originalQuestionNumber: "V", originalChoiceSymbol: "カ",
+                questionText: "IgM は一次応答で産生される他、母乳中に分泌されて乳児の免疫にも関わる。",
+                answerType: "true_false", correctAnswer: false,
+                explanation: "誤りです。IgMは一次応答で最初に産生される主要な抗体ですが、母乳中に主に分泌されて乳児の消化管免疫に関与するのはIgA（分泌型IgA）です。",
+                category: "免疫・リンパ系"
+            },
+            {
+                id: "R5_V_キ", sourceFile: "R5", originalQuestionNumber: "V", originalChoiceSymbol: "キ",
+                questionText: "B細胞は免疫記憶により、2度目の感染以降は速やかに補体を産生して体液性免疫を引き起こす。",
+                answerType: "true_false", correctAnswer: false,
+                explanation: "誤りです。B細胞は免疫記憶により、2度目の感染以降は速やかに大量の抗体（主にIgG）を産生します。補体は肝臓などで産生されるタンパク質群であり、B細胞が直接産生するものではありません。抗体によって補体系が活性化されることはあります。",
+                category: "免疫・リンパ系"
+            },
+            {
+                id: "R5_V_ク", sourceFile: "R5", originalQuestionNumber: "V", originalChoiceSymbol: "ク",
+                questionText: "抗体のFab領域は可変部を含み、抗体の多様性を生み出す。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。抗体のFab領域の先端部分（可変部）が抗原結合部位であり、この部分のアミノ酸配列の多様性が様々な抗原に対応できる抗体の多様性を生み出しています。",
+                category: "免疫・リンパ系"
+            },
+            {
+                id: "R5_V_ケ", sourceFile: "R5", originalQuestionNumber: "V", originalChoiceSymbol: "ケ",
+                questionText: "2型ヘルパーT細胞から産生されるサイトカインは、B細胞の活性化により液性免疫を起こす。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。Th2細胞が産生するIL-4、IL-5、IL-13などのサイトカインは、B細胞の増殖、抗体産生細胞への分化、抗体のクラススイッチなどを促進し、体液性免疫応答を主導します。",
+                category: "免疫・リンパ系"
+            },
+            {
+                id: "R5_V_コ", sourceFile: "R5", originalQuestionNumber: "V", originalChoiceSymbol: "コ",
+                questionText: "ヘルパーT細胞は、抗原提示細胞の表面に発現しているMHCクラスII 分子を認識する。",
+                answerType: "true_false", correctAnswer: true,
+                explanation: "正しい記述です。ヘルパーT細胞（CD4陽性T細胞）は、抗原提示細胞（マクロファージ、樹状細胞、B細胞など）のMHCクラスII分子に提示された外来抗原ペプチドをT細胞受容体（TCR）とCD4分子を介して認識します。",
                 category: "免疫・リンパ系"
             }
         ];
+
 
         let quizQuestions = [];
         let currentQuestionIndex = 0;
