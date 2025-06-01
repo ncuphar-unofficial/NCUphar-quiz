@@ -13,7 +13,7 @@
         body {
             font-family: 'Noto Sans JP', 'Inter', sans-serif;
             -webkit-tap-highlight-color: transparent;
-            background-color: #f3f4f6; /* Tailwind gray-100 */
+            background-color: #f3f4f6;
         }
         .container {
             max-width: 800px;
@@ -88,7 +88,7 @@
 
         .question-prompt { 
             margin-top: 1.75rem; 
-            font-weight: 500; /* Adjusted font-weight */
+            font-weight: 500;
             color: #111827;    
         }
 
@@ -107,8 +107,8 @@
             transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease;
             background-color: #f9fafb; 
             color: #374151; 
-            text-align: center; /* Centered for True/False */
-            font-size: 1.1rem; /* Slightly larger for True/False */
+            text-align: center; 
+            font-size: 1.1rem; 
             font-weight: 600;
             box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); 
         }
@@ -129,7 +129,7 @@
             color: #991b1b; 
             font-weight: 700;
         }
-        /* Styles for typed answer input - Not used in True/False mode but kept for potential future use */
+        
         #typed-answer-container {
             margin-bottom: 1.5rem;
         }
@@ -148,10 +148,10 @@
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
         }
         #submit-typed-answer-btn {
-            background-color: #10b981; /* Tailwind emerald-500 */
+            background-color: #10b981;
         }
         #submit-typed-answer-btn:hover:not(:disabled) {
-            background-color: #059669; /* Tailwind emerald-600 */
+            background-color: #059669;
         }
 
 
@@ -171,15 +171,15 @@
         .explanation strong {
             color: #075985; 
         }
-        .explanation .memo-point { /* Style for memo points */
+        .explanation .memo-point {
             margin-top: 0.75rem;
             padding-top: 0.75rem;
-            border-top: 1px dashed #93c5fd; /* sky-300 */
+            border-top: 1px dashed #93c5fd;
             font-size: 0.9rem;
-            color: #0369a1; /* sky-700 */
+            color: #0369a1;
         }
         .explanation .memo-point strong {
-             color: #0c4a6e; /* sky-800 */
+             color: #0c4a6e;
         }
 
         .controls {
@@ -386,7 +386,6 @@
             <label for="category-select" class="block text-slate-700 text-lg font-semibold mb-2">出題カテゴリーを選択してください:</label>
             <select id="category-select" class="shadow-sm appearance-none border rounded w-full py-3 px-4 text-slate-700 leading-tight focus:outline-none focus:shadow-outline">
                 <option value="all">全ての範囲</option>
-                {/* Categories will be populated by JavaScript */}
             </select>
 
             <label for="num-questions-select" class="block text-slate-700 text-lg font-semibold mb-2 mt-6">出題数を選択してください:</label>
@@ -403,10 +402,6 @@
                  <div>
                      <input type="radio" id="mode-true-false" name="answer-mode" value="true_false" checked>
                      <label for="mode-true-false">〇×形式</label>
-                     {/* Add multiple-choice option if implemented in the future
-                     <input type="radio" id="mode-multiple-choice" name="answer-mode" value="multiple-choice" class="ml-4">
-                     <label for="mode-multiple-choice">選択式</label>
-                     */}
                  </div>
             </div>
 
@@ -425,7 +420,6 @@
                     </div>
                     <div id="question" class="question"></div>
                     <div id="options" class="options"></div>
-                    {/* Typed answer container is hidden as we are focusing on True/False */}
                     <div id="typed-answer-container" style="display: none;">
                         <input type="text" id="typed-answer-input" placeholder="解答を入力してください">
                         <button id="submit-typed-answer-btn" class="quiz-btn w-full">解答する</button>
@@ -453,7 +447,6 @@
     </div>
 
     <script>
-        // KaTeX auto-render configuration
         document.addEventListener("DOMContentLoaded", function() {
             const sharedKatexOptions = {
                 delimiters: [
@@ -470,11 +463,8 @@
             }
         });
 
-        // This is where the questions extracted from PDFs will be stored.
-        // For demonstration, a few example questions are included.
-        // In a real scenario, this would be populated by parsing the PDF content.
+        
         const masterQuizData = [
-            // R6年度 PDFからの問題例 (手動で構造化)
             {
                 id: "R6_I_ア", sourceFile: "R6", originalQuestionNumber: "I", originalChoiceSymbol: "ア",
                 questionText: "心筋のペースメーカー細胞では、ペースメーカー電位により自律的に活動電位が生じる。",
@@ -485,7 +475,7 @@
             {
                 id: "R6_I_イ", sourceFile: "R6", originalQuestionNumber: "I", originalChoiceSymbol: "イ",
                 questionText: "心室収縮時に乳頭筋が収縮すると、三尖弁や僧帽弁が閉鎖して血液の心房への逆流が防止される。",
-                answerType: "true_false", correctAnswer: false, // PDFではこの記述は正しいが、ここでは例として誤りに
+                answerType: "true_false", correctAnswer: false, 
                 explanation: "誤りです。乳頭筋の収縮は、房室弁（三尖弁、僧帽弁）が心房側へ反転するのを防ぎますが、弁の閉鎖そのものは心室圧が心房圧を上回ることによります。",
                 category: "心臓のポンプ機能・調節"
             },
@@ -531,7 +521,6 @@
                 explanation: "正しい記述です。Th2細胞はサイトカインを産生し、B細胞の抗体産生細胞への分化・増殖を助け、体液性免疫を誘導します。",
                 category: "免疫・リンパ系"
             },
-            // R5年度 PDFからの問題例
             {
                 id: "R5_I_ア", sourceFile: "R5", originalQuestionNumber: "I", originalChoiceSymbol: "ア",
                 questionText: "心臓の活動電位は房室結節にあるペースメーカー細胞から発生する。",
@@ -574,7 +563,6 @@
                 explanation: "正しい記述です。一次リンパ器官（中枢リンパ器官）はリンパ球が分化・成熟する場で、骨髄と胸腺が該当します。",
                 category: "免疫・リンパ系"
             }
-            // ... More questions would be parsed and added here
         ];
 
         let quizQuestions = [];
@@ -582,7 +570,7 @@
         let score = 0;
         let userAnswers = [];
         let selectedCategory = 'all';
-        let answerMode = 'true_false'; // Defaulting to True/False
+        let answerMode = 'true_false';
         let isReviewMode = false; 
         let reviewSourceQuestions = []; 
 
@@ -624,7 +612,6 @@
             const categories = new Set();
             masterQuizData.forEach(q => categories.add(q.category));
             
-            // Clear existing options except "All"
             while (categorySelect.options.length > 1) {
                 categorySelect.remove(1);
             }
@@ -648,7 +635,7 @@
         function initializeQuizData(category, numQuestionsRequestedStr, mode) { 
             isReviewMode = false; 
             selectedCategory = category;
-            answerMode = mode; // Currently only 'true_false'
+            answerMode = mode;
             
             let filteredQuestions = masterQuizData;
 
@@ -716,7 +703,7 @@
                     quizCardContent.style.transform = 'translateX(-100%)';
                 }
                
-                quizCardContent.offsetHeight; // Trigger reflow
+                quizCardContent.offsetHeight; 
 
                 quizCardContent.style.transition = 'transform 0.35s ease-in-out, opacity 0.35s ease-in-out';
                 quizCardContent.style.opacity = '1';
@@ -743,7 +730,6 @@
             optionsElement.innerHTML = ''; 
             typedAnswerInput.value = ''; 
             
-            // For True/False questions
             const trueOption = document.createElement('div');
             trueOption.classList.add('option');
             trueOption.textContent = '〇 (正しい)';
@@ -772,10 +758,10 @@
                 optionsElement.childNodes.forEach(optDiv => {
                     optDiv.classList.add('answered', 'disabled');
                     const optValue = optDiv.dataset.answerValue === 'true';
-                    if (optValue === questionData.correctAnswer) { // This option is the correct one
+                    if (optValue === questionData.correctAnswer) {
                         optDiv.classList.add('correct');
                     }
-                    if (optValue === answered.selectedAnswer && optValue !== questionData.correctAnswer) { // User selected this and it was wrong
+                    if (optValue === answered.selectedAnswer && optValue !== questionData.correctAnswer) {
                          optDiv.classList.add('incorrect');
                     }
                 });
@@ -826,9 +812,9 @@
                 questionIndex: currentQuestionIndex,
                 selectedAnswer: selectedAnswer, 
                 isCorrect: isCorrect,
-                questionText: questionData.questionText, // For review
-                explanation: questionData.explanation, // For review
-                originalQuestion: questionData // Store the full question object for review list
+                questionText: questionData.questionText,
+                explanation: questionData.explanation,
+                originalQuestion: questionData
             };
 
             if (isCorrect) {
@@ -845,7 +831,7 @@
                 const optValue = optDiv.dataset.answerValue === 'true';
                 if (optValue === questionData.correctAnswer) {
                     optDiv.classList.add('correct');
-                } else if (optValue === selectedAnswer) { // User selected this wrong option
+                } else if (optValue === selectedAnswer) {
                     optDiv.classList.add('incorrect');
                 }
             });
@@ -894,7 +880,7 @@
                 incorrectAnswersForDisplay.forEach(ans => {
                     const listItem = document.createElement('li');
                     listItem.className = 'text-sm text-gray-700 leading-relaxed';
-                    const qData = ans.originalQuestion; // Get the original question data
+                    const qData = ans.originalQuestion;
                     listItem.innerHTML = `<strong class="text-base text-slate-800">問題 ${ans.questionIndex + 1} (出典: ${qData.sourceFile} - ${qData.originalQuestionNumber}(${qData.originalChoiceSymbol}))</strong><br>
                                         <span class="text-xs text-gray-600">あなたの回答: ${ans.selectedAnswer ? '〇' : '×'} | 正解: ${qData.correctAnswer ? '〇' : '×'}</span><br>
                                         <p class="mt-1"><em>問題文:</em> ${qData.questionText}</p>
@@ -943,18 +929,17 @@
 
         function startReviewQuiz() {
             if (reviewSourceQuestions.length === 0) {
-                // This case should ideally be handled by disabling the button
                 return;
             }
             isReviewMode = true;
-            answerMode = 'true_false'; // Review mode will also be True/False
+            answerMode = 'true_false';
            
             currentQuestionIndex = 0;
             score = 0;
             userAnswers = []; 
             progressBar.style.width = '0%';
            
-            quizQuestions = [...reviewSourceQuestions]; // Use the collected incorrect questions
+            quizQuestions = [...reviewSourceQuestions];
             shuffleArray(quizQuestions); 
 
             if (quizQuestions.length > 0) {
@@ -977,7 +962,6 @@
                     quizCardContent.style.opacity = '1';
                 }, 20);
             } else {
-                // Should not happen if button is properly managed
                 isReviewMode = false; 
                 mainHeader.style.display = 'block'; 
             }
@@ -995,7 +979,7 @@
         }, {passive: true});
 
         function handleSwipe() {
-            if (touchendX < touchstartX - swipeThreshold) { // Swiped left
+            if (touchendX < touchstartX - swipeThreshold) {
                 if (currentQuestionIndex < quizQuestions.length - 1) {
                     if (!nextButton.disabled) { 
                         animateAndLoadQuestion(currentQuestionIndex + 1, 'next');
@@ -1004,7 +988,7 @@
                     finishButton.click(); 
                 }
             }
-            if (touchendX > touchstartX + swipeThreshold) { // Swiped right
+            if (touchendX > touchstartX + swipeThreshold) {
                 if (currentQuestionIndex > 0) {
                     animateAndLoadQuestion(currentQuestionIndex - 1, 'prev');
                 }
@@ -1090,8 +1074,7 @@
             startReviewQuiz();
         });
 
-        // Initial setup
-        populateCategories(); // Populate categories from masterQuizData
+        populateCategories();
         categorySelectContainer.style.display = 'block'; 
         quizContainer.style.display = 'none'; 
         quizContainer.classList.remove('visible');
