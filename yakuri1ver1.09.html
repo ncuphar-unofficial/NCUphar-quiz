@@ -301,21 +301,21 @@
         .category-selection-area {
             margin-bottom: 1.5rem;
             text-align: left;
-            max-width: 400px; /* Consistent with other controls */
+            max-width: 400px; 
             margin-left: auto;
             margin-right: auto;
         }
-        .category-selection-area .main-label { /* Label for "出題カテゴリーを選択してください" */
+        .category-selection-area .main-label { 
             display: block;
-            color: #374151; /* gray-700 */
+            color: #374151; 
             font-weight: 600;
             margin-bottom: 0.75rem;
-            font-size: 1rem; /* Consistent with other labels */
-            text-align: center; /* Center the main label */
+            font-size: 1rem; 
+            text-align: center; 
         }
         .category-options-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Responsive grid */
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); 
             gap: 0.75rem;
             margin-top: 0.5rem;
         }
@@ -323,27 +323,27 @@
             display: flex;
             align-items: center;
             padding: 0.5rem 0.75rem;
-            background-color: #f9fafb; /* gray-50 */
-            border: 1px solid #d1d5db; /* gray-300 */
+            background-color: #f9fafb; 
+            border: 1px solid #d1d5db; 
             border-radius: 0.375rem;
             cursor: pointer;
             transition: background-color 0.2s, border-color 0.2s;
         }
         .category-option:hover {
-            background-color: #f3f4f6; /* gray-100 */
-            border-color: #9ca3af; /* gray-400 */
+            background-color: #f3f4f6; 
+            border-color: #9ca3af; 
         }
         .category-option input[type="checkbox"] {
             margin-right: 0.5rem;
-            accent-color: #4b5563; /* gray-600 */
+            accent-color: #4b5563; 
             width: 1.1em;
             height: 1.1em;
         }
         .category-option label {
             font-size: 0.9rem;
-            color: #374151; /* gray-700 */
+            color: #374151; 
             cursor: pointer;
-            flex-grow: 1; /* Allow label to take remaining space */
+            flex-grow: 1; 
         }
         
         /* Number of Questions Slider Area */
@@ -358,14 +358,13 @@
             max-width: 400px;
             margin-left: auto;
             margin-right: auto;
-            /* padding: 0 10px; Removed padding to let ticks define edges */
         }
         .slider-container { 
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 1rem;
-            position: relative; /* For absolute positioning of ticks relative to this */
+            position: relative; 
         }
         #num-questions-slider {
             flex-grow: 1;
@@ -378,7 +377,7 @@
             border-radius: 4px;
             opacity: 1;
             transition: opacity .2s;
-            margin: 0; /* Ensure no extra margin affecting alignment */
+            margin: 0; 
         }
         #num-questions-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
@@ -413,34 +412,17 @@
             display: flex;
             justify-content: space-between;
             margin-top: 4px;
-            position: relative; /* To allow absolute positioning of children if needed, but flex is better */
-            /* The width of this container should ideally match the track of the slider.
-               If the slider itself has padding or the thumb makes it appear shorter,
-               this might need adjustment or the parent .slider-wrapper's padding.
-            */
+            padding-left: 10px; 
+            padding-right: 10px;
+            box-sizing: border-box; 
         }
         .slider-ticks span {
             font-size: 0.8rem;
             color: #4b5563; 
-            /* Each span will be positioned by flexbox's space-between */
-            /* To perfectly align, each span represents a point.
-               The first tick is at 0%, last at 100%.
-               For 4 ticks (5, 10, 15, 20) on a range of 5-20 (total 15 units):
-               5: 0%
-               10: (10-5)/15 = 33.33%
-               15: (15-5)/15 = 66.67%
-               20: 100%
-               We can use flexbox to distribute them and then adjust individual items slightly if needed,
-               or use absolute positioning for pixel-perfect alignment.
-               For now, relying on flexbox `space-between` and ensuring the wrapper matches slider width.
-            */
-            flex-basis: 0; /* Allows items to shrink/grow from a zero basis */
-            text-align: center;
+            flex-basis: 0; 
+            text-align: center; 
         }
-         /* To better align the numbers under the slider's visual points: */
         .slider-ticks span:nth-child(1) { text-align: left; }
-        .slider-ticks span:nth-child(2) { text-align: center; } /* Needs to be pushed right a bit */
-        .slider-ticks span:nth-child(3) { text-align: center; } /* Needs to be pushed left a bit */
         .slider-ticks span:nth-child(4) { text-align: right; }
 
 
@@ -882,7 +864,6 @@
         const accuracyElement = document.getElementById('accuracy');
         const restartButton = document.getElementById('restart-btn');
         const categorySelectContainer = document.getElementById('category-select-container');
-        // const categorySelect = document.getElementById('category-select'); // Replaced by checkboxes
         const categoryCheckboxes = document.querySelectorAll('input[name="category"]');
         const catAllCheckbox = document.getElementById('cat-all');
 
@@ -916,11 +897,10 @@
 
         function initializeQuizData(selectedCategories, numQuestionsRequestedStr) { 
             isReviewMode = false; 
-            // answerMode is set by its own toggle's event listener
 
             let filteredDrugs = [];
             if (selectedCategories.includes('all') || selectedCategories.length === 0) {
-                filteredDrugs = [...drugData]; // Use all drugs if "all" is selected or no specific category is chosen
+                filteredDrugs = [...drugData]; 
             } else {
                 filteredDrugs = drugData.filter(drug => selectedCategories.includes(drug.category));
             }
@@ -961,13 +941,20 @@
 
         function generateQuestionsFromSource(sourceDrugArray) {
             quizQuestions = sourceDrugArray.map(correctDrug => {
+                const drugName = correctDrug.name || "情報なし";
+                const mechanism = correctDrug.mechanism || "情報なし";
+                const characteristics = correctDrug.characteristics || "情報なし";
+                const applications = correctDrug.applications || "情報なし";
+                const memo = correctDrug.memo || "";
+
                 const questionText = `
                     <div class="text-left space-y-3 mb-4"> 
-                        <div class="question-detail-box"><strong>作用機序:</strong><div>${correctDrug.mechanism}</div></div>
-                        <div class="question-detail-box"><strong>薬理学的特徴:</strong><div>${correctDrug.characteristics}</div></div>
-                        <div class="question-detail-box"><strong>主な適応:</strong><div>${correctDrug.applications}</div></div>
+                        <div class="question-detail-box"><strong>作用機序:</strong><div>${mechanism}</div></div>
+                        <div class="question-detail-box"><strong>薬理学的特徴:</strong><div>${characteristics}</div></div>
+                        <div class="question-detail-box"><strong>主な適応:</strong><div>${applications}</div></div>
                     </div>
                     <p class="question-prompt"><strong>この説明に該当する薬物はどれですか？</strong></p>`;
+                
                 let optionsArray = [];
                 if (answerMode === 'multiple-choice' || isReviewMode) { 
                     let distractors = drugData.filter(d => d.name !== correctDrug.name).map(d => d.name);
@@ -981,21 +968,29 @@
                         if (finalDistractors.length >= 3) break;
                     }
                     while(finalDistractors.length < 3 && drugData.length > finalDistractors.length + 1) { 
-                        const randomDrugName = drugData[Math.floor(Math.random() * drugData.length)].name;
+                        const randomDrugIndex = Math.floor(Math.random() * drugData.length);
+                        const randomDrugName = drugData[randomDrugIndex].name;
                         if (!usedNamesInOptions.has(randomDrugName)) { 
                             finalDistractors.push(randomDrugName); usedNamesInOptions.add(randomDrugName);
                         }
                         if (finalDistractors.length >=3) break;
                     }
                     finalDistractors = finalDistractors.slice(0,3);
-                    optionsArray = [correctDrug.name, ...finalDistractors];
+                    optionsArray = [correctDrug.name, ...finalDistractors]; // Ensure correctDrug.name is used for options
                     shuffleArray(optionsArray);
                 }
-                let explanationContent = `<strong>${correctDrug.name}</strong><br>作用機序: ${correctDrug.mechanism}<br>薬理学的特徴: ${correctDrug.characteristics}<br>主な適応: ${correctDrug.applications}`;
-                if (correctDrug.memo) {
-                    explanationContent += `<div class="memo-point"><strong>暗記ポイント・比較:</strong><br>${correctDrug.memo}</div>`;
+
+                let explanationContent = `<strong>${drugName}</strong><br>作用機序: ${mechanism}<br>薬理学的特徴: ${characteristics}<br>主な適応: ${applications}`;
+                if (memo) {
+                    explanationContent += `<div class="memo-point"><strong>暗記ポイント・比較:</strong><br>${memo}</div>`;
                 }
-                return { questionText, options: optionsArray, correctAnswer: correctDrug.name, explanationText, drugDetails: correctDrug };
+                return { 
+                    questionText: questionText,
+                    options: optionsArray, 
+                    correctAnswer: correctDrug.name, // Crucial: use original name for answer checking
+                    explanationText: explanationContent, 
+                    drugDetails: correctDrug 
+                };
             });
         }
         
@@ -1204,8 +1199,8 @@
             numQuestionsSlider.disabled = false;
 
             categoryCheckboxes.forEach(cb => cb.checked = false);
-            catAllCheckbox.checked = true; // Default to "All Categories"
-            handleCatAllChange(); // Update other checkboxes based on "All"
+            catAllCheckbox.checked = true; 
+            handleCatAllChange(); 
         }
 
         function startReviewQuiz() {
@@ -1294,8 +1289,8 @@
             const isChecked = catAllCheckbox.checked;
             categoryCheckboxes.forEach(cb => {
                 if (cb.id !== 'cat-all') {
-                    cb.checked = false; // Uncheck individual categories if "All" is checked
-                    cb.disabled = isChecked; // Disable individual categories if "All" is checked
+                    cb.checked = false; 
+                    cb.disabled = isChecked; 
                 }
             });
         }
@@ -1306,8 +1301,7 @@
             if (cb.id !== 'cat-all') {
                 cb.addEventListener('change', () => {
                     if (cb.checked) {
-                        catAllCheckbox.checked = false; // Uncheck "All" if an individual category is checked
-                        // Re-enable all individual checkboxes in case "All" was previously checked
+                        catAllCheckbox.checked = false; 
                         categoryCheckboxes.forEach(otherCb => {
                             if (otherCb.id !== 'cat-all') otherCb.disabled = false;
                         });
@@ -1328,9 +1322,9 @@
                     }
                 });
             }
-            // If "All" is unchecked and no individual categories are checked, default to "all"
+            
             if (!catAllCheckbox.checked && selectedCategories.length === 0) {
-                selectedCategories.push("all");
+                selectedCategories.push("all"); // Default to all if nothing specific is chosen
             }
 
 
@@ -1341,15 +1335,13 @@
                 numQuestions = numQuestionsSlider.value;
             }
             
-            resetQuizState(); // This will reset category checkboxes to default ("All" checked)
-                              // So, we need to get selectedCategories *before* resetQuizState if we want to preserve the current UI selection for the quiz start.
-                              // For now, let's get it before, and resetQuizState will handle the UI for the *next* setup.
-            
-            // Re-fetch selected categories after potential reset if behavior is to use current UI state
-            // For this implementation, we'll use the categories selected *right before* clicking start.
-            // The resetQuizState will set up the UI for a *subsequent* quiz.
+            const currentSelectedCategories = [...selectedCategories];
+            const currentNumQuestions = numQuestions;
 
-            if (initializeQuizData(selectedCategories, numQuestions)) { 
+            resetQuizState(); 
+            
+            reviewSourceQuestions = []; mainHeader.style.display = 'none'; 
+            if (initializeQuizData(currentSelectedCategories, currentNumQuestions)) { 
                 categorySelectContainer.style.display = 'none';
                 quizContainer.style.display = 'block'; setTimeout(() => { quizContainer.classList.add('visible'); }, 10); 
                 summaryContainer.style.display = 'none';
@@ -1357,6 +1349,18 @@
                 quizCardContent.style.opacity = '0'; loadQuestion(0);
                 setTimeout(() => { quizCardContent.style.transition = 'opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)'; quizCardContent.style.opacity = '1'; }, 50); 
             } else {
+                // If initialization fails, restore the category selections for the user to correct
+                if (currentSelectedCategories.includes("all")) {
+                    catAllCheckbox.checked = true;
+                } else {
+                    catAllCheckbox.checked = false;
+                    currentSelectedCategories.forEach(catValue => {
+                        const checkbox = document.querySelector(`input[name="category"][value="${catValue}"]`);
+                        if (checkbox) checkbox.checked = true;
+                    });
+                }
+                handleCatAllChange(); // Reflect changes in UI
+
                 mainHeader.style.display = 'block';
             }
         });
