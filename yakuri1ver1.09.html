@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>薬理学クイズ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" crossorigin="anonymous">
+
+    <style>
+        /* General Body and Container Styles */
+        body {
+            font-family: 'Noto Sans JP', 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            background-color: #e5e7eb; /* Tailwind gray-200 */
+            color: #374151; /* Default text color: gray-700 */
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 1rem;
+            text-align: center;
+        }
+        @media (min-width: 640px) {
+            .container {
+                padding: 2rem;
+            }
+        }
+
+        /* Card Styles (for quiz, category select, summary) */
+        #quiz-card-element, #category-select-container, .summary {
+            background-color: #ffffff; /* White */
+            border-radius: 0.75rem;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.05); /* Softer shadow */
+            padding: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+        @media (min-width: 640px) {
+            #quiz-card-element, #category-select-container, .summary {
+                padding: 2.5rem;
+            }
+        }
+        #quiz-card-element {
+            overflow: hidden;
+            position: relative;
+        }
+        #quiz-card-content {
+            width: 100%;
+            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            will-change: transform, opacity;
+        }
+
+        /* Quiz Container Visibility */
+        #quiz-container {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease-in-out, visibility 0s linear 0.5s;
+        }
+        #quiz-container.visible {
+            opacity: 1;
+            visibility: visible;
+            transition-delay: 0s;
+        }
+
+        /* Header */
+        #main-header h1 {
+            color: #111827; /* gray-900 */
+            font-weight: 700;
+        }
+
+        /* Question Text and Details */
+        .question {
+            font-size: 1.1rem;
+            margin-bottom: 1.75rem;
+            color: #1f2937; /* gray-800 */
+            font-weight: 500;
+            text-align: left;
+            line-height: 1.75;
+        }
+        .question-detail-box {
+            border: 1px solid #d1d5db; /* gray-300 */
+            border-radius: 0.625rem;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1rem;
+            text-align: left;
+            background-color: #f9fafb; /* gray-50 */
+        }
+        .question-detail-box strong {
+            color: #4b5563; /* gray-600 */
+            font-weight: 600;
+            display: block;
+            margin-bottom: 0.375rem;
+            font-size: 0.875rem;
+        }
+        .question-detail-box div {
+            color: #374151; /* gray-700 */
+            font-size: 0.95rem;
+            line-height: 1.65;
+        }
+        .question-prompt {
+            margin-top: 2rem;
+            font-weight: 600;
+            color: #111827; /* gray-900 */
+            font-size: 1.05rem;
+        }
+
+        /* Options Styling */
+        .options {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            margin-bottom: 1.75rem;
+        }
+        .option {
+            padding: 1rem 1.375rem;
+            border: 1px solid #d1d5db; /* gray-300 */
+            border-radius: 0.5rem;
+            margin-bottom: 0.875rem;
+            cursor: pointer;
+            transition: background-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+            background-color: #ffffff; /* White */
+            color: #374151; /* gray-700 */
+            text-align: left;
+            font-size: 1rem;
+            font-weight: 500;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+        }
+        .option:hover:not(.disabled):not(.answered) {
+            background-color: #f3f4f6; /* gray-100 */
+            border-color: #9ca3af; /* gray-400 */
+            transform: translateY(-2px);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+        }
+        .option.correct {
+            background-color: #f0fdf4; /* desaturated green-50 */
+            border-color: #a7f3d0; /* desaturated green-200 */
+            color: #065f46; /* desaturated green-800 */
+            font-weight: 600;
+        }
+        .option.incorrect {
+            background-color: #fef2f2; /* desaturated red-50 */
+            border-color: #fecaca; /* desaturated red-200 */
+            color: #991b1b; /* desaturated red-800 */
+            font-weight: 600;
+        }
+        .option.disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        .option.answered:not(.correct):not(.incorrect) {
+            opacity: 0.6;
+            background-color: #e5e7eb; /* gray-200 */
+        }
+
+        /* Typed Answer Input */
+        #typed-answer-container { margin-bottom: 1.75rem; }
+        #typed-answer-input {
+            width: 100%;
+            padding: 0.875rem 1.125rem;
+            border: 1px solid #d1d5db; /* gray-300 */
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            color: #1f2937; /* gray-800 */
+            background-color: #ffffff; /* White */
+            margin-bottom: 0.875rem;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        #typed-answer-input:focus {
+            outline: none;
+            border-color: #6b7280; /* gray-500 */
+            box-shadow: 0 0 0 3px rgba(107, 114, 128, 0.2); /* gray-500 with opacity */
+        }
+        #typed-answer-input.border-green-500 { border-color: #a7f3d0 !important; }
+        #typed-answer-input.border-red-500 { border-color: #fecaca !important; }
+
+        /* Explanation Box */
+        .explanation {
+            background-color: #f3f4f6; /* gray-100 */
+            border-radius: 0.625rem;
+            padding: 1.5rem;
+            margin-top: 1.75rem;
+            margin-bottom: 1.75rem;
+            color: #374151; /* gray-700 */
+            text-align: left;
+            font-size: 0.95rem;
+            border: 1px solid #e5e7eb; /* gray-200 */
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.03);
+            line-height: 1.7;
+        }
+        .explanation strong {
+            color: #1f2937; /* gray-800 */
+            font-weight: 600;
+        }
+        .explanation .memo-point {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px dashed #d1d5db; /* gray-300 */
+            font-size: 0.9rem;
+            color: #4b5563; /* gray-600 */
+        }
+        .explanation .memo-point strong { color: #1f2937; }
+
+        /* Control Buttons */
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 2.5rem;
+        }
+        .quiz-btn {
+            padding: 0.875rem 1.75rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            color: #ffffff; /* White text */
+            cursor: pointer;
+            transition: background-color 0.25s ease, transform 0.15s ease, box-shadow 0.25s ease;
+            border: none;
+            font-size: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            letter-spacing: 0.025em;
+        }
+        .quiz-btn:disabled {
+            opacity: 0.4; /* More pronounced disabled state */
+            cursor: not-allowed;
+            box-shadow: none;
+            background-color: #9ca3af; /* gray-400 */
+        }
+        .quiz-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.07);
+        }
+
+        /* Specific Button Colors (Monochromatic) */
+        .start-quiz-btn, #submit-typed-answer-btn, .next-btn, .finish-btn, .restart-btn, .review-btn {
+            background-color: #374151; /* gray-700 */
+        }
+        .start-quiz-btn:hover:not(:disabled),
+        #submit-typed-answer-btn:hover:not(:disabled),
+        .next-btn:hover:not(:disabled),
+        .finish-btn:hover:not(:disabled),
+        .restart-btn:hover:not(:disabled),
+        .review-btn:hover:not(:disabled) {
+            background-color: #1f2937; /* gray-800 */
+        }
+        .prev-btn { background-color: #6b7280; /* gray-500 */ }
+        .prev-btn:hover:not(:disabled) { background-color: #4b5563; /* gray-600 */ }
+        
+        .start-quiz-btn { font-size: 1.1rem; padding: 0.8rem 2rem; margin-top: 1.5rem; }
+        .restart-btn { font-size: 1.1rem; padding: 0.8rem 2rem; }
+
+
+        /* Summary Screen */
+        .summary h2 {
+            font-size: 2rem;
+            margin-bottom: 1.75rem;
+            color: #111827; /* gray-900 */
+            font-weight: 700;
+        }
+        .summary p {
+            font-size: 1.15rem;
+            margin-bottom: 1.25rem;
+            color: #374151; /* gray-700 */
+        }
+        #summary-container { display: none; }
+        #review-incorrect-container h3 { color: #1f2937; /* gray-800 */ }
+        #review-incorrect-container ul li {
+            background-color: #f9fafb; /* gray-50 */
+            padding: 0.75rem 1rem;
+            border-radius: 0.375rem;
+            border: 1px solid #e5e7eb; /* gray-200 */
+        }
+         #review-incorrect-container ul li strong.text-base { color: #111827; /* gray-900 */ }
+
+        /* Feedback Messages */
+        .feedback {
+            margin-top: 1.75rem;
+            padding: 0.875rem 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1rem;
+            border-width: 1px;
+            border-style: solid;
+        }
+        .feedback.correct {
+            background-color: #f0fdf4; /* desaturated green-50 */
+            border-color: #a7f3d0; /* desaturated green-200 */
+            color: #065f46; /* desaturated green-800 */
+        }
+        .feedback.incorrect {
+            background-color: #fef2f2; /* desaturated red-50 */
+            border-color: #fecaca; /* desaturated red-200 */
+            color: #991b1b; /* desaturated red-800 */
+        }
+
+        /* Category Selection Area */
+        .category-selection-area {
+            margin-bottom: 1.5rem;
+            text-align: left;
+            max-width: 400px; /* Consistent with other controls */
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .category-selection-area .main-label { /* Label for "出題カテゴリーを選択してください" */
+            display: block;
+            color: #374151; /* gray-700 */
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            font-size: 1rem; /* Consistent with other labels */
+            text-align: center; /* Center the main label */
+        }
+        .category-options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Responsive grid */
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+        }
+        .category-option {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 0.75rem;
+            background-color: #f9fafb; /* gray-50 */
+            border: 1px solid #d1d5db; /* gray-300 */
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+        .category-option:hover {
+            background-color: #f3f4f6; /* gray-100 */
+            border-color: #9ca3af; /* gray-400 */
+        }
+        .category-option input[type="checkbox"] {
+            margin-right: 0.5rem;
+            accent-color: #4b5563; /* gray-600 */
+            width: 1.1em;
+            height: 1.1em;
+        }
+        .category-option label {
+            font-size: 0.9rem;
+            color: #374151; /* gray-700 */
+            cursor: pointer;
+            flex-grow: 1; /* Allow label to take remaining space */
+        }
+        
+        /* Number of Questions Slider Area */
+        .num-questions-label { 
+            display: block;
+            color: #374151; 
+            font-weight: 600;
+            margin-bottom: 0.5rem; 
+            margin-top: 1.5rem; 
+        }
+        .slider-wrapper { 
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+            /* padding: 0 10px; Removed padding to let ticks define edges */
+        }
+        .slider-container { 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            position: relative; /* For absolute positioning of ticks relative to this */
+        }
+        #num-questions-slider {
+            flex-grow: 1;
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%; 
+            height: 8px;
+            background: #d1d5db; 
+            outline: none;
+            border-radius: 4px;
+            opacity: 1;
+            transition: opacity .2s;
+            margin: 0; /* Ensure no extra margin affecting alignment */
+        }
+        #num-questions-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #4b5563; 
+            cursor: pointer;
+            border-radius: 50%;
+            border: 2px solid white; 
+        }
+        #num-questions-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #4b5563; 
+            cursor: pointer;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+        #num-questions-slider:disabled { opacity: 0.5; }
+        #num-questions-slider:disabled::-webkit-slider-thumb { background: #9ca3af; }
+        #num-questions-slider:disabled::-moz-range-thumb { background: #9ca3af; }
+
+        #num-questions-value-display {
+            font-size: 1rem;
+            color: #1f2937; 
+            font-weight: 500;
+            min-width: 50px; 
+            text-align: right;
+        }
+        .slider-ticks { 
+            display: flex;
+            justify-content: space-between;
+            margin-top: 4px;
+            position: relative; /* To allow absolute positioning of children if needed, but flex is better */
+            /* The width of this container should ideally match the track of the slider.
+               If the slider itself has padding or the thumb makes it appear shorter,
+               this might need adjustment or the parent .slider-wrapper's padding.
+            */
+        }
+        .slider-ticks span {
+            font-size: 0.8rem;
+            color: #4b5563; 
+            /* Each span will be positioned by flexbox's space-between */
+            /* To perfectly align, each span represents a point.
+               The first tick is at 0%, last at 100%.
+               For 4 ticks (5, 10, 15, 20) on a range of 5-20 (total 15 units):
+               5: 0%
+               10: (10-5)/15 = 33.33%
+               15: (15-5)/15 = 66.67%
+               20: 100%
+               We can use flexbox to distribute them and then adjust individual items slightly if needed,
+               or use absolute positioning for pixel-perfect alignment.
+               For now, relying on flexbox `space-between` and ensuring the wrapper matches slider width.
+            */
+            flex-basis: 0; /* Allows items to shrink/grow from a zero basis */
+            text-align: center;
+        }
+         /* To better align the numbers under the slider's visual points: */
+        .slider-ticks span:nth-child(1) { text-align: left; }
+        .slider-ticks span:nth-child(2) { text-align: center; } /* Needs to be pushed right a bit */
+        .slider-ticks span:nth-child(3) { text-align: center; } /* Needs to be pushed left a bit */
+        .slider-ticks span:nth-child(4) { text-align: right; }
+
+
+        .all-questions-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 1rem;
+            gap: 0.5rem;
+        }
+        #all-questions-checkbox {
+            width: 1.15em;
+            height: 1.15em;
+            accent-color: #4b5563; 
+        }
+        #all-questions-checkbox-label {
+            font-size: 0.95rem;
+            color: #374151; 
+            cursor: pointer;
+        }
+
+
+        /* Progress Bar */
+        .progress-bar-container {
+            width: 100%;
+            background-color: #d1d5db; 
+            border-radius: 0.5rem;
+            margin-bottom: 1.75rem;
+            overflow: hidden;
+            height: 14px;
+        }
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: #4b5563; 
+            border-radius: 0.5rem;
+            transition: width 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .question-counter {
+            font-size: 0.9rem;
+            color: #6b7280; 
+            font-weight: 500;
+        }
+
+        /* Back to Menu Link (Button Style) */
+        .back-to-menu-btn { 
+            display: inline-flex; 
+            align-items: center;
+            padding: 0.5rem 0.75rem;
+            background-color: #e5e7eb; 
+            color: #374151; 
+            border: 1px solid #d1d5db; 
+            border-radius: 0.375rem; 
+            font-size: 0.875rem; 
+            font-weight: 500;
+            text-decoration: none;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+        .back-to-menu-btn:hover {
+            background-color: #d1d5db; 
+            border-color: #9ca3af; 
+            color: #1f2937; 
+        }
+        .back-to-menu-btn svg {
+            width: 1em;
+            height: 1em;
+            margin-right: 0.375rem;
+        }
+
+
+        /* Answer Mode Slide Toggle */
+        #answer-mode-select-container {
+            margin-top: 1.75rem;
+            margin-bottom: 1.5rem; 
+            display: flex;
+            flex-direction: column;
+            align-items: center; 
+        }
+        #answer-mode-select-container .toggle-label { 
+            display: block;
+            color: #374151; 
+            font-weight: 600;
+            margin-bottom: 0.75rem; 
+            font-size: 1rem; 
+        }
+
+        .slide-toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem; 
+        }
+
+        .slide-toggle-label {
+            font-size: 0.95rem;
+            color: #374151; 
+            cursor: pointer;
+            padding-bottom: 2px; 
+            border-bottom: 2px solid transparent; 
+            transition: color 0.2s ease, border-bottom-color 0.2s ease, font-weight 0.2s ease; 
+        }
+        .slide-toggle-label.active { 
+            font-weight: 600;
+            color: #1f2937; 
+            border-bottom-color: #4b5563; 
+        }
+
+
+        .slide-toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px; 
+            height: 26px; 
+        }
+
+        .slide-toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slide-toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #cbd5e1; 
+            transition: .3s;
+            border-radius: 26px; 
+        }
+
+        .slide-toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px; 
+            width: 20px;  
+            left: 3px;   
+            bottom: 3px; 
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        input:checked + .slide-toggle-slider {
+            background-color: #4b5563; 
+        }
+
+        input:focus + .slide-toggle-slider {
+            box-shadow: 0 0 1px #4b5563; 
+        }
+
+        input:checked + .slide-toggle-slider:before {
+            transform: translateX(24px); 
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+</head>
+<body class="bg-gray-200">
+    <div class="container">
+        <header id="main-header" class="my-8 md:my-10">
+             <h1 class="text-3xl sm:text-4xl font-bold text-gray-900">薬理学クイズ</h1>
+        </header>
+
+        <div id="category-select-container">
+            <div class="category-selection-area">
+                <label class="main-label text-lg font-semibold">出題カテゴリーを選択してください:</label>
+                <div class="category-options-grid">
+                    <div class="category-option">
+                        <input type="checkbox" id="cat-all" name="category" value="all" checked>
+                        <label for="cat-all">全ての薬物</label>
+                    </div>
+                    <div class="category-option">
+                        <input type="checkbox" id="cat-nervous" name="category" value="神経系">
+                        <label for="cat-nervous">神経系に作用する薬物</label>
+                    </div>
+                    <div class="category-option">
+                        <input type="checkbox" id="cat-cardio" name="category" value="循環器系">
+                        <label for="cat-cardio">循環器系に作用する薬物</label>
+                    </div>
+                    <div class="category-option">
+                        <input type="checkbox" id="cat-local-anesthetics" name="category" value="局所麻酔薬">
+                        <label for="cat-local-anesthetics">局所麻酔薬</label>
+                    </div>
+                    <div class="category-option">
+                        <input type="checkbox" id="cat-muscle-relaxants" name="category" value="末梢性筋弛緩薬">
+                        <label for="cat-muscle-relaxants">末梢性筋弛緩薬</label>
+                    </div>
+                    <div class="category-option">
+                        <input type="checkbox" id="cat-sympathomimetics" name="category" value="交感神経刺激薬">
+                        <label for="cat-sympathomimetics">交感神経刺激薬</label>
+                    </div>
+                     <div class="category-option">
+                        <input type="checkbox" id="cat-sympatholytics" name="category" value="交感神経遮断薬">
+                        <label for="cat-sympatholytics">交感神経遮断薬</label>
+                    </div>
+                    <div class="category-option">
+                        <input type="checkbox" id="cat-others" name="category" value="その他">
+                        <label for="cat-others">その他の薬物</label>
+                    </div>
+                </div>
+            </div>
+
+            <label for="num-questions-slider" class="num-questions-label text-lg font-semibold">出題数を選択してください:</label>
+            <div class="slider-wrapper">
+                <div class="slider-container">
+                    <input type="range" id="num-questions-slider" min="5" max="20" value="10" step="5">
+                    <span id="num-questions-value-display">10問</span>
+                </div>
+                <div class="slider-ticks">
+                    <span>5</span>
+                    <span>10</span>
+                    <span>15</span>
+                    <span>20</span>
+                </div>
+            </div>
+            <div class="all-questions-container">
+                <input type="checkbox" id="all-questions-checkbox">
+                <label for="all-questions-checkbox" id="all-questions-checkbox-label">全ての問題を出題する</label>
+            </div>
+
+
+            <div id="answer-mode-select-container">
+                <label class="toggle-label text-lg font-semibold">解答形式を選択してください:</label>
+                <div class="slide-toggle-container">
+                    <span class="slide-toggle-label" id="label-multiple-choice">選択式</span>
+                    <label class="slide-toggle-switch">
+                        <input type="checkbox" id="answer-mode-toggle">
+                        <span class="slide-toggle-slider"></span>
+                    </label>
+                    <span class="slide-toggle-label" id="label-typed-input">単語入力式</span>
+                </div>
+            </div>
+
+           <button id="start-quiz-btn" class="quiz-btn start-quiz-btn">クイズを開始する</button>
+        </div>
+
+        <div id="quiz-container">
+            <div id="quiz-card-element">
+                <div id="quiz-card-content">
+                    <div class="flex justify-between items-center mb-5">
+                        <a href="#" id="back-to-menu-btn" class="back-to-menu-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                            </svg>
+                            メニューへ
+                        </a>
+                        <div class="question-counter" id="question-counter"></div>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="progress-bar"></div>
+                    </div>
+                    <div id="question" class="question"></div>
+                    <div id="options" class="options"></div>
+                    <div id="typed-answer-container" style="display: none;">
+                        <input type="text" id="typed-answer-input" placeholder="薬物名を入力してください">
+                        <button id="submit-typed-answer-btn" class="quiz-btn w-full">解答する</button>
+                    </div>
+                    <div id="feedback" class="feedback" style="display: none;"></div>
+                    <div id="explanation" class="explanation" style="display: none;"></div>
+                    <div class="controls">
+                        <button id="prev-btn" class="quiz-btn prev-btn">前へ</button>
+                        <button id="next-btn" class="quiz-btn next-btn">次へ</button>
+                        <button id="finish-btn" class="quiz-btn finish-btn" style="display: none;">終了</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="summary-container" class="summary">
+            <h2>あなたの成績</h2>
+            <p>正解数: <span id="correct-count">0</span> / <span id="total-questions">0</span></p>
+            <p>正答率: <span id="accuracy">0</span>%</p>
+            <div id="review-incorrect-container" class="mt-6"> </div>
+            <button id="review-incorrect-btn" class="quiz-btn review-btn mt-6" style="display: none;">間違えた問題を復習する</button>
+            <button id="restart-btn" class="quiz-btn restart-btn mt-4">もう一度挑戦する</button>
+        </div>
+    </div>
+
+    <script>
+        // KaTeX auto-render configuration
+        document.addEventListener("DOMContentLoaded", function() {
+            const sharedKatexOptions = {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false},
+                    {left: '\\(', right: '\\)', display: false}, {left: '\\[', right: '\\]', display: true}
+                ],
+                throwOnError: false
+            };
+            window.renderMathInElementOptions = sharedKatexOptions;
+            window.katexRenderOptions = sharedKatexOptions;
+             if (typeof renderMathInElement === 'function') {
+                 renderMathInElement(document.body, sharedKatexOptions);
+             }
+        });
+
+        const drugData = [
+            // 例:
+            { name: "アスピリン", category: "その他", mechanism: "COX阻害", characteristics: "解熱鎮痛", applications: "疼痛", memo: "ライ症候群注意" },
+            { name: "イブプロフェン", category: "その他", mechanism: "COX阻害", characteristics: "解熱鎮痛", applications: "疼痛、炎症", memo: "消化管障害に注意" },
+            { name: "リドカイン", category: "局所麻酔薬", mechanism: "Naチャネル遮断", characteristics: "アミド型、作用発現速い", applications: "表面麻酔、浸潤麻酔", memo: "アレルギー稀" },
+            { name: "プロカイン", category: "局所麻酔薬", mechanism: "Naチャネル遮断", characteristics: "エステル型、作用時間短い", applications: "浸潤麻酔", memo: "PABAによりアレルギー" },
+            { name: "スキサメトニウム", category: "末梢性筋弛緩薬", mechanism: "脱分極性筋弛緩薬、ACh受容体作動", characteristics: "作用発現速い、持続短い", applications: "気管挿管時の筋弛緩", memo: "悪性高熱症のリスク" },
+            { name: "ベクロニウム", category: "末梢性筋弛緩薬", mechanism: "非脱分極性筋弛緩薬、ACh受容体競合阻害", characteristics: "作用時間中程度", applications: "手術時の筋弛緩", memo: "拮抗薬: スガマデクス" },
+            { name: "アドレナリン", category: "交感神経刺激薬", mechanism: "α,β受容体刺激", characteristics: "心機能亢進、血管収縮、気管支拡張", applications: "アナフィラキシーショック、心停止", memo: "α作用:血管収縮, β1作用:心機能亢進, β2作用:気管支拡張" },
+            { name: "ノルアドレナリン", category: "交感神経刺激薬", mechanism: "α受容体主体の刺激", characteristics: "強力な血管収縮", applications: "急性低血圧、ショック", memo: "β1作用も若干有するが、α作用が主" },
+            { name: "プロプラノロール", category: "交感神経遮断薬", mechanism: "非選択的β受容体遮断", characteristics: "心機能抑制、気管支収縮", applications: "高血圧、狭心症、頻脈性不整脈", memo: "喘息患者には禁忌" },
+            { name: "アテノロール", category: "交感神経遮断薬", mechanism: "選択的β1受容体遮断", characteristics: "心機能抑制", applications: "高血圧、狭心症", memo: "β2への影響少ないが、高用量では注意" },
+            { name: "ジアゼパム", category: "神経系", mechanism: "GABA_A受容体アロステリック調節 (ベンゾジアゼピン結合部位)", characteristics: "抗不安、鎮静、催眠、筋弛緩", applications: "不安、不眠、痙攣", memo: "依存性、離脱症状に注意" },
+            { name: "フェニトイン", category: "神経系", mechanism: "電位依存性Naチャネル遮断", characteristics: "抗てんかん作用", applications: "てんかん (強直間代発作、部分発作)", memo: "歯肉増殖、多毛などの副作用" }
+        ];
+        
+        let quizQuestions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let userAnswers = [];
+        let answerMode = 'multiple-choice'; 
+        let isReviewMode = false; 
+        let reviewSourceQuestions = [];
+
+        // DOM Elements
+        const questionElement = document.getElementById('question');
+        const optionsElement = document.getElementById('options');
+        const typedAnswerContainer = document.getElementById('typed-answer-container');
+        const typedAnswerInput = document.getElementById('typed-answer-input');
+        const submitTypedAnswerBtn = document.getElementById('submit-typed-answer-btn');
+        const explanationElement = document.getElementById('explanation');
+        const feedbackElement = document.getElementById('feedback');
+        const nextButton = document.getElementById('next-btn');
+        const prevButton = document.getElementById('prev-btn');
+        const finishButton = document.getElementById('finish-btn');
+        const quizContainer = document.getElementById('quiz-container');
+        const summaryContainer = document.getElementById('summary-container');
+        const correctCountElement = document.getElementById('correct-count');
+        const totalQuestionsElement = document.getElementById('total-questions');
+        const accuracyElement = document.getElementById('accuracy');
+        const restartButton = document.getElementById('restart-btn');
+        const categorySelectContainer = document.getElementById('category-select-container');
+        // const categorySelect = document.getElementById('category-select'); // Replaced by checkboxes
+        const categoryCheckboxes = document.querySelectorAll('input[name="category"]');
+        const catAllCheckbox = document.getElementById('cat-all');
+
+        const numQuestionsSlider = document.getElementById('num-questions-slider');
+        const numQuestionsValueDisplay = document.getElementById('num-questions-value-display');
+        const allQuestionsCheckbox = document.getElementById('all-questions-checkbox');
+        const startQuizButton = document.getElementById('start-quiz-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const questionCounterElement = document.getElementById('question-counter');
+        const reviewIncorrectContainer = document.getElementById('review-incorrect-container');
+        const backToMenuButton = document.getElementById('back-to-menu-btn');
+        const reviewIncorrectBtn = document.getElementById('review-incorrect-btn'); 
+        const quizCardElement = document.getElementById('quiz-card-element'); 
+        const quizCardContent = document.getElementById('quiz-card-content'); 
+        const mainHeader = document.getElementById('main-header');
+        const answerModeToggle = document.getElementById('answer-mode-toggle');
+        const labelMultipleChoice = document.getElementById('label-multiple-choice');
+        const labelTypedInput = document.getElementById('label-typed-input');
+
+        let touchstartX = 0;
+        let touchendX = 0;
+        const swipeThreshold = 50;
+        let isAnimating = false;
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function initializeQuizData(selectedCategories, numQuestionsRequestedStr) { 
+            isReviewMode = false; 
+            // answerMode is set by its own toggle's event listener
+
+            let filteredDrugs = [];
+            if (selectedCategories.includes('all') || selectedCategories.length === 0) {
+                filteredDrugs = [...drugData]; // Use all drugs if "all" is selected or no specific category is chosen
+            } else {
+                filteredDrugs = drugData.filter(drug => selectedCategories.includes(drug.category));
+            }
+
+            if (filteredDrugs.length === 0) {
+                showTemporaryFeedback("選択されたカテゴリーに該当する薬物がありません。または、問題データが空です。", 'incorrect', categorySelectContainer);
+                quizContainer.classList.remove('visible');
+                summaryContainer.style.display = 'none';
+                categorySelectContainer.style.display = 'block';
+                mainHeader.style.display = 'block'; 
+                return false;
+            }
+            
+            shuffleArray(filteredDrugs);
+            
+            let numToDisplay;
+            if (numQuestionsRequestedStr === 'all') {
+                numToDisplay = filteredDrugs.length;
+            } else {
+                const requestedNum = parseInt(numQuestionsRequestedStr);
+                numToDisplay = Math.min(requestedNum, filteredDrugs.length);
+            }
+            
+            if (numToDisplay === 0 && filteredDrugs.length > 0) {
+                numToDisplay = filteredDrugs.length; 
+            }
+
+            const selectedQuizDrugs = filteredDrugs.slice(0, numToDisplay);
+            generateQuestionsFromSource(selectedQuizDrugs); 
+            
+            if (quizQuestions.length === 0) {
+                showTemporaryFeedback("クイズの問題を生成できませんでした。", 'incorrect', categorySelectContainer);
+                mainHeader.style.display = 'block'; 
+                return false;
+            }
+            return true;
+        }
+
+        function generateQuestionsFromSource(sourceDrugArray) {
+            quizQuestions = sourceDrugArray.map(correctDrug => {
+                const questionText = `
+                    <div class="text-left space-y-3 mb-4"> 
+                        <div class="question-detail-box"><strong>作用機序:</strong><div>${correctDrug.mechanism}</div></div>
+                        <div class="question-detail-box"><strong>薬理学的特徴:</strong><div>${correctDrug.characteristics}</div></div>
+                        <div class="question-detail-box"><strong>主な適応:</strong><div>${correctDrug.applications}</div></div>
+                    </div>
+                    <p class="question-prompt"><strong>この説明に該当する薬物はどれですか？</strong></p>`;
+                let optionsArray = [];
+                if (answerMode === 'multiple-choice' || isReviewMode) { 
+                    let distractors = drugData.filter(d => d.name !== correctDrug.name).map(d => d.name);
+                    shuffleArray(distractors);
+                    let finalDistractors = [];
+                    let usedNamesInOptions = new Set([correctDrug.name]);
+                    for (const distractorName of distractors) {
+                        if (finalDistractors.length < 3 && !usedNamesInOptions.has(distractorName)) {
+                            finalDistractors.push(distractorName); usedNamesInOptions.add(distractorName);
+                        }
+                        if (finalDistractors.length >= 3) break;
+                    }
+                    while(finalDistractors.length < 3 && drugData.length > finalDistractors.length + 1) { 
+                        const randomDrugName = drugData[Math.floor(Math.random() * drugData.length)].name;
+                        if (!usedNamesInOptions.has(randomDrugName)) { 
+                            finalDistractors.push(randomDrugName); usedNamesInOptions.add(randomDrugName);
+                        }
+                        if (finalDistractors.length >=3) break;
+                    }
+                    finalDistractors = finalDistractors.slice(0,3);
+                    optionsArray = [correctDrug.name, ...finalDistractors];
+                    shuffleArray(optionsArray);
+                }
+                let explanationContent = `<strong>${correctDrug.name}</strong><br>作用機序: ${correctDrug.mechanism}<br>薬理学的特徴: ${correctDrug.characteristics}<br>主な適応: ${correctDrug.applications}`;
+                if (correctDrug.memo) {
+                    explanationContent += `<div class="memo-point"><strong>暗記ポイント・比較:</strong><br>${correctDrug.memo}</div>`;
+                }
+                return { questionText, options: optionsArray, correctAnswer: correctDrug.name, explanationText, drugDetails: correctDrug };
+            });
+        }
+        
+        function animateAndLoadQuestion(newIndex, direction) {
+            if (isAnimating) return; isAnimating = true;
+            quizCardContent.style.opacity = '0';
+            quizCardContent.style.transform = direction === 'next' ? 'translateX(-50px)' : 'translateX(50px)';
+            setTimeout(() => {
+                loadQuestion(newIndex); 
+                quizCardContent.style.transition = 'none'; 
+                quizCardContent.style.transform = direction === 'next' ? 'translateX(50px)' : 'translateX(-50px)';
+                quizCardContent.offsetHeight; 
+                quizCardContent.style.transition = 'transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)';
+                quizCardContent.style.opacity = '1';
+                quizCardContent.style.transform = 'translateX(0)';
+                setTimeout(() => { isAnimating = false; }, 400);
+            }, 400);
+        }
+
+        function loadQuestion(index) {
+            if (index < 0 || index >= quizQuestions.length) return;
+            currentQuestionIndex = index;
+            const questionData = quizQuestions[index];
+            questionElement.innerHTML = questionData.questionText;
+            if (typeof renderMathInElement === 'function' && window.renderMathInElementOptions) {
+                renderMathInElement(questionElement, window.renderMathInElementOptions);
+            }
+            optionsElement.innerHTML = ''; 
+            typedAnswerInput.value = ''; 
+            typedAnswerInput.classList.remove('border-green-500', 'ring-2', 'ring-green-200', 'border-red-500', 'ring-2', 'ring-red-200', 'border-green-500', 'border-red-500');
+
+
+            if (answerMode === 'multiple-choice' || isReviewMode) { 
+                optionsElement.style.display = 'flex';
+                typedAnswerContainer.style.display = 'none';
+                questionData.options.forEach(optionName => {
+                    const optionDiv = document.createElement('div');
+                    optionDiv.className = 'option';
+                    optionDiv.textContent = optionName;
+                    optionDiv.dataset.optionName = optionName; 
+                    optionDiv.addEventListener('click', () => selectOption(optionDiv, questionData));
+                    optionsElement.appendChild(optionDiv);
+                });
+            } else { 
+                optionsElement.style.display = 'none';
+                typedAnswerContainer.style.display = 'block';
+                typedAnswerInput.disabled = false;
+                submitTypedAnswerBtn.disabled = false;
+                typedAnswerInput.focus();
+            }
+
+            explanationElement.style.display = 'none';
+            feedbackElement.style.display = 'none';
+            feedbackElement.textContent = '';
+            feedbackElement.className = 'feedback';
+
+            const answered = userAnswers[index];
+            if (answered) {
+                if (answerMode === 'multiple-choice' || isReviewMode) {
+                    optionsElement.childNodes.forEach(optDiv => {
+                        optDiv.classList.add('answered', 'disabled');
+                        if (optDiv.dataset.optionName === questionData.correctAnswer) optDiv.classList.add('correct');
+                        else if (optDiv.dataset.optionName === answered.selectedDrugName) optDiv.classList.add('incorrect');
+                    });
+                } else { 
+                    typedAnswerInput.value = answered.typedAnswer || ''; 
+                    typedAnswerInput.disabled = true;
+                    submitTypedAnswerBtn.disabled = true;
+                    if(answered.isCorrect) typedAnswerInput.classList.add('border-green-500'); else typedAnswerInput.classList.add('border-red-500');
+                }
+                feedbackElement.textContent = answered.isCorrect ? '正解です！' : `不正解です。正解は「${questionData.correctAnswer}」です。`;
+                feedbackElement.classList.add(answered.isCorrect ? 'correct' : 'incorrect');
+                feedbackElement.style.display = 'block';
+                explanationElement.innerHTML = questionData.explanationText;
+                if (typeof renderMathInElement === 'function' && window.renderMathInElementOptions) {
+                    renderMathInElement(explanationElement, window.renderMathInElementOptions);
+                }
+                explanationElement.style.display = 'block';
+                nextButton.disabled = false;
+            } else {
+                nextButton.disabled = true;
+            }
+
+            const progressPercentage = quizQuestions.length > 0 ? ((index + 1) / quizQuestions.length) * 100 : 0;
+            progressBar.style.width = `${progressPercentage}%`;
+            questionCounterElement.textContent = quizQuestions.length > 0 ? `${isReviewMode ? '復習問題' : '問題'} ${index + 1} / ${quizQuestions.length}` : `${isReviewMode ? '復習問題' : '問題'} 0 / 0`;
+            prevButton.disabled = index === 0;
+            if (index === quizQuestions.length - 1) {
+                nextButton.style.display = 'none';
+                finishButton.style.display = 'inline-block';
+                finishButton.disabled = !answered;
+            } else {
+                nextButton.style.display = 'inline-block';
+                finishButton.style.display = 'none';
+            }
+            if (quizQuestions.length === 0) {
+                nextButton.style.display = 'none'; finishButton.style.display = 'none'; prevButton.disabled = true;
+            }
+        }
+
+        function selectOption(selectedOptionDiv, questionData) {
+            if (userAnswers[currentQuestionIndex]) return;
+            const selectedDrugName = selectedOptionDiv.dataset.optionName;
+            const isCorrect = selectedDrugName === questionData.correctAnswer;
+            userAnswers[currentQuestionIndex] = { questionIndex: currentQuestionIndex, selectedDrugName, typedAnswer: null, correctAnswerName: questionData.correctAnswer, isCorrect, questionText: questionData.questionText, drugDetails: questionData.drugDetails };
+            if (isCorrect) {
+                score++; selectedOptionDiv.classList.add('correct');
+                feedbackElement.textContent = '正解です！'; feedbackElement.classList.add('correct');
+            } else {
+                selectedOptionDiv.classList.add('incorrect');
+                feedbackElement.textContent = `不正解です。正解は「${questionData.correctAnswer}」です。`; feedbackElement.classList.add('incorrect');
+                optionsElement.childNodes.forEach(optDiv => { if (optDiv.dataset.optionName === questionData.correctAnswer) optDiv.classList.add('correct'); });
+            }
+            feedbackElement.style.display = 'block';
+            explanationElement.innerHTML = questionData.explanationText;
+            if (typeof renderMathInElement === 'function' && window.renderMathInElementOptions) renderMathInElement(explanationElement, window.renderMathInElementOptions);
+            explanationElement.style.display = 'block';
+            optionsElement.childNodes.forEach(optDiv => optDiv.classList.add('disabled', 'answered'));
+            nextButton.disabled = false;
+            if (currentQuestionIndex === quizQuestions.length - 1) finishButton.disabled = false;
+        }
+
+        function submitTypedAnswer() {
+            if (userAnswers[currentQuestionIndex]) return;
+            const questionData = quizQuestions[currentQuestionIndex];
+            const userAnswerText = typedAnswerInput.value.trim();
+            const normalizedUserAnswer = userAnswerText.toLowerCase().replace(/\s+/g, '');
+            const normalizedCorrectAnswer = questionData.correctAnswer.toLowerCase().replace(/\s+/g, '');
+            const isCorrect = normalizedUserAnswer === normalizedCorrectAnswer;
+            userAnswers[currentQuestionIndex] = { questionIndex: currentQuestionIndex, selectedDrugName: null, typedAnswer: userAnswerText, correctAnswerName: questionData.correctAnswer, isCorrect, questionText: questionData.questionText, drugDetails: questionData.drugDetails };
+            if (isCorrect) {
+                score++; feedbackElement.textContent = '正解です！'; feedbackElement.classList.add('correct');
+                typedAnswerInput.classList.add('border-green-500'); 
+            } else {
+                feedbackElement.textContent = `不正解です。正解は「${questionData.correctAnswer}」です。`; feedbackElement.classList.add('incorrect');
+                typedAnswerInput.classList.add('border-red-500'); 
+            }
+            feedbackElement.style.display = 'block';
+            explanationElement.innerHTML = questionData.explanationText;
+            if (typeof renderMathInElement === 'function' && window.renderMathInElementOptions) renderMathInElement(explanationElement, window.renderMathInElementOptions);
+            explanationElement.style.display = 'block';
+            typedAnswerInput.disabled = true; submitTypedAnswerBtn.disabled = true;
+            nextButton.disabled = false;
+            if (currentQuestionIndex === quizQuestions.length - 1) finishButton.disabled = false;
+        }
+        submitTypedAnswerBtn.addEventListener('click', submitTypedAnswer);
+        typedAnswerInput.addEventListener('keypress', e => { if (e.key === 'Enter' && !submitTypedAnswerBtn.disabled) submitTypedAnswer(); });
+
+        function showSummary() {
+            quizContainer.classList.remove('visible');
+            setTimeout(() => { quizContainer.style.display = 'none'; }, 500);
+            summaryContainer.style.display = 'block'; 
+            categorySelectContainer.style.display = 'none';
+            mainHeader.style.display = 'none';
+            correctCountElement.textContent = score;
+            totalQuestionsElement.textContent = quizQuestions.length;
+            accuracyElement.textContent = quizQuestions.length > 0 ? Math.round((score / quizQuestions.length) * 100) : 0;
+            reviewIncorrectContainer.innerHTML = ''; reviewSourceQuestions = [];
+            const incorrectAnswersForDisplay = userAnswers.filter(ans => ans && !ans.isCorrect);
+            if (incorrectAnswersForDisplay.length > 0) {
+                const reviewTitle = document.createElement('h3');
+                reviewTitle.textContent = '間違えた問題の復習:';
+                reviewTitle.className = 'text-lg font-semibold mt-6 mb-3 text-left text-gray-700';
+                reviewIncorrectContainer.appendChild(reviewTitle);
+                const reviewList = document.createElement('ul');
+                reviewList.className = 'list-none text-left space-y-3';
+                incorrectAnswersForDisplay.forEach(ans => {
+                    const listItem = document.createElement('li');
+                    const userAnswerDisplay = ans.typedAnswer !== null ? ans.typedAnswer : ans.selectedDrugName;
+                    listItem.innerHTML = `<strong class="text-base text-gray-800">問題 ${ans.questionIndex + 1}: ${ans.drugDetails.name}</strong> (あなたの回答: ${userAnswerDisplay})<br><div class="pl-2 mt-1 text-xs space-y-0.5"><p><strong>作用機序:</strong> ${ans.drugDetails.mechanism}</p><p><strong>薬理学的特徴:</strong> ${ans.drugDetails.characteristics}</p><p><strong>主な適応:</strong> ${ans.drugDetails.applications}</p></div>`;
+                    reviewList.appendChild(listItem);
+                    if (!reviewSourceQuestions.some(rq => rq.name === ans.drugDetails.name)) reviewSourceQuestions.push(ans.drugDetails);
+                });
+                reviewIncorrectContainer.appendChild(reviewList);
+                if (typeof renderMathInElement === 'function' && window.renderMathInElementOptions) renderMathInElement(reviewList, window.renderMathInElementOptions);
+                reviewIncorrectBtn.style.display = 'inline-block'; reviewIncorrectBtn.disabled = false;
+            } else if (quizQuestions.length > 0 && score === quizQuestions.length) {
+                const perfectMessage = document.createElement('p');
+                perfectMessage.textContent = '全問正解です！素晴らしい！';
+                perfectMessage.className = 'text-green-700 font-semibold mt-4 text-lg'; 
+                reviewIncorrectContainer.appendChild(perfectMessage);
+                reviewIncorrectBtn.style.display = 'none'; 
+            } else if (quizQuestions.length === 0) {
+                const noQuizMessage = document.createElement('p');
+                noQuizMessage.textContent = 'クイズは実行されませんでした。';
+                noQuizMessage.className = 'text-gray-600 font-semibold mt-4';
+                reviewIncorrectContainer.appendChild(noQuizMessage);
+                reviewIncorrectBtn.style.display = 'none';
+            } else { 
+                reviewIncorrectBtn.style.display = 'none';
+            }
+        }
+        
+        function resetQuizState() {
+            currentQuestionIndex = 0; score = 0; userAnswers = []; quizQuestions = []; 
+            progressBar.style.width = '0%'; questionCounterElement.textContent = '';
+            nextButton.style.display = 'inline-block'; finishButton.style.display = 'none';
+            nextButton.disabled = true; prevButton.disabled = true; isReviewMode = false; 
+            typedAnswerInput.classList.remove('border-green-500', 'border-red-500');
+            answerModeToggle.checked = false; 
+            updateToggleLabels(); 
+            
+            numQuestionsSlider.value = 10;
+            numQuestionsValueDisplay.textContent = `${numQuestionsSlider.value}問`;
+            allQuestionsCheckbox.checked = false;
+            numQuestionsSlider.disabled = false;
+
+            categoryCheckboxes.forEach(cb => cb.checked = false);
+            catAllCheckbox.checked = true; // Default to "All Categories"
+            handleCatAllChange(); // Update other checkboxes based on "All"
+        }
+
+        function startReviewQuiz() {
+            if (reviewSourceQuestions.length === 0) {
+                showTemporaryFeedback("復習する問題がありません。", 'incorrect', summaryContainer); return;
+            }
+            isReviewMode = true; answerMode = 'multiple-choice'; 
+            currentQuestionIndex = 0; score = 0; userAnswers = []; quizQuestions = []; progressBar.style.width = '0%';
+            let reviewDrugsToQuiz = [...reviewSourceQuestions]; shuffleArray(reviewDrugsToQuiz); 
+            generateQuestionsFromSource(reviewDrugsToQuiz); 
+            if (quizQuestions.length > 0) {
+                categorySelectContainer.style.display = 'none'; summaryContainer.style.display = 'none';
+                quizContainer.style.display = 'block'; setTimeout(() => { quizContainer.classList.add('visible'); }, 10);
+                mainHeader.style.display = 'none'; 
+                quizCardContent.style.transition = 'none'; quizCardContent.style.transform = 'translateX(0)'; quizCardContent.style.opacity = '0'; 
+                loadQuestion(0);
+                setTimeout(() => { quizCardContent.style.transition = 'transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)'; quizCardContent.style.opacity = '1'; }, 20);
+            } else {
+                showTemporaryFeedback("復習問題の生成に失敗しました。", 'incorrect', summaryContainer);
+                isReviewMode = false; mainHeader.style.display = 'block'; 
+            }
+        }
+
+        function showTemporaryFeedback(message, type, anchorElement = document.body) {
+            const tempFeedback = document.createElement('div');
+            tempFeedback.textContent = message;
+            tempFeedback.className = `feedback ${type}`;
+            tempFeedback.style.display = 'block'; tempFeedback.style.position = 'fixed';
+            tempFeedback.style.top = '20px'; tempFeedback.style.left = '50%';
+            tempFeedback.style.transform = 'translateX(-50%)'; tempFeedback.style.zIndex = '1000';
+            tempFeedback.style.padding = '1rem'; tempFeedback.style.borderRadius = '0.5rem';
+            tempFeedback.style.boxShadow = '0 4px 10px rgba(0,0,0,0.1)';
+            if (anchorElement && anchorElement.parentNode) anchorElement.parentNode.insertBefore(tempFeedback, anchorElement.nextSibling);
+            else document.body.prepend(tempFeedback);
+            setTimeout(() => {
+                tempFeedback.style.transition = 'opacity 0.5s ease'; tempFeedback.style.opacity = '0';
+                setTimeout(() => tempFeedback.remove(), 500);
+            }, 3500);
+        }
+
+        quizCardElement.addEventListener('touchstart', e => { if (isAnimating) return; touchstartX = e.changedTouches[0].screenX; }, {passive: true}); 
+        quizCardElement.addEventListener('touchend', e => { if (isAnimating) return; touchendX = e.changedTouches[0].screenX; handleSwipe(); }, {passive: true});
+        function handleSwipe() {
+            if (touchendX < touchstartX - swipeThreshold) { 
+                if (currentQuestionIndex < quizQuestions.length - 1) { if (!nextButton.disabled) animateAndLoadQuestion(currentQuestionIndex + 1, 'next'); }
+                else if (!finishButton.disabled && finishButton.style.display !== 'none') finishButton.click(); 
+            }
+            if (touchendX > touchstartX + swipeThreshold) { 
+                if (currentQuestionIndex > 0) animateAndLoadQuestion(currentQuestionIndex - 1, 'prev');
+            }
+        }
+        
+        // Answer Mode Toggle Logic
+        function updateToggleLabels() {
+            if (answerModeToggle.checked) { 
+                labelTypedInput.classList.add('active');
+                labelMultipleChoice.classList.remove('active');
+                answerMode = 'typed-input';
+            } else { 
+                labelMultipleChoice.classList.add('active');
+                labelTypedInput.classList.remove('active');
+                answerMode = 'multiple-choice';
+            }
+        }
+        answerModeToggle.addEventListener('change', updateToggleLabels);
+
+        // Number of Questions Slider Logic
+        numQuestionsSlider.addEventListener('input', function() {
+            if (!allQuestionsCheckbox.checked) {
+                numQuestionsValueDisplay.textContent = `${this.value}問`;
+            }
+        });
+
+        allQuestionsCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                numQuestionsSlider.disabled = true;
+                numQuestionsValueDisplay.textContent = '全て';
+            } else {
+                numQuestionsSlider.disabled = false;
+                numQuestionsValueDisplay.textContent = `${numQuestionsSlider.value}問`;
+            }
+        });
+
+        // Category Checkbox Logic
+        function handleCatAllChange() {
+            const isChecked = catAllCheckbox.checked;
+            categoryCheckboxes.forEach(cb => {
+                if (cb.id !== 'cat-all') {
+                    cb.checked = false; // Uncheck individual categories if "All" is checked
+                    cb.disabled = isChecked; // Disable individual categories if "All" is checked
+                }
+            });
+        }
+
+        catAllCheckbox.addEventListener('change', handleCatAllChange);
+
+        categoryCheckboxes.forEach(cb => {
+            if (cb.id !== 'cat-all') {
+                cb.addEventListener('change', () => {
+                    if (cb.checked) {
+                        catAllCheckbox.checked = false; // Uncheck "All" if an individual category is checked
+                        // Re-enable all individual checkboxes in case "All" was previously checked
+                        categoryCheckboxes.forEach(otherCb => {
+                            if (otherCb.id !== 'cat-all') otherCb.disabled = false;
+                        });
+                    }
+                });
+            }
+        });
+
+
+        startQuizButton.addEventListener('click', () => {
+            let selectedCategories = [];
+            if (catAllCheckbox.checked) {
+                selectedCategories.push("all");
+            } else {
+                categoryCheckboxes.forEach(cb => {
+                    if (cb.checked && cb.id !== 'cat-all') {
+                        selectedCategories.push(cb.value);
+                    }
+                });
+            }
+            // If "All" is unchecked and no individual categories are checked, default to "all"
+            if (!catAllCheckbox.checked && selectedCategories.length === 0) {
+                selectedCategories.push("all");
+            }
+
+
+            let numQuestions;
+            if (allQuestionsCheckbox.checked) {
+                numQuestions = "all";
+            } else {
+                numQuestions = numQuestionsSlider.value;
+            }
+            
+            resetQuizState(); // This will reset category checkboxes to default ("All" checked)
+                              // So, we need to get selectedCategories *before* resetQuizState if we want to preserve the current UI selection for the quiz start.
+                              // For now, let's get it before, and resetQuizState will handle the UI for the *next* setup.
+            
+            // Re-fetch selected categories after potential reset if behavior is to use current UI state
+            // For this implementation, we'll use the categories selected *right before* clicking start.
+            // The resetQuizState will set up the UI for a *subsequent* quiz.
+
+            if (initializeQuizData(selectedCategories, numQuestions)) { 
+                categorySelectContainer.style.display = 'none';
+                quizContainer.style.display = 'block'; setTimeout(() => { quizContainer.classList.add('visible'); }, 10); 
+                summaryContainer.style.display = 'none';
+                quizCardContent.style.transition = 'none'; quizCardContent.style.transform = 'translateX(0)';
+                quizCardContent.style.opacity = '0'; loadQuestion(0);
+                setTimeout(() => { quizCardContent.style.transition = 'opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)'; quizCardContent.style.opacity = '1'; }, 50); 
+            } else {
+                mainHeader.style.display = 'block';
+            }
+        });
+
+        nextButton.addEventListener('click', () => { if (currentQuestionIndex < quizQuestions.length - 1 && !nextButton.disabled) animateAndLoadQuestion(currentQuestionIndex + 1, 'next'); });
+        prevButton.addEventListener('click', () => { if (currentQuestionIndex > 0 && !prevButton.disabled) animateAndLoadQuestion(currentQuestionIndex - 1, 'prev'); });
+        finishButton.addEventListener('click', () => { showSummary(); if (isReviewMode) mainHeader.style.display = 'block'; });
+        restartButton.addEventListener('click', () => {
+            resetQuizState(); reviewSourceQuestions = []; mainHeader.style.display = 'block'; 
+            summaryContainer.style.display = 'none';
+            quizContainer.classList.remove('visible'); setTimeout(() => { quizContainer.style.display = 'none'; }, 500);
+            categorySelectContainer.style.display = 'block';
+        });
+        backToMenuButton.addEventListener('click', (e) => {
+            e.preventDefault(); resetQuizState(); reviewSourceQuestions = []; mainHeader.style.display = 'block'; 
+            quizContainer.classList.remove('visible'); setTimeout(() => { quizContainer.style.display = 'none'; }, 500);
+            summaryContainer.style.display = 'none'; categorySelectContainer.style.display = 'block';
+        });
+        reviewIncorrectBtn.addEventListener('click', () => { startReviewQuiz(); });
+
+        // Initial Page Setup
+        categorySelectContainer.style.display = 'block'; 
+        quizContainer.style.display = 'none'; 
+        quizContainer.classList.remove('visible');
+        summaryContainer.style.display = 'none'; 
+        mainHeader.style.display = 'block'; 
+        updateToggleLabels(); 
+        numQuestionsValueDisplay.textContent = `${numQuestionsSlider.value}問`; 
+        handleCatAllChange(); // Initialize category checkbox states
+
+    </script>
+</body>
+</html>
