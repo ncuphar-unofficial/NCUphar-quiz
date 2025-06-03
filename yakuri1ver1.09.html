@@ -319,7 +319,7 @@
             gap: 0.75rem;
             margin-top: 0.5rem;
         }
-        .category-option {
+        .category-option { /* This div is now the primary clickable target */
             display: flex;
             align-items: center;
             padding: 0.5rem 0.75rem;
@@ -338,12 +338,14 @@
             accent-color: #4b5563; 
             width: 1.1em;
             height: 1.1em;
+            pointer-events: none; /* Checkbox itself is not directly interactive */
         }
-        .category-option label {
+        .category-option label { /* Label is part of the visual, not directly interactive */
             font-size: 0.9rem;
             color: #374151; 
-            cursor: pointer;
+            /* cursor: pointer; Removed, parent div handles click */
             flex-grow: 1; 
+            pointer-events: none; /* Label itself is not directly interactive */
         }
         
         /* Number of Questions Slider Area */
@@ -722,120 +724,19 @@
         });
 
         const drugData = [
-            { name: "アセチルコリン", mechanism: "ムスカリン受容体刺激、ニコチン受容体刺激", characteristics: "神経伝達物質、コリンエステラーゼで速やかに分解される。運動神経終末部、自律神経節の節前線維終末部、副交感神経の節後線維終末部のシナプス小胞中に存在する。", applications: "神経伝達、血管拡張（内皮細胞M3受容体を介したNO遊離による）", category: "神経系", memo: "コリン作動性神経の伝達物質。", type: "直接型コリン作動薬", isCatecholamine: false, oralAdministration: false, tachyphylaxis: undefined, receptorActions: ["muscarinic_agonist", "nicotinic_agonist"], centralAction: false, metabolism: ["ChE"] },
-            { name: "アトロピン", mechanism: "ムスカリン受容体遮断", characteristics: "抗コリン作用、散瞳、抗痙攣。ムスカリン受容体拮抗薬。", applications: "散瞳、前投薬、鎮痙、徐脈治療、有機リン中毒解毒", category: "神経系", memo: "抗コリン薬の代表。副作用: 口渇、便秘、頻脈、排尿困難など。", type: "受容体遮断薬", isCatecholamine: false, oralAdministration: true, tachyphylaxis: undefined, receptorActions: ["muscarinic_antagonist"], centralAction: true, metabolism: [] },
-            { name: "パパベリン", mechanism: "ホスホジエステラーゼ阻害", characteristics: "平滑筋弛緩作用、血管拡張作用", applications: "血管拡張、鎮痙", category: "循環器系", memo: "", type: undefined, isCatecholamine: false, oralAdministration: undefined, tachyphylaxis: undefined, receptorActions: [], centralAction: undefined, metabolism: [] },
-            { name: "アドレナリン", mechanism: "アドレナリン受容体($\\alpha,\\beta$)直接刺激", characteristics: "内因性カテコールアミン。副腎髄質から分泌されるホルモン。$\\alpha$作用と$\\beta$作用を示す。血液脳関門を通過しないため、中枢作用はない。MAOやCOMTで不活性化される。消化管で不活性化されるため、一般的に経口投与は無効。心機能亢進($\\beta_1$)、血管収縮($\\alpha_1$)/拡張($\\beta_2$)、散瞳($\\alpha_1$)、血糖値上昇($\\beta_2$)、脂肪分解促進($\\beta_1/\\beta_3$)。", applications: "アナフィラキシー反応に対する補助治療、心停止の補助治療、気管支ぜん息、急性低血圧・ショック時の補助治療、局所麻酔薬の配合剤(血管収縮薬)", category: "交感神経刺激薬", memo: "$\\alpha$・$\\beta$両作用。アナフィラキシーの第一選択。", type: "直接型", isCatecholamine: true, oralAdministration: false, tachyphylaxis: false, receptorActions: ["alpha_agonist", "beta_agonist", "alpha1_agonist", "alpha2_agonist", "beta1_agonist", "beta2_agonist", "beta3_agonist"], centralAction: false, metabolism: ["MAO", "COMT"] },
-            { name: "ノルアドレナリン", mechanism: "アドレナリン受容体(主に$\\alpha$,一部$\\beta_1$)直接刺激", characteristics: "内因性カテコールアミン。アドレナリン作動性神経の伝達物質。$\\alpha$作用($\\alpha_1=\\alpha_2$)と$\\beta_1$作用はあるが、$\\beta_2$作用は非常に弱い。血液脳関門を通過しないため、中枢作用はない。皮膚血管や内臓血管の収縮作用($\\alpha_1$)、心収縮力の増強作用($\\beta_1$)。", applications: "急性低血圧・ショック時の補助治療", category: "交感神経刺激薬", memo: "主に$\\alpha$作用で昇圧作用が強い。アドレナリンよりショック時の補助治療に適する。", type: "直接型", isCatecholamine: true, oralAdministration: false, tachyphylaxis: false, receptorActions: ["alpha_agonist", "alpha1_agonist", "alpha2_agonist", "beta1_agonist"], centralAction: false, metabolism: ["MAO", "COMT"] },
-            { name: "プロプラノロール", mechanism: "非選択的$\\beta$受容体遮断", characteristics: "心筋収縮力・心拍数・心拍出量低下($\\beta_1$遮断)、レニン分泌抑制($\\beta_1$遮断)、脂肪分解抑制($\\beta_1$遮断)。血管平滑筋収縮の可能性($\\beta_2$遮断による相対的$\\alpha$作用)、気管支収縮($\\beta_2$遮断)、グリコーゲン分解抑制($\\beta_2$遮断)による血糖値低下。脂溶性で中枢に移行し中枢抑制作用を示す。", applications: "狭心症(労作型狭心症の第一選択薬)、不整脈(第Ⅱ群)、本態性高血圧症", category: "交感神経遮断薬", memo: "非選択的$\\beta$遮断薬の代表。気管支ぜん息に禁忌。うっ血性心不全に禁忌。糖尿病患者に注意(血糖低下副作用)。", type: "受容体遮断薬", isCatecholamine: false, oralAdministration: true, tachyphylaxis: undefined, receptorActions: ["beta_antagonist", "beta1_antagonist", "beta2_antagonist"], centralAction: true, metabolism: [], ISA: false },
-            { name: "フェントラミン", mechanism: "非選択的$\\alpha$受容体遮断薬 (イミダゾリン誘導体)", characteristics: "$\\alpha_1$受容体を競合的に遮断し血管拡張。$\\alpha_2$受容体も遮断するためNAd遊離が促進し心機能亢進の可能性。", applications: "褐色細胞腫", category: "交感神経遮断薬", memo: "$\\alpha_1$、$\\alpha_2$両方を遮断。アドレナリンの血圧反転を起こす。", type: "受容体遮断薬", isCatecholamine: false, oralAdministration: undefined, tachyphylaxis: undefined, receptorActions: ["alpha_antagonist", "alpha1_antagonist", "alpha2_antagonist"], centralAction: undefined, metabolism: [] },
-            { name: "イソプレナリン", mechanism: "非選択的$\\beta$受容体直接刺激 ($\\beta_1$及び$\\beta_2$作用)", characteristics: "$\\alpha$作用はない。外因性(合成)カテコールアミン。心機能亢進作用($\\beta_1$)、気管支拡張作用($\\beta_2$)、血管拡張作用($\\beta_2$)、脂肪分解促進($\\beta_1/\\beta_3$)。", applications: "気管支ぜん息、急性・慢性気管支炎に伴う気管支痙攣の緩解(ネブライザーによるエアゾル吸入)、徐脈による発作の防止", category: "交感神経刺激薬", memo: "$\\beta_1$、$\\beta_2$両方を刺激。", type: "直接型", isCatecholamine: true, oralAdministration: false, tachyphylaxis: false, receptorActions: ["beta_agonist", "beta1_agonist", "beta2_agonist"], centralAction: false, metabolism: ["MAO", "COMT"] },
-            { name: "スキサメトニウム", mechanism: "ニコチン性アセチルコリン($\\mathrm{N_M}$)受容体刺激(持続的脱分極)", characteristics: "脱分極性筋弛緩。アセチルコリン2分子結合構造。血漿ChEで分解されるため作用時間が短い(約5分)。悪性高熱症・緑内障に禁忌。", applications: "麻酔時の筋弛緩、気管内挿管時の筋弛緩", category: "末梢性筋弛緩薬", memo: "脱分極性筋弛緩薬。サクシニルコリン。作用発現が速く、持続が短い。拮抗薬なし。", type: undefined, isCatecholamine: false, oralAdministration: false, tachyphylaxis: undefined, receptorActions: ["Nm_agonist"], centralAction: false, metabolism: ["plasma_ChE"] },
-            { name: "ベクロニウム", mechanism: "ニコチン性アセチルコリン($\\mathrm{N_M}$)受容体競合的遮断", characteristics: "非脱分極性筋弛緩。ステロイド骨格。ヒスタミン遊離作用弱い。作用時間約1時間。", applications: "全身麻酔時の筋弛緩", category: "末梢性筋弛緩薬", memo: "非脱分極性筋弛緩薬。スガマデクスで拮抗可能。", type: undefined, isCatecholamine: false, oralAdministration: false, tachyphylaxis: undefined, receptorActions: ["Nm_antagonist"], centralAction: false, metabolism: [] },
-            { name: "エドロホニウム", mechanism: "可逆的コリンエステラーゼ阻害", characteristics: "抗コリンエステラーゼ作用。骨格筋直接刺激作用。作用持続時間非常に短い。", applications: "重症筋無力症の診断", category: "その他", memo: "テンシロンテストに使用。", type: undefined, isCatecholamine: false, oralAdministration: false, tachyphylaxis: undefined, receptorActions: [], centralAction: false, metabolism: [] },
-            { name: "ジアゼパム", mechanism: "$\\mathrm{GABA_A}$受容体アロステリック修飾 (ベンゾジアゼピン結合部位)", characteristics: "抗不安、筋弛緩、抗痙攣", applications: "不安障害、てんかん、筋痙攣", category: "神経系", memo: "ベンゾジアゼピン系抗不安薬。", type: undefined, isCatecholamine: false, oralAdministration: true, tachyphylaxis: undefined, receptorActions: ["GABA_A_modulator"], centralAction: true, metabolism: [] },
-            { name: "タムスロシン", mechanism: "選択的$\\alpha_{1A}$受容体遮断", characteristics: "前立腺・尿道平滑筋弛緩。前立腺$\\alpha_{1A}$受容体への選択性が高い。$\\alpha_{1B}$受容体(血管)遮断作用が弱いので、血圧下降の副作用も弱い。", applications: "前立腺肥大症に伴う排尿障害", category: "交感神経遮断薬", memo: "$\\alpha_{1A}$選択性が高く、血管への影響が少ない。", type: "受容体遮断薬", isCatecholamine: false, oralAdministration: true, tachyphylaxis: undefined, receptorActions: ["alpha1A_antagonist"], centralAction: false, metabolism: [] },
-            { name: "ニフェジピン", mechanism: "$\\mathrm{Ca^{2+}}$チャネル遮断 (L型)", characteristics: "血管拡張、血圧低下、ジヒドロピリジン系", applications: "高血圧、狭心症", category: "循環器系", memo: "ジヒドロピリジン系$\\mathrm{Ca^{2+}}$拮抗薬。", type: undefined, isCatecholamine: false, oralAdministration: true, tachyphylaxis: undefined, receptorActions: [], centralAction: false, metabolism: [] },
-            { name: "エフェドリン", mechanism: "混合型アドレナリン作動薬 (直接$\\alpha\\beta$受容体刺激＋ノルアドレナリン遊離促進)", characteristics: "麻黄に含まれるアルカロイド。$\\alpha$作用(血管収縮)はノルアドレナリンの遊離を介する間接作用でタキフィラキシーあり。$\\beta$作用(気管支拡張)は直接作用でタキフィラキシーなし。中枢興奮作用を示す。経口投与可（消化管で分解されない、COMTやMAOで分解されないため作用が持続性）。", applications: "気管支ぜん息、低血圧、鼻閉", category: "交感神経刺激薬", memo: "麻黄の成分。経口投与可能。", type: "混合型", isCatecholamine: false, oralAdministration: true, tachyphylaxis: true, receptorActions: ["alpha_agonist", "beta_agonist", "NA_releaser"], centralAction: true, metabolism: ["not_MAO", "not_COMT"] },
-            { name: "ピロカルピン", mechanism: "ムスカリン性アセチルコリン受容体作動薬", characteristics: "縮瞳、発汗・唾液分泌促進。眼房水の排出促進。", applications: "緑内障、口腔乾燥症(シェーグレン症候群)", category: "神経系", memo: "", type: undefined, isCatecholamine: false, oralAdministration: true, tachyphylaxis: undefined, receptorActions: ["muscarinic_agonist"], centralAction: true, metabolism: [] },
-            { name: "ブチルスコポラミン", mechanism: "ムスカリン受容体遮断", characteristics: "抗コリン作用、鎮痙。4級アンモニウム化合物で中枢作用弱い。", applications: "消化管痙攣、胆道・尿路痙攣", category: "神経系", memo: "4級アンモニウム構造のため中枢作用は弱い。", type: "受容体遮断薬", isCatecholamine: false, oralAdministration: true, tachyphylaxis: undefined, receptorActions: ["muscarinic_antagonist"], centralAction: false, metabolism: [] },
-            { name: "ロピバカイン", mechanism: "電位依存性$\\mathrm{Na^{+}}$チャネル遮断", characteristics: "アミド型、長時間作用型(3-5時間)、ブピバカインのS体で心毒性低い", applications: "硬膜外麻酔、伝達麻酔、浸潤麻酔", category: "局所麻酔薬", memo: "【アミド型】「網戸におしり、バカ～ン♡」の仲間。ブピバカインのS体で心毒性が低い。名前に濁音あり。" },
-            { name: "リドカイン", mechanism: "電位依存性$\\mathrm{Na^{+}}$チャネル遮断", characteristics: "アミド型、中時間作用型(1.5-2時間)、抗不整脈作用($\\mathrm{Ib}$群)、安全性高い", applications: "硬膜外麻酔、伝達麻酔、浸潤麻酔、表面麻酔、心室性不整脈", category: "局所麻酔薬", memo: "【アミド型】「網戸におしり、バカ～ン♡」の「り」。局所麻酔薬の代表。名前に濁音あり。" },
-            { name: "プロカイン", mechanism: "電位依存性$\\mathrm{Na^{+}}$チャネル遮断", characteristics: "エステル型、短時間作用型(約1時間)、血中ChEで分解、アレルギー反応注意、組織浸透性低い", applications: "浸潤麻酔、伝達麻酔、硬膜外麻酔、脊椎麻酔", category: "局所麻酔薬", memo: "【エステル型】「プロエステ、手とか安心効果」の「プロ」。名前に濁音なし。血漿ChEで分解、作用短くアレルギー注意。" },
-            { name: "テトラカイン", mechanism: "電位依存性$\\mathrm{Na^{+}}$チャネル遮断", characteristics: "エステル型、プロカインより作用時間長い(1.5-2時間)、効力・毒性強い", applications: "脊椎麻酔、硬膜外麻酔、伝達麻酔、浸潤麻酔、表面麻酔", category: "局所麻酔薬", memo: "【エステル型】「プロエステ、手とか安心効果」の「手と」。名前に濁音なし。プロカインより強力・長時間。" },
-            { name: "コカイン", mechanism: "電位依存性$\\mathrm{Na^{+}}$チャネル遮断、NA再取込阻害", characteristics: "エステル型。局所麻酔作用。血管収縮作用。中枢興奮作用。精神依存性(麻薬指定)。チラミンと同様に神経終末に取り込まれ、ノルアドレナリン遊離を介して作用する可能性もあるが、主にはアミントランスポーター阻害によるNA再取り込み阻害。タキフィラキシーを起こす可能性（間接作用部分）。", applications: "表面麻酔(眼科・耳鼻科)", category: "局所麻酔薬", memo: "【エステル型】「プロエステ、手とか安心効果」の「効果」。名前に濁音なし。麻薬指定。血管収縮作用も併せ持つ。" },
-            { name: "カプサイシン", mechanism: "$\\mathrm{TRPV_1}$受容体作動", characteristics: "知覚神経刺激(灼熱感)、鎮痛作用 (バニロイド受容体作動薬)", applications: "疼痛緩和 (外用剤・軟膏、神経障害性疼痛)", category: "その他", memo: "" },
-            { name: "ジブカイン", mechanism: "電位依存性$\\mathrm{Na^{+}}$チャネル遮断", characteristics: "アミド型、効力最強、毒性も強い、作用時間長い", applications: "脊椎麻酔、伝達・浸潤麻酔(歯科領域)、表面麻酔", category: "局所麻酔薬", memo: "【アミド型】「網戸におしり、バカ～ン♡」の「し」。効力・毒性ともに最強クラス。名前に濁音あり。" },
-            { name: "レボブピバカイン", mechanism: "電位依存性$\\mathrm{Na^{+}}$チャネル遮断", characteristics: "アミド型、長時間作用型、ブピバカインのS体、心毒性低い", applications: "硬膜外麻酔、神経ブロック", category: "局所麻酔薬", memo: "【アミド型】ブピバカインのS体（左旋性）で心毒性を軽減。ロピバカインと類似。名前に濁音あり。" },
-            { name: "メピバカイン", mechanism: "電位依存性$\\mathrm{Na^{+}}$チャネル遮断", characteristics: "アミド型、中時間作用型(1.5-2時間)、血管収縮作用あり(アドレナリン添加不要な場合も)、アナフィラキシー注意", applications: "硬膜外麻酔、伝達麻酔、浸潤麻酔", category: "局所麻酔薬", memo: "【アミド型】「網戸におしり、バカ～ン♡」の「バカ～ン」の一員。リドカインと似た作用時間。名前に濁音あり。" },
-            { name: "プリロカイン", mechanism: "電位依存性$\\mathrm{Na^{+}}$チャネル遮断", characteristics: "アミド型、中時間作用型、メトヘモグロビン血症に注意", applications: "浸潤麻酔、伝達麻酔、歯科領域の浸潤麻酔", category: "局所麻酔薬", memo: "【アミド型】だが「濁音なし」の例外。メトヘモグロビン血症の副作用に注意。" },
-            { name: "アルチカイン", mechanism: "電位依存性$\\mathrm{Na^{+}}$チャネル遮断", characteristics: "アミド型（チオフェン環を持つ）、強酸性条件下でも効果発揮、組織浸透性高い", applications: "歯科麻酔、口腔粘膜局所麻酔", category: "局所麻酔薬", memo: "【アミド型】だが「濁音なし」の例外。チオフェン環構造が特徴で歯科でよく用いられる。" },
-            { name: "ボツリヌス毒素A型", mechanism: "アセチルコリン遊離抑制 (神経終末)", characteristics: "ボツリヌス菌産生毒素、効果3-4ヶ月持続", applications: "眼瞼痙攣、片側顔面痙攣、痙性斜頸、表情皺(眉間・目尻)", category: "末梢性筋弛緩薬", memo: "" },
-            { name: "ロクロニウム", mechanism: "ニコチン性アセチルコリン($\\mathrm{N_M}$)受容体競合的遮断", characteristics: "非脱分極性筋弛緩、ステロイド骨格、作用発現速い、スガマデクスで拮抗", applications: "全身麻酔時の筋弛緩", category: "末梢性筋弛緩薬", memo: "" },
-            { name: "ベシル酸シスアトラクリウム", mechanism: "ニコチン性アセチルコリン($\\mathrm{N_M}$)受容体競合的遮断", characteristics: "非脱分極性筋弛緩、アトラクリウムの異性体、ホフマン分解、副作用少ない", applications: "全身麻酔時の筋弛緩", category: "末梢性筋弛緩薬", memo: "" },
-            { name: "ダントロレンナトリウム", mechanism: "筋小胞体リアノジン受容体($\\mathrm{Ca^{2+}}$遊離チャネル)抑制", characteristics: "骨格筋の興奮収縮連関を抑制、骨格筋直接電気刺激による収縮も抑制", applications: "悪性高熱症、悪性症候群、痙性麻痺", category: "末梢性筋弛緩薬", memo: "" },
-            { name: "スガマデクス", mechanism: "ロクロニウム・ベクロニウムを包接化し不活性化", characteristics: "修飾$\\gamma$シクロデキストリン、筋弛緩回復薬", applications: "ロクロニウム・ベクロニウムによる筋弛緩からの回復", category: "その他", memo: "" },
-            { name: "テトロドトキシン", mechanism: "電位依存性$\\mathrm{Na^{+}}$チャネル遮断 (細胞外から蓋をする)", characteristics: "フグ毒、$\\mathrm{Na^{+}}$チャネル選択性高い、強力な局所麻酔作用だが臨床応用なし", applications: "薬理学的試薬", category: "その他", memo: "" },
-            { name: "ヘミコリニウム", mechanism: "コリン作動性神経終末へのコリン取り込み阻害 (ACh合成阻害)", characteristics: "現在使用されていない", applications: "薬理学的試薬", category: "神経系", memo: "" },
-            { name: "ツボクラリン", mechanism: "ニコチン性アセチルコリン($\\mathrm{N_M}$)受容体競合的遮断", characteristics: "d-ツボクラリン、矢毒クラーレ主成分、ヒスタミン遊離作用、自律神経節遮断作用、現在使用されていない", applications: "（歴史的）筋弛緩薬", category: "末梢性筋弛緩薬", memo: "" },
-            { name: "ガラミン", mechanism: "ニコチン性アセチルコリン($\\mathrm{N_M}$)受容体競合的遮断", characteristics: "Daniel Bovet開発、ツボクラリンより弱い、ヒスタミン遊離作用なし、心臓副交感神経遮断で血圧・心拍数上昇、現在使用されていない", applications: "（歴史的）筋弛緩薬", category: "末梢性筋弛緩薬", memo: "" },
-            { name: "パンクロニウム", mechanism: "ニコチン性アセチルコリン($\\mathrm{N_M}$)受容体競合的遮断", characteristics: "非脱分極性筋弛緩、ステロイド骨格、ツボクラリンより強力、作用時間長い、ヒスタミン遊離・自律神経節遮断作用弱い、現在使用されていない", applications: "（歴史的）筋弛緩薬", category: "末梢性筋弛緩薬", memo: "" },
-            { name: "ジピベフリン", mechanism: "$\\alpha/\\beta$受容体刺激薬", characteristics: "アドレナリンのプロドラッグ、MAO・COMTによる代謝を受けにくい", applications: "低血圧、緑内障", category: "交感神経刺激薬", memo: "" },
-            { name: "ナファゾリン", mechanism: "$\\alpha_1$受容体直接刺激薬", characteristics: "細動脈血管の収縮", applications: "表在性充血(点眼)、鼻粘膜充血", category: "交感神経刺激薬", memo: "" },
-            { name: "フェニレフリン", mechanism: "$\\alpha_1$受容体直接刺激薬", characteristics: "血管収縮、瞳孔散大筋の収縮", applications: "低血圧、散瞳薬、局所麻酔薬の配合剤", category: "交感神経刺激薬", memo: "" },
-            { name: "メトキサミン", mechanism: "$\\alpha_1$受容体直接刺激薬", characteristics: "末梢血管の収縮", applications: "低血圧", category: "交感神経刺激薬", memo: "" },
-            { name: "クロニジン", mechanism: "中枢性$\\alpha_2$受容体刺激薬 (一部末梢性)", characteristics: "眼房水の産生抑制・排出促進、鎮静、鎮痛", applications: "高血圧、緑内障、片頭痛予防、薬物離脱症状緩和", category: "交感神経遮断薬", memo: "" },
-            { name: "メチルドパ", mechanism: "中枢性$\\alpha_2$受容体刺激薬 ($\\alpha$-メチルNAに変換)", characteristics: "ドパ脱炭酸酵素により代謝され作用", applications: "妊娠高血圧", category: "交感神経遮断薬", memo: "" },
-            { name: "ドブタミン", mechanism: "$\\beta_1$受容体直接刺激薬", characteristics: "合成カテコールアミン、心筋収縮力を増強する", applications: "急性循環不全、うっ血性心不全、心原性ショック", category: "交感神経刺激薬", memo: "" },
-            { name: "デノパミン", mechanism: "$\\beta_1$受容体直接刺激薬", characteristics: "非カテコールアミン、経口投与可能、心筋収縮力を増強する", applications: "慢性心不全", category: "交感神経刺激薬", memo: "" },
-            { name: "サルブタモール", mechanism: "選択的$\\beta_2$受容体刺激薬", characteristics: "第二世代の$\\beta_2$作用薬、中時間作用型、気管支拡張", applications: "気管支ぜん息、気管支炎、COPD", category: "交感神経刺激薬", memo: "" },
-            { name: "ホルモテロール", mechanism: "選択的$\\beta_2$受容体刺激薬", characteristics: "第三世代の$\\beta_2$作用薬、長時間作用型、気管支拡張", applications: "気管支ぜん息(発作治療・管理)、COPD", category: "交感神経刺激薬", memo: "" },
-            { name: "クレンブテロール", mechanism: "選択的$\\beta_2$受容体刺激薬", characteristics: "気管支平滑筋の弛緩、排尿筋弛緩", applications: "気管支ぜん息、気管支炎、腹圧性尿失禁", category: "交感神経刺激薬", memo: "" },
-            { name: "リトドリン", mechanism: "選択的$\\beta_2$受容体刺激薬", characteristics: "子宮平滑筋$\\beta_2$受容体に選択性が高い、子宮弛緩", applications: "切迫流産・早産", category: "交感神経刺激薬", memo: "" },
-            { name: "ミラベグロン", mechanism: "選択的$\\beta_3$受容体刺激薬", characteristics: "膀胱平滑筋の$\\beta_3$受容体を刺激し、膀胱を弛緩させることで、畜尿機能を亢進する。", applications: "過活動膀胱における尿意切迫感、頻尿、切迫性尿失禁", category: "交感神経刺激薬", memo: "" },
-            { name: "チラミン", mechanism: "間接型アドレナリン作動薬", characteristics: "アミントランスポーターを介して交感神経終末に入り、交感神経節後線維終末からノルアドレナリンを遊離して交感神経興奮作用(昇圧)を示す。コカインによって神経終末に取り込まれなくなる。レセルピンにより伝達物質を枯渇させると作用が消失する。MAOで分解されやすい。タキフィラキシーを起こす。チーズに多く含まれ、MAO阻害薬と同時摂取で急激な昇圧の危険性(薬物一食品相互作用)。", applications: "医薬品ではない (チーズ、赤ワイン等に含有)", category: "その他", memo: "" },
-            { name: "メタンフェタミン", mechanism: "間接型アドレナリン作動薬", characteristics: "交感神経節後線維終末よりノルアドレナリンの遊離を促進して、交感神経興奮作用を示す。タキフィラキシーを起こす。視床下部に働き、食欲減退効果を示す。大脳皮質興奮作用が強いので、覚せい剤に指定されている。", applications: "ナルコレプシー(過眠症)、昏睡、手術中・手術後の虚脱状態からの回復促進、麻酔からの覚醒促進", category: "神経系", memo: "副作用: 精神依存、耐性。アンフェタミンも同様の作用。" },
-            { name: "ドパミン", mechanism: "混合型アドレナリン作動薬", characteristics: "内因性カテコールアミン。少量:腎血管D1受容体に作用し腎血管や内臓血管の拡張、血流量増加。中等量:心臓$\\beta_1$受容体を刺激し心筋収縮力増強、心拍出量増加、神経終末からノルアドレナリン遊離促進(間接作用)。大量:$\\alpha_1$受容体に作用し血管収縮。", applications: "急性循環不全(心原性ショック、出血性ショック)", category: "交感神経刺激薬", memo: "ドカルパミンはドパミンのプロドラッグ。" },
-            { name: "エルゴタミン", mechanism: "$\\alpha$受容体遮断薬、$5-HT_{1B/1D}$受容体作動薬", characteristics: "麦角アルカロイド。血管選択性 ($\\alpha_1/5-HT$受容体の部分アゴニスト)。脳血管収縮作用。", applications: "片頭痛(発作時)、起立性低血圧症", category: "神経系", memo: "" },
-            { name: "エルゴメトリン", mechanism: "$\\alpha$受容体遮断薬、子宮平滑筋直接収縮", characteristics: "麦角アルカロイド。子宮選択性が高い(筋直接作用)。", applications: "分娩後の弛緩性子宮出血", category: "その他", memo: "" },
-            { name: "プラゾシン", mechanism: "選択的$\\alpha_1$受容体遮断薬", characteristics: "血管$\\alpha_1$受容体を選択的に遮断し、血管を拡張させ、血圧を下降させる。$\\alpha_2$受容体遮断作用が極めて弱いので、心機能に影響を与えず、頻脈を起こしにくい。", applications: "高血圧症、前立腺肥大症に伴う排尿障害", category: "交感神経遮断薬", memo: "副作用: 起立性低血圧。ブナゾシン、テラゾシン、ウラピジル、ドキサゾシンも同様の作用機序と適応を持つ。" },
-            { name: "ウラピジル", mechanism: "選択的$\\alpha_1$受容体遮断薬、$5-HT_{1A}$受容体作動", characteristics: "血管拡張作用。", applications: "高血圧症、前立腺肥大症に伴う排尿障害", category: "交感神経遮断薬", memo: "" },
-            { name: "ピンドロール", mechanism: "非選択的$\\beta$受容体遮断薬 (ISA+)", characteristics: "プロプラノロールと同様の作用を示すが、弱い$\\beta$受容体刺激作用(内因性交感神経刺激作用: ISA 約0.6)を併せもつ。心臓$\\beta_1$受容体刺激により心機能の過度の抑制を回避。血管$\\beta_2$受容体刺激により血管収縮が起こりにくい。", applications: "高血圧症、狭心症、頻脈性不整脈", category: "交感神経遮断薬", memo: "徐脈患者や高齢者にも使いやすい。" },
-            { name: "チモロール", mechanism: "非選択的$\\beta$受容体遮断薬 (ISA-)", characteristics: "内因性交感神経刺激作用(ISA)無し。効力が強い。眼房水の産生抑制。", applications: "緑内障、高眼圧症、(高血圧、狭心症)", category: "交感神経遮断薬", memo: "" },
-            { name: "ニプラジロール", mechanism: "非選択的$\\beta$受容体遮断薬 ($\\alpha_1$遮断作用も, ISA-)", characteristics: "NO遊離作用。ニトロ基を持つ。眼房水産生抑制。", applications: "高血圧症、狭心症、緑内障", category: "交感神経遮断薬", memo: "" },
-            { name: "ベタキソロール", mechanism: "選択的$\\beta_1$受容体遮断薬 (ISA-)", characteristics: "眼房水の産生抑制。", applications: "本態性高血圧症、腎実質性高血圧症、狭心症、緑内障", category: "交感神経遮断薬", memo: "" },
-            { name: "エスモロール", mechanism: "選択的$\\beta_1$受容体遮断薬 (ISA-)", characteristics: "超短時間作用型。エステラーゼで分解される。", applications: "上室性頻脈性不整脈(手術時)", category: "交感神経遮断薬", memo: "ランジオロールも同様の短時間作用型$\\beta_1$遮断薬。" },
-            { name: "カルベジロール", mechanism: "非選択的$\\beta$受容体遮断薬 ($\\alpha_1$遮断作用も)", characteristics: "抗酸化作用。血管拡張作用。血圧低下による反射性頻脈は起こらない。", applications: "本態性高血圧症、腎実質性高血圧症、狭心症、慢性心不全", category: "交感神経遮断薬", memo: "喘息患者には禁忌。" },
-            { name: "ラベタロール", mechanism: "非選択的$\\beta$受容体遮断薬 ($\\alpha_1$遮断作用も)", characteristics: "ISAをわずかに有する。血管$\\alpha_1$受容体遮断により血管拡張、血圧降下。心臓$\\beta_1$受容体遮断により心拍出量減少。血圧低下による反射性頻脈は起こらない。腎傍糸球体細胞$\\beta_1$受容体遮断によりレニン分泌抑制。", applications: "本態性高血圧症(高血圧救急症も)、狭心症", category: "交感神経遮断薬", memo: "アモスラロール、アロチノロールも類似の$\\alpha/\\beta$遮断薬。" },
-            { name: "アミノ安息香酸エチル", mechanism: "電位依存性$\\mathrm{Na^{+}}$チャネル遮断", characteristics: "エステル型、水に難溶、外用剤(軟膏)・内服(鎮痛)", applications: "表面麻酔(鎮痒、胃炎鎮痛)", category: "局所麻酔薬", memo: "【エステル型】「プロエステ、手とか安心効果」の「安」。ベンゾカイン。名前に濁音なし。" },
-            { name: "オキシブプロカイン", mechanism: "電位依存性$\\mathrm{Na^{+}}$チャネル遮断", characteristics: "エステル型、プロカインより速やかに分解", applications: "表面麻酔(眼科領域)", category: "局所麻酔薬", memo: "【エステル型】だが「濁音あり」の例外。「オキシ」は「Oxy（眼）」に使う。「ブプロカイン」と名前が似ているがエステル型。" },
-            { name: "オキセサゼイン", mechanism: "電位依存性$\\mathrm{Na^{+}}$チャネル遮断", characteristics: "アミド型、強酸性下でも作用、胃粘膜局所麻酔薬、ガストリン遊離抑制", applications: "食道炎・胃炎・胃潰瘍等の疼痛・嘔吐・げっぷ等", category: "局所麻酔薬", memo: "【アミド型】「網戸におしり、バカ～ン♡」の「お」。「オキセ」は「胃」に効く。名前に濁音「ゼ」あり。ストロカイン。" },
-            { name: "ブピバカイン", mechanism: "電位依存性$\\mathrm{Na^{+}}$チャネル遮断", characteristics: "アミド型、長時間作用型(3-5時間)、血管収縮薬なしでも作用時間長い、心毒性に注意", applications: "脊椎麻酔、伝達麻酔、硬膜外麻酔", category: "局所麻酔薬", memo: "【アミド型】「網戸におしり、バカ～ン♡」の「バカ～ン」の一員。「ブピ」っと太く長く効くが、心「毒」性「高」。マーカイン。名前に濁音「ブ」「ピ」「バ」あり。" },
-            { name: "フィゾスチグミン", mechanism: "可逆的コリンエステラーゼ阻害", characteristics: "カラバル豆アルカロイド。3級アミンで血液脳関門通過。現在使用されていない。", applications: "（歴史的）抗コリン薬中毒の解毒", category: "神経系", memo: "" },
-            { name: "ネオスチグミン", mechanism: "可逆的コリンエステラーゼ阻害", characteristics: "合成4級アンモニウム。骨格筋直接刺激作用($\\mathrm{N_M}, \\mathrm{N_N}$受容体)。", applications: "重症筋無力症、クラーレ剤による呼吸抑制、麻痺性イレウス", category: "神経系", memo: "" },
-            { name: "ジスチグミン", mechanism: "可逆的コリンエステラーゼ阻害", characteristics: "合成4級アンモニウム。骨格筋直接刺激作用。作用時間長い。", applications: "重症筋無力症、排尿困難(術後・神経因性膀胱)、緑内障", category: "神経系", memo: "" },
-            { name: "ピリドスチグミン", mechanism: "可逆的コリンエステラーゼ阻害", characteristics: "合成4級アンモニウム。骨格筋直接刺激作用。", applications: "重症筋無力症", category: "神経系", memo: "" },
-            { name: "アンベノニウム", mechanism: "可逆的コリンエステラーゼ阻害", characteristics: "合成4級アンモニウム。骨格筋直接刺激作用。", applications: "重症筋無力症", category: "神経系", memo: "" },
-            { name: "$\\alpha$-ブンガロトキシン", mechanism: "ニコチン性アセチルコリン($\\mathrm{N_M}$)受容体非競合的・不可逆的遮断", characteristics: "ヘビ毒の一種", applications: "研究用試薬", category: "その他", memo: "" },
-            { name: "ミドドリン", mechanism: "$\\alpha_1$受容体直接刺激薬（活性代謝物を介して）", characteristics: "脱グリシン化を経て活性代謝物デスグリミドドリンとなるプロドラッグ。", applications: "本態性低血圧症、起立性低血圧症", category: "交感神経刺激薬", memo: "低血圧症治療薬（非カテコールアミン系）。" },
-            { name: "エチレフリン", mechanism: "$\\alpha$作用と$\\beta$作用を示す", characteristics: "COMTによる代謝を受けにくいため、経口投与可能で、作用は持続性。", applications: "本態性・起立性低血圧症、急性低血圧・ショック時の補助治療", category: "交感神経刺激薬", memo: "低血圧症治療薬（非カテコールアミン系）。" },
-            { name: "イソクスプリン", mechanism: "$\\beta_2$受容体刺激による血管拡張・子宮弛緩", characteristics: "血管拡張作用($\\beta_2$)。子宮弛緩作用($\\beta_2$)。", applications: "末梢循環障害、切迫流産・早産(子宮収縮の抑制)", category: "交感神経刺激薬", memo: "" },
-            { name: "トリメトキノール", mechanism: "$\\beta$受容体刺激薬", characteristics: "第一世代の$\\beta_2$選択的作動薬だが、選択性は低い。短時間型。", applications: "気管支ぜん息など（現在はあまり使用されない）", category: "交感神経刺激薬", memo: "" },
-            { name: "テルブタリン", mechanism: "選択的$\\beta_2$受容体刺激薬", characteristics: "第二世代の$\\beta_2$選択的作動薬。中時間型。", applications: "気管支ぜん息など", category: "交感神経刺激薬", memo: "" },
-            { name: "ツロブテロール", mechanism: "選択的$\\beta_2$受容体刺激薬", characteristics: "第三世代の$\\beta_2$選択的作動薬。長時間型(貼付剤の場合)。", applications: "気管支ぜん息、急性・慢性気管支炎、肺気腫", category: "交感神経刺激薬", memo: "" },
-            { name: "フェノテロール", mechanism: "選択的$\\beta_2$受容体刺激薬", characteristics: "第三世代の$\\beta_2$作用薬。長時間型。", applications: "気管支ぜん息、急性・慢性気管支炎、肺気腫", category: "交感神経刺激薬", memo: "" },
-            { name: "プロカテロール", mechanism: "選択的$\\beta_2$受容体刺激薬", characteristics: "第三世代の$\\beta_2$選択的作動薬。長時間型。", applications: "気管支ぜん息、急性・慢性気管支炎、肺気腫", category: "交感神経刺激薬", memo: "" },
-            { name: "サルメテロール", mechanism: "選択的$\\beta_2$受容体刺激薬", characteristics: "第三世代の$\\beta_2$選択的作動薬。長時間作用型の吸入薬。", applications: "気管支ぜん息(予防)、慢性閉塞性肺疾患(COPD)", category: "交感神経刺激薬", memo: "" },
-            { name: "インダカテロール", mechanism: "選択的$\\beta_2$受容体刺激薬", characteristics: "第三世代の$\\beta_2$選択的作動薬。超長時間作用型。", applications: "慢性閉塞性肺疾患(COPD)", category: "交感神経刺激薬", memo: "" },
-            { name: "ビベグロン", mechanism: "選択的$\\beta_3$受容体刺激薬", characteristics: "膀胱平滑筋の$\\beta_3$受容体を刺激し、膀胱を弛緩させることで、畜尿機能を亢進する。", applications: "過活動膀胱における尿意切迫感、頻尿、切迫性尿失禁", category: "交感神経刺激薬", memo: "" },
-            { name: "アンフェタミン", mechanism: "間接型アドレナリン作動薬", characteristics: "交感神経節後線維終末よりノルアドレナリンの遊離を促進して、交感神経興奮作用を示す。タキフィラキシーを起こす。視床下部に働き、食欲減退効果を示す。大脳皮質興奮作用が強いので、覚せい剤に指定されている。", applications: "ナルコレプシーなど（現在は使用制限）", category: "神経系", memo: "副作用: 精神依存、耐性。" },
-            { name: "メチルエフェドリン", mechanism: "混合型アドレナリン作動薬", characteristics: "エフェドリンのメチル化体。$\\alpha$作用(血管収縮)は間接作用でタキフィラキシーあり。$\\beta$作用(気管支拡張)は直接作用でタキフィラキシーなし。中枢興奮作用はエフェドリンより弱い。経口投与可。COMTやMAOで分解されないため作用持続性。", applications: "気管支ぜん息、咳嗽", category: "交感神経刺激薬", memo: "" },
-            { name: "ドカルパミン", mechanism: "ドパミンのプロドラッグ", characteristics: "体内でドパミンに変換されて作用を示す。", applications: "急性循環不全などドパミンの適応に準じる（経口投与可能な利点）", category: "交感神経刺激薬", memo: "" },
-            { name: "アメジニウム", mechanism: "ノルアドレナリン再取り込み阻害作用とMAO阻害作用", characteristics: "交感神経終末へのノルアドレナリン再取り込み阻害作用とMAO阻害作用によって、交感神経機能を亢進する。", applications: "本態性低血圧症、起立性低血圧症", category: "その他", memo: "低血圧症治療薬（非カテコールアミン系）。" },
-            { name: "トラゾリン", mechanism: "非選択的$\\alpha$受容体遮断薬 (イミダゾリン誘導体)", characteristics: "フェントラミンと同様の作用機序。$\\alpha_1$受容体遮断で血管拡張、$\\alpha_2$受容体遮断でNAd遊離促進の可能性。", applications: "(歴史的) 褐色細胞腫など", category: "交感神経遮断薬", memo: "現在使用されていない。" },
-            { name: "メチルエルゴメトリン", mechanism: "$\\alpha$受容体遮断薬、子宮平滑筋直接収縮", characteristics: "麦角アルカロイド。エルゴメトリンと同様に子宮選択性が高い(筋直接作用)。", applications: "分娩後の弛緩性子宮出血", category: "その他", memo: "" },
-            { name: "ジベナミン", mechanism: "$\\beta$-ハロアルキルアミン系$\\alpha$受容体遮断薬", characteristics: "受容体に物理化学的に結合後、共有結合に移行(非可逆的拮抗)する。", applications: "レイノー病などの末梢循環障害の血行改善", category: "交感神経遮断薬", memo: "フェノキシベンザミン(PBZ)も同系統。" },
-            { name: "フェノキシベンザミン", mechanism: "$\\beta$-ハロアルキルアミン系$\\alpha$受容体遮断薬", characteristics: "受容体に物理化学的に結合後、共有結合に移行(非可逆的拮抗)する。", applications: "レイノー病などの末梢循環障害の血行改善、褐色細胞腫", category: "交感神経遮断薬", memo: "ジベナミンも同系統。" },
-            { name: "ブナゾシン", mechanism: "選択的$\\alpha_1$受容体遮断薬", characteristics: "血管$\\alpha_1$受容体を選択的に遮断し、血管を拡張させ、血圧を下降させる。眼房水の排出促進。", applications: "高血圧症、緑内障", category: "交感神経遮断薬", memo: "" },
-            { name: "テラゾシン", mechanism: "選択的$\\alpha_1$受容体遮断薬", characteristics: "血管$\\alpha_1$受容体を選択的に遮断し、血管を拡張させ、血圧を下降させる。", applications: "高血圧症、前立腺肥大症に伴う排尿障害", category: "交感神経遮断薬", memo: "" },
-            { name: "ドキサゾシン", mechanism: "選択的$\\alpha_1$受容体遮断薬", characteristics: "血管$\\alpha_1$受容体を選択的に遮断し、血管を拡張させ、血圧を下降させる。", applications: "高血圧症、前立腺肥大症に伴う排尿障害", category: "交感神経遮断薬", memo: "" },
-            { name: "シロドシン", mechanism: "選択的$\\alpha_{1A}$受容体遮断薬", characteristics: "下部尿路$\\alpha_{1A}$受容体を選択的に遮断し、それらの平滑筋を弛緩させる。前立腺$\\alpha_{1A}$受容体への選択性が高い。", applications: "前立腺肥大症に伴う排尿障害", category: "交感神経遮断薬", memo: "" },
-            { name: "ナフトピジル", mechanism: "選択的$\\alpha_{1D}$受容体遮断薬", characteristics: "下部尿路$\\alpha_{1D}$受容体(膀胱括約筋)を選択的に遮断し、それらの平滑筋を弛緩させる。", applications: "前立腺肥大症に伴う排尿障害", category: "交感神経遮断薬", memo: "" },
-            { name: "ヨヒンビン", mechanism: "選択的$\\alpha_2$受容体遮断薬", characteristics: "", applications: "研究用試薬", category: "交感神経遮断薬", memo: "" },
-            { name: "アテノロール", mechanism: "選択的$\\beta_1$受容体遮断薬", characteristics: "$\\beta_2$受容体遮断作用は非常に弱いので、気管支収縮、血行動態悪化、血糖低下作用などの副作用は少ない。ISAなし。", applications: "狭心症(労作型狭心症の第一選択薬)、不整脈(第Ⅱ群)、本態性高血圧症", category: "交感神経遮断薬", memo: "うっ血性心不全に禁忌。気管支ぜん息に慎重投与。" },
-            { name: "メトプロロール", mechanism: "選択的$\\beta_1$受容体遮断薬", characteristics: "$\\beta_2$受容体遮断作用は非常に弱い。ISAなし。", applications: "狭心症(労作型狭心症の第一選択薬)、不整脈(第Ⅱ群)、本態性高血圧症", category: "交感神経遮断薬", memo: "うっ血性心不全に禁忌。気管支ぜん息に慎重投与。" },
-            { name: "ビソプロロール", mechanism: "選択的$\\beta_1$受容体遮断薬", characteristics: "$\\beta_2$受容体遮断作用は非常に弱い。ISAなし。", applications: "狭心症(労作型狭心症の第一選択薬)、不整脈(第Ⅱ群)、本態性高血圧症、慢性心不全", category: "交感神経遮断薬", memo: "気管支ぜん息に慎重投与。" },
-            { name: "セリプロロール", mechanism: "選択的$\\beta_1$受容体遮断薬 (ISA+)", characteristics: "弱い$\\beta_1$受容体刺激作用(ISA)を併せもつ。一部$\\beta_2$刺激作用もあるとされる。", applications: "本態性高血圧症、腎実質性高血圧症、狭心症", category: "交感神経遮断薬", memo: "" },
-            { name: "ランジオロール", mechanism: "選択的$\\beta_1$受容体遮断薬 (ISA-)", characteristics: "短時間作用型。エスモロールと同様。", applications: "上室性頻脈性不整脈(手術時)", category: "交感神経遮断薬", memo: "" },
-            { name: "アモスラロール", mechanism: "$\\alpha_1/\\beta$受容体遮断薬", characteristics: "血管$\\alpha_1$受容体の遮断により血管拡張、血圧降下。心臓$\\beta_1$受容体を遮断し心拍出量減少。血圧低下による反射性頻脈は起こらない。腎傍糸球体細胞$\\beta_1$受容体を遮断しレニン分泌抑制。", applications: "本態性高血圧症", category: "交感神経遮断薬", memo: "ラベタロール、アロチノロール、カルベジロールも類似薬。" },
-            { name: "アロチノロール", mechanism: "$\\alpha_1/\\beta$受容体遮断薬", characteristics: "血管$\\alpha_1$受容体の遮断により血管拡張、血圧降下。心臓$\\beta_1$受容体を遮断し心拍出量減少。血圧低下による反射性頻脈は起こらない。腎傍糸球体細胞$\\beta_1$受容体を遮断しレニン分泌抑制。ISA（-）。", applications: "本態性高血圧症、狭心症、頻脈性不整脈", category: "交感神経遮断薬", memo: "うっ血性心不全に禁忌。" },
-            { name: "グアナベンズ", mechanism: "中枢性$\\alpha_2$受容体刺激による交感神経の抑制", characteristics: "中枢$\\alpha_2$受容体刺激による交感神経の抑制。", applications: "本態性高血圧症", category: "交感神経遮断薬", memo: "" },
-            { name: "レセルピン", mechanism: "ノルアドレナリン枯渇薬", characteristics: "インドジャボクに含まれるアルカロイド。不可逆的に小胞モノアミントランスポーター(VMAT)を阻害し、ノルアドレナリンを枯渇させる。中枢神経系、末梢アドレナリン作動性神経、副腎髄質のノルアドレナリンを減少・枯渇させ、降圧作用、鎮静作用を示す。アドレナリン、ドパミン、セロトニンも枯渇させる。", applications: "本態性・腎性・悪性高血圧症", category: "交感神経遮断薬", memo: "副作用: 錐体外路障害、抑うつ、鼻閉、下痢、消化性潰瘍、徐脈。" },
-            { name: "グアネチジン", mechanism: "ノルアドレナリン遊離阻害薬", characteristics: "アミントランスポーターによって交感神経に取り込まれ、交感神経節後線維終末で集積し、ノルアドレナリンの遊離を阻害。その後、アミン顆粒に収まりノルアドレナリンの貯蔵を阻害するため、ノルアドレナリンは枯渇する。持続性の降圧作用。血液脳関門を通過しないので中枢作用は示さない。", applications: "(歴史的) 高血圧症", category: "交感神経遮断薬", memo: "副作用: 起立性低血圧、徐脈、鼻閉、下痢。" },
-            { name: "カルテオロール", mechanism: "非選択的$\\beta$受容体遮断薬（ISA+）", characteristics: "眼房水の産生抑制。ISA(+)。", applications: "緑内障、高眼圧症", category: "交感神経遮断薬", memo: "" },
-            { name: "レボブノロール", mechanism: "非選択的$\\beta$受容体遮断薬", characteristics: "眼房水の産生抑制。ISA(-) [cite: 9 表中該当なし、一般的にISAなし]", applications: "緑内障、高眼圧症", category: "交感神経遮断薬", memo: "" },
-            { name: "ブリモニジン", mechanism: "$\\alpha_2$受容体刺激薬", characteristics: "眼房水の産生抑制・排出促進。", applications: "緑内障、高眼圧症", category: "交感神経作動薬", memo: "" }
-
+            // 例:
+            { name: "アスピリン", category: "その他", mechanism: "COX阻害", characteristics: "解熱鎮痛", applications: "疼痛", memo: "ライ症候群注意" },
+            { name: "イブプロフェン", category: "その他", mechanism: "COX阻害", characteristics: "解熱鎮痛", applications: "疼痛、炎症", memo: "消化管障害に注意" },
+            { name: "リドカイン", category: "局所麻酔薬", mechanism: "Naチャネル遮断", characteristics: "アミド型、作用発現速い", applications: "表面麻酔、浸潤麻酔", memo: "アレルギー稀" },
+            { name: "プロカイン", category: "局所麻酔薬", mechanism: "Naチャネル遮断", characteristics: "エステル型、作用時間短い", applications: "浸潤麻酔", memo: "PABAによりアレルギー" },
+            { name: "スキサメトニウム", category: "末梢性筋弛緩薬", mechanism: "脱分極性筋弛緩薬、ACh受容体作動", characteristics: "作用発現速い、持続短い", applications: "気管挿管時の筋弛緩", memo: "悪性高熱症のリスク" },
+            { name: "ベクロニウム", category: "末梢性筋弛緩薬", mechanism: "非脱分極性筋弛緩薬、ACh受容体競合阻害", characteristics: "作用時間中程度", applications: "手術時の筋弛緩", memo: "拮抗薬: スガマデクス" },
+            { name: "アドレナリン", category: "交感神経刺激薬", mechanism: "α,β受容体刺激", characteristics: "心機能亢進、血管収縮、気管支拡張", applications: "アナフィラキシーショック、心停止", memo: "α作用:血管収縮, β1作用:心機能亢進, β2作用:気管支拡張" },
+            { name: "ノルアドレナリン", category: "交感神経刺激薬", mechanism: "α受容体主体の刺激", characteristics: "強力な血管収縮", applications: "急性低血圧、ショック", memo: "β1作用も若干有するが、α作用が主" },
+            { name: "プロプラノロール", category: "交感神経遮断薬", mechanism: "非選択的β受容体遮断", characteristics: "心機能抑制、気管支収縮", applications: "高血圧、狭心症、頻脈性不整脈", memo: "喘息患者には禁忌" },
+            { name: "アテノロール", category: "交感神経遮断薬", mechanism: "選択的β1受容体遮断", characteristics: "心機能抑制", applications: "高血圧、狭心症", memo: "β2への影響少ないが、高用量では注意" },
+            { name: "ジアゼパム", category: "神経系", mechanism: "GABA_A受容体アロステリック調節 (ベンゾジアゼピン結合部位)", characteristics: "抗不安、鎮静、催眠、筋弛緩", applications: "不安、不眠、痙攣", memo: "依存性、離脱症状に注意" },
+            { name: "フェニトイン", category: "神経系", mechanism: "電位依存性Naチャネル遮断", characteristics: "抗てんかん作用", applications: "てんかん (強直間代発作、部分発作)", memo: "歯肉増殖、多毛などの副作用" }
         ];
         
         let quizQuestions = [];
@@ -941,11 +842,11 @@
 
         function generateQuestionsFromSource(sourceDrugArray) {
             quizQuestions = sourceDrugArray.map(correctDrug => {
-                const drugName = correctDrug.name || "情報なし";
-                const mechanism = correctDrug.mechanism || "情報なし";
-                const characteristics = correctDrug.characteristics || "情報なし";
-                const applications = correctDrug.applications || "情報なし";
-                const memo = correctDrug.memo || "";
+                const drugName = correctDrug.name || "情報なし"; 
+                const mechanism = correctDrug.mechanism || "情報なし"; 
+                const characteristics = correctDrug.characteristics || "情報なし"; 
+                const applications = correctDrug.applications || "情報なし"; 
+                const memo = correctDrug.memo || ""; 
 
                 const questionText = `
                     <div class="text-left space-y-3 mb-4"> 
@@ -957,10 +858,10 @@
                 
                 let optionsArray = [];
                 if (answerMode === 'multiple-choice' || isReviewMode) { 
-                    let distractors = drugData.filter(d => d.name !== correctDrug.name).map(d => d.name);
+                    let distractors = drugData.filter(d => d.name !== drugName).map(d => d.name); 
                     shuffleArray(distractors);
                     let finalDistractors = [];
-                    let usedNamesInOptions = new Set([correctDrug.name]);
+                    let usedNamesInOptions = new Set([drugName]); 
                     for (const distractorName of distractors) {
                         if (finalDistractors.length < 3 && !usedNamesInOptions.has(distractorName)) {
                             finalDistractors.push(distractorName); usedNamesInOptions.add(distractorName);
@@ -969,25 +870,25 @@
                     }
                     while(finalDistractors.length < 3 && drugData.length > finalDistractors.length + 1) { 
                         const randomDrugIndex = Math.floor(Math.random() * drugData.length);
-                        const randomDrugName = drugData[randomDrugIndex].name;
-                        if (!usedNamesInOptions.has(randomDrugName)) { 
-                            finalDistractors.push(randomDrugName); usedNamesInOptions.add(randomDrugName);
+                        const randomDrugNameFromAllData = drugData[randomDrugIndex].name;
+                        if (!usedNamesInOptions.has(randomDrugNameFromAllData)) { 
+                            finalDistractors.push(randomDrugNameFromAllData); usedNamesInOptions.add(randomDrugNameFromAllData);
                         }
                         if (finalDistractors.length >=3) break;
                     }
                     finalDistractors = finalDistractors.slice(0,3);
-                    optionsArray = [correctDrug.name, ...finalDistractors]; // Ensure correctDrug.name is used for options
+                    optionsArray = [drugName, ...finalDistractors]; 
                     shuffleArray(optionsArray);
                 }
 
                 let explanationContent = `<strong>${drugName}</strong><br>作用機序: ${mechanism}<br>薬理学的特徴: ${characteristics}<br>主な適応: ${applications}`;
-                if (memo) {
+                if (memo) { 
                     explanationContent += `<div class="memo-point"><strong>暗記ポイント・比較:</strong><br>${memo}</div>`;
                 }
                 return { 
                     questionText: questionText,
                     options: optionsArray, 
-                    correctAnswer: correctDrug.name, // Crucial: use original name for answer checking
+                    correctAnswer: drugName, 
                     explanationText: explanationContent, 
                     drugDetails: correctDrug 
                 };
@@ -1198,7 +1099,13 @@
             allQuestionsCheckbox.checked = false;
             numQuestionsSlider.disabled = false;
 
-            categoryCheckboxes.forEach(cb => cb.checked = false);
+            categoryCheckboxes.forEach(cb => {
+                cb.checked = false;
+                const optionDiv = cb.closest('.category-option');
+                if (optionDiv) { 
+                    optionDiv.style.opacity = 1; 
+                }
+            });
             catAllCheckbox.checked = true; 
             handleCatAllChange(); 
         }
@@ -1286,28 +1193,61 @@
 
         // Category Checkbox Logic
         function handleCatAllChange() {
-            const isChecked = catAllCheckbox.checked;
+            const isCatAllChecked = catAllCheckbox.checked;
             categoryCheckboxes.forEach(cb => {
                 if (cb.id !== 'cat-all') {
-                    cb.checked = false; 
-                    cb.disabled = isChecked; 
+                    if (isCatAllChecked) { // If "All" is checked, uncheck and disable others
+                        cb.checked = false; 
+                    }
+                    cb.disabled = isCatAllChecked; 
+                    const optionDiv = cb.closest('.category-option');
+                    if (optionDiv) {
+                        optionDiv.style.opacity = isCatAllChecked ? 0.6 : 1;
+                    }
                 }
             });
         }
 
         catAllCheckbox.addEventListener('change', handleCatAllChange);
 
-        categoryCheckboxes.forEach(cb => {
-            if (cb.id !== 'cat-all') {
-                cb.addEventListener('change', () => {
-                    if (cb.checked) {
-                        catAllCheckbox.checked = false; 
-                        categoryCheckboxes.forEach(otherCb => {
-                            if (otherCb.id !== 'cat-all') otherCb.disabled = false;
+        categoryCheckboxes.forEach(individualCb => {
+            if (individualCb.id !== 'cat-all') {
+                // This event listener is for the checkbox itself (e.g., if label is clicked)
+                individualCb.addEventListener('change', () => {
+                    if (individualCb.checked) {
+                        if (catAllCheckbox.checked) {
+                            catAllCheckbox.checked = false;
+                            // Dispatch change event on catAllCheckbox to trigger its logic
+                            catAllCheckbox.dispatchEvent(new Event('change', { bubbles: true }));
+                        }
+                    } else {
+                        // If this was the last individual checkbox unchecked, check "All"
+                        let anyOtherIndividualChecked = false;
+                        categoryCheckboxes.forEach(cb => {
+                            if (cb.id !== 'cat-all' && cb.checked) {
+                                anyOtherIndividualChecked = true;
+                            }
                         });
+                        if (!anyOtherIndividualChecked) {
+                            catAllCheckbox.checked = true;
+                            catAllCheckbox.dispatchEvent(new Event('change', { bubbles: true }));
+                        }
                     }
                 });
             }
+        });
+
+        document.querySelectorAll('.category-option').forEach(optionDiv => {
+            optionDiv.addEventListener('click', function(event) {
+                const checkbox = this.querySelector('input[type="checkbox"]');
+                if (!checkbox || checkbox.disabled) return; // Do nothing if checkbox is disabled
+
+                // Toggle the state of the checkbox
+                checkbox.checked = !checkbox.checked;
+                // Manually dispatch a 'change' event on the checkbox
+                // This ensures that all logic tied to the checkbox's change event is triggered
+                checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+            });
         });
 
 
@@ -1324,7 +1264,7 @@
             }
             
             if (!catAllCheckbox.checked && selectedCategories.length === 0) {
-                selectedCategories.push("all"); // Default to all if nothing specific is chosen
+                selectedCategories.push("all"); 
             }
 
 
@@ -1355,8 +1295,8 @@
                 } else {
                     catAllCheckbox.checked = false;
                     currentSelectedCategories.forEach(catValue => {
-                        const checkbox = document.querySelector(`input[name="category"][value="${catValue}"]`);
-                        if (checkbox) checkbox.checked = true;
+                        const checkboxToRestore = document.querySelector(`input[name="category"][value="${catValue}"]`);
+                        if (checkboxToRestore) checkboxToRestore.checked = true;
                     });
                 }
                 handleCatAllChange(); // Reflect changes in UI
