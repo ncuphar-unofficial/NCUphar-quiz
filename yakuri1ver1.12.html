@@ -163,13 +163,13 @@
         .review-btn { background-color: #7e22ce; }
         .review-btn:hover:not(:disabled) { background-color: #6b21a8; }
         .back-to-menu-btn {
-            background-color: #64748b; /* slate-500 */
+            background-color: #64748b;
             padding: 0.5rem 1rem !important;
             font-size: 0.9rem !important;
             flex-shrink: 0;
         }
         .back-to-menu-btn:hover:not(:disabled) {
-            background-color: #475569; /* slate-600 */
+            background-color: #475569;
         }
         .summary {
             background-color: white; border-radius: 0.75rem;
@@ -275,6 +275,11 @@
             accent-color: #2563eb; 
             width: 1rem; height: 1rem;
         }
+        /* [NEW] Grayscale mode style */
+        html.grayscale-mode {
+            filter: grayscale(100%);
+            -webkit-filter: grayscale(100%);
+        }
     </style>
 </head>
 <body class="bg-gray-100">
@@ -299,9 +304,18 @@
                     <label for="mode-typed-input">単語入力式</label>
                 </div>
            </div>
+           
+           <!-- [NEW] Grayscale Toggle Switch -->
+           <div id="grayscale-toggle-container" class="flex items-center justify-center mt-6">
+               <label for="grayscale-toggle" class="text-slate-700 text-lg font-semibold mr-4">グレースケールモード:</label>
+               <label class="relative inline-flex items-center cursor-pointer">
+                 <input type="checkbox" id="grayscale-toggle" class="sr-only peer">
+                 <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-2 peer-focus:ring-slate-400 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gray-600"></div>
+               </label>
+           </div>
 
-           <button id="start-quiz-btn" class="quiz-btn start-quiz-btn">クイズを開始する</button>
-           <p class="text-xs text-gray-400 mt-6">ver1.12</p>
+           <button id="start-quiz-btn" class="quiz-btn start-quiz-btn mt-6">クイズを開始する</button>
+           <p class="text-xs text-gray-400 mt-6">ver1.15</p>
         </div>
 
         <div id="quiz-container"> 
@@ -483,6 +497,7 @@
         const quizCardElement = document.getElementById('quiz-card-element'); 
         const quizCardContent = document.getElementById('quiz-card-content'); 
         const mainHeader = document.getElementById('main-header'); 
+        const grayscaleToggle = document.getElementById('grayscale-toggle');
 
         let touchstartX = 0;
         let touchendX = 0;
@@ -584,7 +599,6 @@
             return true;
         }
 
-        // [CHANGE] Logic for generating distractors updated
         function generateQuestionsFromSource(sourceDrugArray) {
             quizQuestions = sourceDrugArray.map(correctDrug => {
                 const questionText = `
@@ -677,7 +691,6 @@
 
             }, 350); 
         }
-
 
         function loadQuestion(index) {
             if (index < 0 || index >= quizQuestions.length) return;
@@ -1104,6 +1117,27 @@
                 });
             });
         }
+        
+        function applyGrayscale(isGrayscale) {
+            if (isGrayscale) {
+                document.documentElement.classList.add('grayscale-mode');
+            } else {
+                document.documentElement.classList.remove('grayscale-mode');
+            }
+        }
+
+        function saveGrayscaleSetting(isGrayscale) {
+            localStorage.setItem('pharmacologyQuizGrayscale', JSON.stringify(isGrayscale));
+        }
+
+        function loadGrayscaleSetting() {
+            const savedSetting = localStorage.getItem('pharmacologyQuizGrayscale');
+            if (savedSetting !== null) {
+                const isGrayscale = JSON.parse(savedSetting);
+                grayscaleToggle.checked = isGrayscale;
+                applyGrayscale(isGrayscale);
+            }
+        }
 
         startQuizButton.addEventListener('click', () => {
             let selectedCategories = getSelectedCategories();
@@ -1183,10 +1217,17 @@
             const selectedReviewMode = document.querySelector('input[name="review-answer-mode"]:checked').value;
             startReviewQuiz(selectedReviewMode);
         });
+        
+        grayscaleToggle.addEventListener('change', () => {
+            const isGrayscale = grayscaleToggle.checked;
+            applyGrayscale(isGrayscale);
+            saveGrayscaleSetting(isGrayscale);
+        });
 
         document.addEventListener('DOMContentLoaded', () => {
             populateCategories();
             updateNumQuestionsOptions();
+            loadGrayscaleSetting();
             categorySelectContainer.style.display = 'block'; 
             quizContainer.style.display = 'none'; 
             quizContainer.classList.remove('visible');
