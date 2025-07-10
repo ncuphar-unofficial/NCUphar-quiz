@@ -221,7 +221,7 @@
             border-radius: 9999px;
             margin-bottom: 1.25rem;
             display: inline-block;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+            box-shadow: 0 1px 2px (0,0,0,0.03);
         }
         #answer-mode-select-container {
             margin-top: 1.5rem; margin-bottom: 1rem; 
@@ -255,7 +255,7 @@
             font-size: 0.95rem;
             background-color: #f9fafb;
             color: #374151;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            box-shadow: 0 1px 2px (0,0,0,0.05);
         }
         #category-checkboxes-container .checkbox-item label:hover {
             border-color: #a5b4fc;
@@ -267,7 +267,7 @@
             border-color: #818cf8;
             color: #3730a3;
             font-weight: 600;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px (0,0,0,0.1);
         }
         #answer-mode-select-container input[type="radio"],
         #review-options-container input[type="radio"] {
@@ -310,6 +310,15 @@
                  <label for="grayscale-toggle" class="text-slate-700 text-lg font-semibold mr-4">グレースケールモード:</label>
                  <label class="relative inline-flex items-center cursor-pointer">
                    <input type="checkbox" id="grayscale-toggle" class="sr-only peer">
+                   <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-2 peer-focus:ring-slate-400 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gray-600"></div>
+                 </label>
+           </div>
+
+           <!-- [NEW] 基原名非表示モード切り替えスイッチ -->
+           <div id="hide-common-name-toggle-container" class="flex items-center justify-center mt-6">
+                 <label for="hide-common-name-toggle" class="text-slate-700 text-lg font-semibold mr-4">基原名非表示モード:</label>
+                 <label class="relative inline-flex items-center cursor-pointer">
+                   <input type="checkbox" id="hide-common-name-toggle" class="sr-only peer">
                    <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-2 peer-focus:ring-slate-400 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gray-600"></div>
                  </label>
            </div>
@@ -1645,12 +1654,14 @@ const CrudeDrugData = [
         const quizCardContent = document.getElementById('quiz-card-content'); 
         const mainHeader = document.getElementById('main-header'); 
         const grayscaleToggle = document.getElementById('grayscale-toggle');
+        const hideCommonNameToggle = document.getElementById('hide-common-name-toggle'); // [NEW]
 
         let touchstartX = 0;
         let touchendX = 0;
         const swipeThreshold = 50; 
         let isAnimating = false; 
-        
+        let hideCommonNameMode = false; // [NEW]
+
         // 生薬学のカテゴリーリスト
         const categories = [
             "植物の皮を基原とする生薬",
@@ -1763,12 +1774,17 @@ const CrudeDrugData = [
 
         function generateQuestionsFromSource(sourceDrugArray) {
             quizQuestions = sourceDrugArray.map(correctDrug => {
+                // Determine the display text for the '基原' based on hideCommonNameMode
+                const originCommonNameDisplay = hideCommonNameMode && correctDrug.originOrganism.commonName
+                    ? '' // Hide common name
+                    : `${correctDrug.originOrganism.commonName} `; // Show common name with a space
+
                 // 問題文の構成を調整
                 const questionText = `
                     <div class="text-left space-y-3 mb-4"> 
                         <div class="question-detail-box bg-emerald-50"> 
                             <strong>基原:</strong>
-                            <div>${correctDrug.originOrganism.commonName} <i>${correctDrug.originOrganism.scientificName}</i> ${correctDrug.originOrganism.family}</div>
+                            <div>${originCommonNameDisplay}<i>${correctDrug.originOrganism.scientificName}</i> ${correctDrug.originOrganism.family}</div>
                         </div>
                         <div class="question-detail-box bg-amber-50"> 
                             <strong>用部:</strong>
@@ -1808,7 +1824,7 @@ const CrudeDrugData = [
                     shuffleArray(optionsArray);
                 }
                 
-                // 解説文の構成を調整
+                // 解説文の構成を調整 (解説では常に全ての情報を表示)
                 let explanationContent = `<strong>${correctDrug.name} (${correctDrug.kanjiName})</strong><br>ラテン名: <i>${correctDrug.latinName}</i><br>基原: ${correctDrug.originOrganism.commonName} <i>${correctDrug.originOrganism.scientificName}</i> ${correctDrug.originOrganism.family}<br>用部: ${correctDrug.partUsed}`;
                 if (correctDrug.markerCompound) {
                     explanationContent += `<br>指標成分: ${correctDrug.markerCompound}`;
@@ -2325,6 +2341,28 @@ const CrudeDrugData = [
             }
         }
 
+        // [NEW] Functions for hiding common name
+        function applyHideCommonNameMode(isHide) {
+            hideCommonNameMode = isHide;
+            // If quiz is currently active, re-load the current question to apply the change
+            if (quizContainer.classList.contains('visible')) {
+                loadQuestion(currentQuestionIndex);
+            }
+        }
+
+        function saveHideCommonNameSetting(isHide) {
+            localStorage.setItem('pharmacognosyQuizHideCommonName', JSON.stringify(isHide));
+        }
+
+        function loadHideCommonNameSetting() {
+            const savedSetting = localStorage.getItem('pharmacognosyQuizHideCommonName');
+            if (savedSetting !== null) {
+                const isHide = JSON.parse(savedSetting);
+                hideCommonNameToggle.checked = isHide;
+                applyHideCommonNameMode(isHide);
+            }
+        }
+
         startQuizButton.addEventListener('click', () => {
             let selectedCategories = getSelectedCategories();
             if (document.getElementById('category-all').checked || selectedCategories.length === 0) {
@@ -2410,10 +2448,18 @@ const CrudeDrugData = [
             saveGrayscaleSetting(isGrayscale);
         });
 
+        // [NEW] Event listener for hide common name toggle
+        hideCommonNameToggle.addEventListener('change', () => {
+            const isHide = hideCommonNameToggle.checked;
+            applyHideCommonNameMode(isHide);
+            saveHideCommonNameSetting(isHide);
+        });
+
         document.addEventListener('DOMContentLoaded', () => {
             populateCategories();
             updateNumQuestionsOptions();
             loadGrayscaleSetting();
+            loadHideCommonNameSetting(); // [NEW] Load hide common name setting
             categorySelectContainer.style.display = 'block'; 
             quizContainer.style.display = 'none'; 
             quizContainer.classList.remove('visible');
